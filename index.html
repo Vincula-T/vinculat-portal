@@ -1366,13 +1366,15 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
     function getDriveImgUrl(url) {
       if (!url || url.toString().trim() === '') return null;
       const str = url.toString().trim();
-      // Extraer el ID del link de Google Drive
-      const match = str.match(/\/d\/([a-zA-Z0-9_-]{25,})/);
-      if (match) {
-        // Usar lh3.googleusercontent.com que sí permite embed desde otras páginas
-        return 'https://lh3.googleusercontent.com/d/' + match[1];
-      }
-      // Si ya es un link directo, usarlo tal cual
+      // Ya es link lh3 directo — usarlo tal cual
+      if (str.includes('lh3.googleusercontent.com')) return str;
+      // Link de Drive formato /d/ID/
+      const m1 = str.match(/\/d\/([a-zA-Z0-9_-]{25,})/);
+      if (m1) return 'https://lh3.googleusercontent.com/d/' + m1[1];
+      // Link de Drive formato ?id=ID
+      const m2 = str.match(/[?&]id=([a-zA-Z0-9_-]{25,})/);
+      if (m2) return 'https://lh3.googleusercontent.com/d/' + m2[1];
+      // Cualquier otro link http — usarlo directo
       if (str.startsWith('http')) return str;
       return null;
     }
