@@ -242,6 +242,23 @@
     letter-spacing: 0.3px;
   }
   .badge-green  { background: rgba(16,185,129,0.15); color: #34D399; border: 1px solid rgba(16,185,129,0.3); }
+  .badge-foto {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: linear-gradient(135deg, rgba(14,165,233,0.2), rgba(99,102,241,0.2));
+    border: 1px solid rgba(14,165,233,0.4);
+    color: #38BDF8;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 100px;
+    animation: pulse-foto 2.5s ease-in-out infinite;
+  }
+  @keyframes pulse-foto {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(14,165,233,0.3); }
+    50%       { box-shadow: 0 0 0 4px rgba(14,165,233,0); }
+  }
   .badge-red    { background: rgba(239,68,68,0.15);  color: #F87171; border: 1px solid rgba(239,68,68,0.3); }
   .badge-gold   { background: rgba(245,158,11,0.15); color: #FCD34D; border: 1px solid rgba(245,158,11,0.3); }
   .badge-blue   { background: rgba(37,99,235,0.15);  color: #60A5FA; border: 1px solid rgba(37,99,235,0.3); }
@@ -660,194 +677,6 @@
   .precio-row:last-child { border-bottom: none; }
   .precio-row .tipo { color: #94A3B8; }
   .precio-row .monto { font-weight: 700; color: var(--green); font-family: 'Syne', sans-serif; }
-
-  /* ── CANAL WHATSAPP BANNER ── */
-  .wa-canal-banner {
-    margin: 14px 14px 4px;
-    background: linear-gradient(135deg, #0A2A1A 0%, #0D3321 50%, #0A2A1A 100%);
-    border: 1.5px solid #25D366;
-    border-radius: 18px;
-    padding: 16px;
-    position: relative;
-    overflow: hidden;
-    animation: fadeUp 0.4s ease both;
-    cursor: pointer;
-    text-decoration: none;
-    display: block;
-  }
-  .wa-canal-banner::before {
-    content: '';
-    position: absolute;
-    top: -30px; right: -30px;
-    width: 120px; height: 120px;
-    background: radial-gradient(circle, rgba(37,211,102,0.15) 0%, transparent 70%);
-    border-radius: 50%;
-  }
-  .wa-canal-banner::after {
-    content: '';
-    position: absolute;
-    bottom: -20px; left: -20px;
-    width: 80px; height: 80px;
-    background: radial-gradient(circle, rgba(37,211,102,0.08) 0%, transparent 70%);
-    border-radius: 50%;
-  }
-  .wa-banner-top {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 10px;
-  }
-  .wa-banner-icon {
-    width: 42px; height: 42px;
-    background: #25D366;
-    border-radius: 12px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 22px;
-    flex-shrink: 0;
-    box-shadow: 0 4px 12px rgba(37,211,102,0.4);
-  }
-  .wa-banner-titles { flex: 1; }
-  .wa-banner-tag {
-    font-size: 9px;
-    font-weight: 800;
-    color: #25D366;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    margin-bottom: 2px;
-  }
-  .wa-banner-title {
-    font-family: 'Syne', sans-serif;
-    font-size: 15px;
-    font-weight: 800;
-    color: white;
-    line-height: 1.2;
-  }
-  .wa-banner-desc {
-    font-size: 12px;
-    color: #86EFAC;
-    line-height: 1.6;
-    margin-bottom: 12px;
-  }
-  .wa-banner-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    background: #25D366;
-    color: #0A2A1A;
-    font-size: 13px;
-    font-weight: 800;
-    padding: 10px 16px;
-    border-radius: 10px;
-    font-family: 'DM Sans', sans-serif;
-    transition: all 0.2s;
-  }
-  .wa-canal-banner:active .wa-banner-btn {
-    transform: scale(0.97);
-    background: #1ebe5a;
-  }
-  .wa-banner-bell {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    margin-top: 10px;
-    background: rgba(37,211,102,0.1);
-    border: 1px solid rgba(37,211,102,0.2);
-    border-radius: 8px;
-    padding: 7px 10px;
-    font-size: 11px;
-    color: #86EFAC;
-  }
-
-
-  /* ── FOTO BADGE EN CARD ── */
-  .badge-foto {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    background: linear-gradient(135deg, rgba(14,165,233,0.2), rgba(99,102,241,0.2));
-    border: 1px solid rgba(14,165,233,0.4);
-    color: #38BDF8;
-    font-size: 10px;
-    font-weight: 700;
-    padding: 3px 8px;
-    border-radius: 100px;
-    animation: pulse-foto 2.5s ease-in-out infinite;
-  }
-  @keyframes pulse-foto {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(14,165,233,0.3); }
-    50%       { box-shadow: 0 0 0 4px rgba(14,165,233,0); }
-  }
-
-  /* ── FOTO PROSPECTO ── */
-  .foto-container {
-    width: 100%;
-    border-radius: 14px;
-    overflow: hidden;
-    margin-bottom: 14px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    position: relative;
-  }
-  .foto-img {
-    width: 100%;
-    max-height: 220px;
-    object-fit: cover;
-    display: block;
-    border-radius: 14px;
-    cursor: pointer;
-    transition: transform 0.2s;
-  }
-  .foto-img:active { transform: scale(0.98); }
-  .foto-badge {
-    position: absolute;
-    top: 10px; left: 10px;
-    background: rgba(0,0,0,0.65);
-    backdrop-filter: blur(6px);
-    color: white;
-    font-size: 10px;
-    font-weight: 700;
-    padding: 4px 10px;
-    border-radius: 100px;
-    border: 1px solid rgba(255,255,255,0.15);
-  }
-  .foto-tap {
-    position: absolute;
-    bottom: 10px; right: 10px;
-    background: rgba(0,0,0,0.55);
-    backdrop-filter: blur(6px);
-    color: white;
-    font-size: 10px;
-    padding: 4px 8px;
-    border-radius: 8px;
-  }
-  /* LIGHTBOX */
-  .lightbox {
-    position: fixed; inset: 0;
-    background: rgba(0,0,0,0.95);
-    z-index: 300;
-    display: flex; align-items: center; justify-content: center;
-    opacity: 0; pointer-events: none;
-    transition: opacity 0.25s;
-  }
-  .lightbox.show { opacity: 1; pointer-events: all; }
-  .lightbox img {
-    max-width: 95vw;
-    max-height: 90vh;
-    object-fit: contain;
-    border-radius: 12px;
-  }
-  .lightbox-close {
-    position: absolute;
-    top: 16px; right: 16px;
-    width: 36px; height: 36px;
-    background: rgba(255,255,255,0.15);
-    border: none; border-radius: 50%;
-    color: white; font-size: 16px;
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-  }
-
 </style>
 </head>
 <body>
@@ -890,27 +719,6 @@
 <div class="panel active" id="panel-inicio">
   <div id="vip-banner-container"></div>
   <div id="sabado-banner-container"></div>
-
-  <!-- CANAL WHATSAPP -->
-  <a class="wa-canal-banner" href="https://whatsapp.com/channel/0029VbCVD7B0bIdsozNP8L1Y" target="_blank">
-    <div class="wa-banner-top">
-      <div class="wa-banner-icon">📢</div>
-      <div class="wa-banner-titles">
-        <div class="wa-banner-tag">Canal oficial · Vinculat Odonto</div>
-        <div class="wa-banner-title">Entérate de los pacientes que nos van llegando</div>
-      </div>
-    </div>
-    <div class="wa-banner-desc">
-      Publicamos cada nuevo prospecto disponible en tiempo real. Sé el primero en enterarte y adquirirlo antes que otros alumnos. 🦷
-    </div>
-    <div class="wa-banner-btn">
-      <span>📲</span> Unirme al canal de WhatsApp
-    </div>
-    <div class="wa-banner-bell">
-      🔔 Una vez dentro, activa la campanita para recibir notificaciones de cada nuevo paciente.
-    </div>
-  </a>
-
   <div class="section-title">
     Recientes
     <span class="section-count" id="recientes-count">—</span>
@@ -949,6 +757,7 @@
 <div class="panel" id="panel-guiones">
   <div class="section-title" style="margin-bottom:4px;">Scripts de contacto</div>
 
+  <!-- PRIMER CONTACTO con 2 versiones + inputs -->
   <div class="guion-card">
     <div class="guion-header" onclick="toggleGuion(this)">
       <span>💬 Primer contacto</span>
@@ -956,14 +765,14 @@
     </div>
     <div class="guion-body open">
 
-      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px;">
+      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;">
         <div style="font-size:11px;font-weight:700;color:#4B6A9B;text-transform:uppercase;letter-spacing:0.5px;">Personaliza el mensaje</div>
         <input id="input-alumno" type="text" placeholder="Tu nombre (alumno)"
                oninput="actualizarGuiones()"
-               style="background:#0C1829;border:1px solid #1A3058;border-radius:9px;padding:10px 12px;color:white;font-size:13px;font-family:'DM Sans',sans-serif;outline:none;width:100%;">
+               style="background:#0C1829;border:1px solid #1A3058;border-radius:9px;padding:10px 12px;color:white;font-size:13px;outline:none;width:100%;box-sizing:border-box;">
         <input id="input-prospecto" type="text" placeholder="Nombre del prospecto / padre o madre"
                oninput="actualizarGuiones()"
-               style="background:#0C1829;border:1px solid #1A3058;border-radius:9px;padding:10px 12px;color:white;font-size:13px;font-family:'DM Sans',sans-serif;outline:none;width:100%;">
+               style="background:#0C1829;border:1px solid #1A3058;border-radius:9px;padding:10px 12px;color:white;font-size:13px;outline:none;width:100%;box-sizing:border-box;">
       </div>
 
       <div style="font-size:11px;font-weight:700;color:#34D399;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;">🟢 Versión general</div>
@@ -989,6 +798,7 @@ Le contacto de parte de la Facultad de Odontología de la UANL. Mi nombre es [AL
     </div>
   </div>
 
+  <!-- NO HA RESPONDIDO -->
   <div class="guion-card">
     <div class="guion-header" onclick="toggleGuion(this)">
       <span>🔁 No ha respondido</span>
@@ -1004,6 +814,7 @@ Si ya no puede, con gusto le damos de baja para no molestarle más. 😊</div>
     </div>
   </div>
 
+  <!-- CONFIRMAR CITA -->
   <div class="guion-card">
     <div class="guion-header" onclick="toggleGuion(this)">
       <span>📅 Confirmar cita</span>
@@ -1021,158 +832,239 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
     </div>
   </div>
 
+  <!-- GUÍA DE MANEJO -->
+  <div class="guion-card">
+    <div class="guion-header" onclick="toggleGuion(this)">
+      <span>📌 Guía de manejo de prospectos</span>
+      <span>▾</span>
+    </div>
+    <div class="guion-body">
+      <div style="display:flex;flex-direction:column;gap:12px;">
 
+        <div style="background:rgba(37,99,235,0.08);border:1px solid rgba(37,99,235,0.2);border-radius:10px;padding:12px;">
+          <div style="font-size:11px;font-weight:800;color:#60A5FA;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;">💰 Confirmación de costos</div>
+          <div style="font-size:13px;color:#CBD5E1;line-height:1.6;">Los prospectos conocen los precios y saben que deben pagar sus tratamientos.</div>
+        </div>
+
+        <div style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:10px;padding:12px;">
+          <div style="font-size:11px;font-weight:800;color:#34D399;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;">🪪 Trámite de cita e INE</div>
+          <div style="font-size:13px;color:#CBD5E1;line-height:1.6;margin-bottom:10px;">Para formalizar la cita, el paciente debe acudir a la facultad con su INE y <strong style="color:white;">$70 MXN</strong> para la valoración.</div>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <div style="background:rgba(255,255,255,0.04);border-radius:8px;padding:10px;font-size:12px;color:#94A3B8;line-height:1.6;">
+              <strong style="color:#34D399;">Opción A —</strong> Ofrécete a acompañarlo personalmente al trámite.
+            </div>
+            <div style="background:rgba(255,255,255,0.04);border-radius:8px;padding:10px;font-size:12px;color:#94A3B8;line-height:1.6;">
+              <strong style="color:#34D399;">Opción B —</strong> Si prefiere enviarla por mensaje, puede ocultar su dirección; solo es necesario que la foto, el nombre y la fecha de nacimiento sean visibles.
+            </div>
+          </div>
+        </div>
+
+        <div style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:10px;padding:12px;">
+          <div style="font-size:11px;font-weight:800;color:#FCD34D;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;">🔔 Seguimiento y garantía</div>
+          <div style="font-size:13px;color:#CBD5E1;line-height:1.6;">Avisa de inmediato a tu operador cuando el paciente confirme la cita. Si pasan <strong style="color:white;">24 horas</strong> sin respuesta del prospecto, repórtalo para activar tu garantía y que te asignen uno nuevo.</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══ POLÍTICAS ══ -->
+<div class="panel" id="panel-politicas">
+  <div class="section-title" style="margin-bottom:4px;">Políticas del sistema</div>
+
+  <div class="politica-item">
+    <div class="politica-header" onclick="togglePolitica(this)">
+      <span>💰 Inversión por prospecto</span><span>▾</span>
+    </div>
+    <div class="politica-body open">
+      <div class="precio-row"><span class="tipo">Todos los tratamientos</span><span class="monto">$130</span></div>
+      <div class="precio-row"><span class="tipo">Muela del juicio (1 o 2)</span><span class="monto">$130</span></div>
+      <div class="precio-row"><span class="tipo">Extracción simple × 2</span><span class="monto">$260</span></div>
+      <div class="precio-row"><span class="tipo">Extracción simple × 3 o más</span><span class="monto">$390</span></div>
+      <div class="precio-row"><span class="tipo">Endodoncia / Fractura frontal / Diente oscuro</span><span class="monto" style="color:#F87171;">$1,500</span></div>
+      <div class="precio-row"><span class="tipo">Sábados</span><span class="monto" style="color:#FCD34D;">GRATIS 🎁</span></div>
+    </div>
+  </div>
+
+  <div class="politica-item">
+    <div class="politica-header" onclick="togglePolitica(this)">
+      <span>🔄 Garantía de reposición</span><span>▾</span>
+    </div>
+    <div class="politica-body">
+      Si el paciente no acude a la cita confirmada, tienes derecho a solicitar una reposición. Para activarla debes subir evidencia de que el paciente confirmó la cita y no se presentó. El operador validará la garantía desde el dashboard.
+    </div>
+  </div>
+
+  <div class="politica-item">
+    <div class="politica-header" onclick="togglePolitica(this)">
+      <span>🚫 Sin reembolso</span><span>▾</span>
+    </div>
+    <div class="politica-body">
+      No se realizan devoluciones en efectivo. Si el prospecto no es viable, el saldo queda a tu favor para el siguiente prospecto. La garantía es reposición de prospecto, no devolución de dinero.
+    </div>
+  </div>
+
+  <div class="politica-item">
+    <div class="politica-header" onclick="togglePolitica(this)">
+      <span>⚡ Asignación FIFO</span><span>▾</span>
+    </div>
+    <div class="politica-body">
+      Los prospectos se asignan por orden de pago. El primero en pagar y enviar comprobante recibe el prospecto. No hay reservas sin pago confirmado. Los datos del paciente se desbloquean solo después de que el operador valide tu pago.
+    </div>
+  </div>
+
+  <div class="politica-item">
+    <div class="politica-header" onclick="togglePolitica(this)">
+      <span>🔴 Casos VIP (Endodoncia)</span><span>▾</span>
+    </div>
+    <div class="politica-body">
+      Los casos de endodoncia son verificados directamente por el operador con foto e INE del paciente. Se publican en la sección Premium una vez verificados. El primero en pagar $1,500 y confirmar recibe el caso con foto, INE y datos completos.
+    </div>
+  </div>
+</div>
+
+<!-- ══ PAGO ══ -->
+<div class="panel" id="panel-pago">
+  <div class="section-title" style="margin-bottom:4px;">Realizar pago</div>
+  <div style="padding: 0 16px;">
+    <div style="background:rgba(37,99,235,0.08); border:1px solid rgba(37,99,235,0.25); border-radius:16px; padding:20px; text-align:center; margin-bottom:16px;">
+      <div style="font-size:40px; margin-bottom:12px;">💬</div>
+      <div style="font-family:'Syne',sans-serif; font-size:16px; font-weight:800; margin-bottom:8px; color:white;">¿Cómo adquirir un prospecto?</div>
+      <div style="font-size:13px; color:#94A3B8; line-height:1.7;">
+        1. Selecciona el prospecto que te interese<br>
+        2. Toca <strong style="color:white;">Adquirir</strong> — se abrirá WhatsApp<br>
+        3. Pregunta si está disponible<br>
+        4. El operador te enviará los datos de transferencia<br>
+        5. Realiza el pago y envía tu comprobante<br>
+        6. ¡Listo! Recibirás los datos del paciente
+      </div>
+    </div>
+    <div class="warning-box">
+      🔒 Los datos de pago se envían directamente por WhatsApp para mayor seguridad. Nunca compartas tu comprobante con otros alumnos.
+    </div>
+    <button class="sheet-cta cta-primary" onclick="showPanel('prospectos', document.querySelectorAll('.nav-item')[1])">
+      🦷 Ver prospectos disponibles
+    </button>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <button class="nav-item active" onclick="showPanel('inicio', this)">
+    <span class="nav-icon">🏠</span>
+    <span class="nav-label">Inicio</span>
+  </button>
+  <button class="nav-item" onclick="showPanel('prospectos', this)">
+    <span class="nav-icon">🦷</span>
+    <span class="nav-label">Prospectos</span>
+  </button>
+  <button class="nav-item" onclick="showPanel('pago', this)">
+    <span class="nav-icon">💳</span>
+    <span class="nav-label">Pagar</span>
+  </button>
+  <button class="nav-item" onclick="showPanel('guiones', this)">
+    <span class="nav-icon">💬</span>
+    <span class="nav-label">Guiones</span>
+  </button>
+  <button class="nav-item" onclick="showPanel('politicas', this)">
+    <span class="nav-icon">📋</span>
+    <span class="nav-label">Políticas</span>
+  </button>
+</nav>
+
+<!-- BOTTOM SHEET -->
+<div class="overlay" id="overlay" onclick="cerrarSheet()"></div>
+<div class="bottom-sheet" id="bottom-sheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-header">
+    <div class="sheet-title" id="sheet-titulo">Detalle del prospecto</div>
+    <button class="sheet-close" onclick="cerrarSheet()">✕</button>
+  </div>
+  <div class="sheet-body" id="sheet-body"></div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
 
 <script>
   const API_URL = 'https://script.google.com/macros/s/AKfycbzOLUMmmIcNJJjlk_J7lkvYIfWzQ79gF1lth2oEqmZ6QcOZ3P8TS-5ay8pS-rDgIYmgcQ/exec';
-  const WHATSAPP = '528126026552';
-  const CLABE = '728969000084218503';
+  const WHATSAPP = '528126026552'; // ← Cambia por tu número de WhatsApp con código de país
+  const CLABE    = '728969000084218503'; // ← Cambia por tu CLABE real
 
   let todosLosProspectos = [];
+  let filtroActual = 'todos';
   let prospectoSeleccionado = null;
-  let filtroActivo = 'todos';
-  let timerInterval = null;
 
-  // ── NAV ──
-  function showPanel(id, btn) {
-    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-    document.getElementById('panel-' + id).classList.add('active');
-    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-    if (btn) btn.closest('.nav-item')?.classList.add('active');
-    else {
-      const navMap = {inicio:0, prospectos:1, pago:2, guiones:3, politicas:4};
-      const navItems = document.querySelectorAll('.nav-item');
-      if (navMap[id] !== undefined) navItems[navMap[id]]?.classList.add('active');
-    }
-    cerrarSheet();
-    window.scrollTo(0, 0);
-  }
-
-  // ── PRECIO ──
+  // ── PRECIO POR TRATAMIENTO ──
   function getPrecio(tratamiento, estado, extracciones) {
     if (estado === 'VIP') return { monto: '$1,500', clase: 'premium' };
     if (estado === 'Sabado') return { monto: 'GRATIS', clase: 'gratis' };
-    if (estado === 'Regalado') return { monto: 'GRATIS', clase: 'gratis' };
+    if (estado === 'Regalado') return { monto: 'GRATIS', clase: 'gratis' }; // historico, no debe aparecer
+
     const t = (tratamiento || '').toLowerCase();
     const e = (extracciones || '').toLowerCase();
-    if (t.includes('endodoncia') || t.includes('nervio') || t.includes('frontal') ||
-        t.includes('fractura en diente') || t.includes('oscuro') ||
-        (t.includes('fractura') && (t.includes('anterior') || t.includes('frente'))))
-      return { monto: '$1,500', clase: 'premium' };
+
+    // Endodoncia — diente frontal, fractura frontal, diente oscuro, nervio
+    if (
+      t.includes('endodoncia') ||
+      t.includes('nervio') ||
+      t.includes('frontal') ||
+      t.includes('fractura en diente') ||
+      t.includes('oscuro') ||
+      t.includes('fractura') && (t.includes('anterior') || t.includes('frente'))
+    ) return { monto: '$1,500', clase: 'premium' };
+
+    // Extracciones — se cobra por cantidad, máximo 3
+    // Incluye: extracción simple, sacar muela/diente, prótesis con extracciones
+    // EXCLUYE: muela del juicio (siempre $130 sin importar cantidad)
     const esExtraccion = t.includes('extracción') || t.includes('extraccion') ||
                          t.includes('sacar') || t.includes('prótesis') || t.includes('protesis');
     const esJuicio = t.includes('juicio');
+
     if (esExtraccion && !esJuicio) {
+      // Detectar cantidad del campo extracciones
       let cantidad = 1;
       if (e.includes('dos') || e.includes('2'))       cantidad = 2;
       else if (e.includes('tres') || e.includes('3')) cantidad = 3;
-      else if (e.includes('cuatro') || e.includes('4') || e.includes('cinco') ||
-               e.includes('5') || e.includes('más') || e.includes('mas') ||
-               e.includes('varias'))                  cantidad = 3;
+      else if (e.includes('cuatro') || e.includes('4') ||
+               e.includes('cinco') || e.includes('5') ||
+               e.includes('más') || e.includes('mas') ||
+               e.includes('varias'))                  cantidad = 3; // máximo 3
+
       const total = cantidad * 130;
       const detalle = cantidad > 1 ? ` (${cantidad} × $130)` : '';
       return { monto: `$${total}${detalle}`, clase: 'normal' };
     }
+
+    // Todo lo demás: $130 fijo
+    // (resinas, muela del juicio, corona, blanqueamiento, prótesis, valoración, infantil, etc.)
     return { monto: '$130', clase: 'normal' };
   }
 
+  // ── ICONO POR TRATAMIENTO ──
   function getIcono(tratamiento) {
     const t = (tratamiento || '').toLowerCase();
     if (t.includes('endodoncia') || t.includes('nervio')) return '🔴';
-    if (t.includes('extracción') || t.includes('extraccion') || t.includes('sacar')) return '🦷';
-    if (t.includes('resina') || t.includes('caries') || t.includes('tapar')) return '🔵';
-    if (t.includes('corona') || t.includes('prótesis') || t.includes('protesis')) return '👑';
-    if (t.includes('blanqueamiento') || t.includes('limpieza')) return '✨';
+    if (t.includes('extracción') || t.includes('extracci') || t.includes('sacar')) return '🦷';
+    if (t.includes('resina') || t.includes('caries') || t.includes('empa')) return '🔵';
+    if (t.includes('juicio')) return '😬';
+    if (t.includes('corona')) return '👑';
+    if (t.includes('prótesis') || t.includes('dentadura')) return '🦴';
     if (t.includes('infantil') || t.includes('menor') || t.includes('niño')) return '👶';
-    if (t.includes('ortodoncia') || t.includes('brackets')) return '😁';
+    if (t.includes('blanquea')) return '✨';
+    if (t.includes('puente')) return '🔗';
+    if (t.includes('cirugía') || t.includes('cirugia')) return '⚕️';
     return '🦷';
   }
 
+  // ── LIMPIAR TRATAMIENTO ──
   function limpiarTratamiento(t) {
     return (t || '').replace(/\.$/, '').trim();
   }
 
-  // ── TIMER ──
-  function iniciarTimer() {
-    let seg = 0;
-    const msgs = ['⏳ Conectando con Google Sheets...','⏳ Leyendo prospectos...','⏳ Casi listo...','⏳ Procesando datos...'];
-    const ids = ['timer-inicio','timer-todos'];
-    timerInterval = setInterval(() => {
-      seg++;
-      const msg = msgs[Math.min(seg-1, msgs.length-1)] + ` (${seg}s)`;
-      ids.forEach(id => { const el = document.getElementById(id); if (el) el.textContent = msg; });
-    }, 1000);
-    return timerInterval;
-  }
-
-  // ── CARGAR ──
-  async function cargarProspectos() {
-    const btn = document.getElementById('sync-btn');
-    const txt = document.getElementById('sync-text');
-    btn.classList.add('loading');
-    txt.textContent = 'Cargando...';
-    const timer = iniciarTimer();
-    try {
-      const res  = await fetch(API_URL);
-      const json = await res.json();
-      if (!json.ok) throw new Error();
-      todosLosProspectos = json.data.reverse();
-      renderInicio();
-      renderProspectos();
-      actualizarStats();
-    } catch(e) {
-      document.getElementById('cards-recientes').innerHTML = '<div class="empty-state"><div class="empty-icon">⚠️</div><p>Error al cargar. Toca actualizar.</p></div>';
-    } finally {
-      btn.classList.remove('loading');
-      txt.textContent = 'Actualizar';
-      clearInterval(timer);
-    }
-  }
-
-  function actualizarStats() {
-    const disp = todosLosProspectos.filter(p => p.estado === 'Disponible').length;
-    const vip  = todosLosProspectos.filter(p => p.estado === 'VIP').length;
-    const sab  = todosLosProspectos.filter(p => p.estado === 'Sabado').length;
-    document.getElementById('stat-disponibles').textContent = disp;
-    document.getElementById('stat-premium').textContent     = vip;
-    document.getElementById('stat-sabado').textContent      = sab;
-    document.getElementById('stat-total').textContent       = todosLosProspectos.length;
-  }
-
-  function renderInicio() {
-    const recientes = todosLosProspectos.slice(0, 5);
-    document.getElementById('recientes-count').textContent = recientes.length;
-    const recDiv = document.getElementById('cards-recientes');
-    if (recientes.length === 0) {
-      recDiv.innerHTML = '<div class="empty-state"><div class="empty-icon">🦷</div><p>No hay prospectos disponibles.</p></div>';
-      return;
-    }
-    recDiv.innerHTML = recientes.map((p, i) => buildCard(p, i * 60)).join('');
-    const vip  = todosLosProspectos.filter(p => p.estado === 'VIP');
-    const sabs = todosLosProspectos.filter(p => p.estado === 'Sabado');
-    document.getElementById('vip-banner-container').innerHTML   = vip.length  ? `<div class="alert-vip">🔴 ${vip.length} caso${vip.length>1?'s':''} VIP disponible${vip.length>1?'s':''}  — $1,500 c/u</div>` : '';
-    document.getElementById('sabado-banner-container').innerHTML= sabs.length ? `<div class="alert-sabado">🎁 ${sabs.length} prospecto${sabs.length>1?'s':''} de sábado gratuito${sabs.length>1?'s':''}</div>` : '';
-  }
-
-  function renderProspectos() {
-    let lista = filtroActivo === 'todos' ? todosLosProspectos : todosLosProspectos.filter(p => p.estado === filtroActivo);
-    document.getElementById('count-prospectos').textContent = lista.length;
-    const div = document.getElementById('cards-todos');
-    if (lista.length === 0) {
-      div.innerHTML = '<div class="empty-state"><div class="empty-icon">🔍</div><p>Sin prospectos con este filtro.</p></div>';
-      return;
-    }
-    div.innerHTML = lista.map((p, i) => buildCard(p, i * 40)).join('');
-  }
-
-  function filtrar(tipo, btn) {
-    filtroActivo = tipo;
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-    if (btn) btn.classList.add('active');
-    renderProspectos();
-  }
-
-  // ── BUILD CARD ──
+  // ── CONSTRUIR CARD ──
   function buildCard(p, delay = 0) {
     const precio = getPrecio(p.tratamiento, p.estado, p.extracciones);
     const icono  = getIcono(p.tratamiento);
@@ -1181,16 +1073,19 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
     if (p.horarioMana)  horarioParts.push('🌅 ' + p.horarioMana + ' (mañana)');
     if (p.horarioTarde) horarioParts.push('🌆 ' + p.horarioTarde + ' (tarde)');
     const horario = horarioParts.join(' · ') || 'A definir';
-    const folio   = (p.expediente || '').includes('primera') ? '🆕 Sin folio' : '📄 Con folio';
+    const folio  = (p.expediente || '').includes('primera') ? '🆕 Sin folio' : '📄 Con folio';
+
+    const badgeFoto = p.foto ? '<span class="badge-foto">📷 Con foto</span>' : '';
     const badgeEstado = p.estado === 'VIP'
       ? `<span class="badge badge-red">🔴 PREMIUM</span>`
       : p.estado === 'Sabado'
       ? `<span class="badge badge-gold">🎁 GRATIS</span>`
       : `<span class="badge badge-green">🟢 Disponible</span>`;
-    const badgeFoto = p.foto ? `<span class="badge-foto">📷 Con foto</span>` : '';
+
     const btnClase = p.estado === 'VIP' ? 'btn-premium' : p.estado === 'Sabado' ? 'btn-gratis' : 'btn-normal';
     const btnText  = p.estado === 'Sabado' ? '🎁 Apartar' : 'Adquirir →';
     const cardClase = p.estado === 'VIP' ? 'vip' : p.estado === 'Sabado' ? 'sabado' : 'disponible';
+
     return `
       <div class="card ${cardClase}" style="animation-delay:${delay}ms" onclick="abrirSheet(${JSON.stringify(p).replace(/"/g, '&quot;')})">
         <div class="card-top">
@@ -1210,60 +1105,163 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
       </div>`;
   }
 
-  // ── SHEET ──
+  // ── CARGAR PROSPECTOS ──
+  function iniciarTimer() {
+    let seg = 0;
+    const msgs = [
+      '⏳ Conectando con Google Sheets...',
+      '⏳ Leyendo prospectos...',
+      '⏳ Casi listo...',
+      '⏳ Un momento más...',
+      '⏳ Procesando datos...',
+    ];
+    const ids = ['timer-inicio','timer-todos'];
+    const interval = setInterval(() => {
+      seg++;
+      const msg = msgs[Math.min(seg-1, msgs.length-1)] + ` (${seg}s)`;
+      ids.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = msg;
+      });
+    }, 1000);
+    return interval;
+  }
+
+  async function cargarProspectos() {
+    const btn  = document.getElementById('sync-btn');
+    const txt  = document.getElementById('sync-text');
+    btn.classList.add('loading');
+    txt.textContent = 'Cargando...';
+    const timer = iniciarTimer();
+
+    try {
+      const res  = await fetch(API_URL);
+      const json = await res.json();
+
+      if (!json.ok) throw new Error('API error');
+
+      todosLosProspectos = json.data.reverse(); // más nuevos primero
+      renderTodo();
+      toast('✅ Actualizado correctamente');
+    } catch(e) {
+      toast('❌ Error al cargar. Reintenta.');
+    } finally {
+      btn.classList.remove('loading');
+      txt.textContent = 'Actualizar';
+      clearInterval(timer);
+    }
+  }
+
+  // ── RENDER ──
+  function renderTodo() {
+    const disponibles = todosLosProspectos.filter(p => p.estado === 'Disponible');
+    const vips        = todosLosProspectos.filter(p => p.estado === 'VIP');
+    const sabados     = todosLosProspectos.filter(p => p.estado === 'Sabado');
+    const total       = todosLosProspectos.length;
+
+    // Stats
+    document.getElementById('stat-disponibles').textContent = disponibles.length;
+    document.getElementById('stat-vip').textContent  = vips.length;
+    document.getElementById('stat-sabado').textContent = sabados.length;
+    document.getElementById('stat-total').textContent  = total;
+
+    // VIP Banner
+    const vipBanner = document.getElementById('vip-banner-container');
+    vipBanner.innerHTML = vips.length > 0 ? `
+      <div class="vip-banner" onclick="filtrar('vip', null); showPanel('prospectos', document.querySelectorAll('.nav-item')[1])">
+        <div class="vip-icon">🔴</div>
+        <div class="vip-text">
+          <div class="vip-title">Casos Premium disponibles</div>
+          <div class="vip-sub">Endodoncia verificada · $1,500 por caso</div>
+        </div>
+        <div class="vip-count">${vips.length}</div>
+      </div>` : '';
+
+    // Sábado Banner
+    const sabBanner = document.getElementById('sabado-banner-container');
+    sabBanner.innerHTML = sabados.length > 0 ? `
+      <div class="sabado-banner">
+        <div class="sabado-icon">🎁</div>
+        <div class="vip-text">
+          <div class="sabado-title">${sabados.length} prospecto${sabados.length > 1 ? 's' : ''} de sábado disponible${sabados.length > 1 ? 's' : ''}</div>
+          <div class="sabado-sub">Gratis para alumnos activos — solo este sábado</div>
+        </div>
+      </div>` : '';
+
+    // Recientes (últimos 5)
+    const recientes = todosLosProspectos.slice(0, 5); // ya están en orden nuevo→viejo
+    document.getElementById('recientes-count').textContent = recientes.length;
+    const recDiv = document.getElementById('cards-recientes');
+    if (recientes.length === 0) {
+      recDiv.innerHTML = `<div class="empty"><div class="ei">🦷</div><p>No hay prospectos disponibles en este momento.<br>Regresa más tarde.</p></div>`;
+    } else {
+      recDiv.innerHTML = recientes.map((p, i) => buildCard(p, i * 60)).join('');
+    }
+
+    // Todos
+    renderFiltro();
+  }
+
+  function renderFiltro() {
+    let lista = todosLosProspectos;
+    if (filtroActual !== 'todos') {
+      lista = todosLosProspectos.filter(p => p.estado.toLowerCase() === filtroActual);
+    }
+    document.getElementById('todos-count').textContent = lista.length;
+    const div = document.getElementById('cards-todos');
+    if (lista.length === 0) {
+      div.innerHTML = `<div class="empty"><div class="ei">🔍</div><p>No hay prospectos con este filtro.</p></div>`;
+    } else {
+      div.innerHTML = lista.map((p, i) => buildCard(p, i * 40)).join('');
+    }
+  }
+
+  function filtrar(tipo, btn) {
+    filtroActual = tipo;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    renderFiltro();
+  }
+
+  // ── BOTTOM SHEET ──
   function abrirSheet(p) {
     if (typeof p === 'string') p = JSON.parse(p);
     prospectoSeleccionado = p;
-    const precio  = getPrecio(p.tratamiento, p.estado, p.extracciones);
-    const trat    = limpiarTratamiento(p.tratamiento);
+
+    const precio = getPrecio(p.tratamiento, p.estado, p.extracciones);
+    const trat   = limpiarTratamiento(p.tratamiento);
     const horarioParts = [];
     if (p.horarioMana)  horarioParts.push('🌅 ' + p.horarioMana + ' (mañana)');
     if (p.horarioTarde) horarioParts.push('🌆 ' + p.horarioTarde + ' (tarde)');
     const horario = horarioParts.join(' · ') || 'A definir';
-    const folio   = (p.expediente || '').includes('primera') ? 'No tiene folio' : 'Sí tiene folio';
+    const folio  = (p.expediente || '').includes('primera') ? 'No tiene folio' : 'Sí tiene folio';
+
     const esGratis  = p.estado === 'Sabado';
     const esPremium = p.estado === 'VIP';
     const btnClass  = esPremium ? 'cta-premium' : esGratis ? 'cta-gratis' : 'cta-primary';
     const btnText   = esGratis ? '🎁 Apartar — preguntar por WhatsApp' : esPremium ? '🔴 Preguntar disponibilidad · $1,500' : `💬 Preguntar disponibilidad · ${precio.monto}`;
 
-    function getDriveImgUrl(url) {
-      if (!url || url.toString().trim() === '') return null;
-      const str = url.toString().trim();
-      if (str.includes('lh3.googleusercontent.com')) return str;
-      const m1 = str.match(/\/d\/([a-zA-Z0-9_-]{25,})/);
-      if (m1) return 'https://lh3.googleusercontent.com/d/' + m1[1];
-      const m2 = str.match(/[?&]id=([a-zA-Z0-9_-]{25,})/);
-      if (m2) return 'https://lh3.googleusercontent.com/d/' + m2[1];
-      if (str.startsWith('http')) return str;
-      return null;
-    }
-    const fotoUrl = getDriveImgUrl(p.foto);
-
     document.getElementById('sheet-titulo').textContent = p.id + ' — ' + trat;
+
     document.getElementById('sheet-body').innerHTML = `
-      ${fotoUrl ? `
-      <div class="foto-container">
-        <img class="foto-img" src="${fotoUrl}" alt="Foto del caso"
-             onclick="abrirLightbox('${fotoUrl}')"
-             onerror="this.parentElement.style.display='none'">
-        <div class="foto-badge">📷 Foto del caso</div>
-        <div class="foto-tap">🔍 Toca para ampliar</div>
-      </div>` : ''}
       <div class="sheet-row"><span class="key">Tratamiento</span><span class="val">${trat}</span></div>
       <div class="sheet-row"><span class="key">Horario preferido</span><span class="val">${horario}</span></div>
       <div class="sheet-row"><span class="key">Expediente</span><span class="val">${folio}</span></div>
       ${p.extracciones ? `<div class="sheet-row"><span class="key">Extracciones</span><span class="val">${p.extracciones}</span></div>` : ''}
       <div class="sheet-row"><span class="key">Estado</span><span class="val" style="color:${esPremium ? '#F87171' : esGratis ? '#FCD34D' : '#34D399'}">${p.estado}</span></div>
       <div class="sheet-row"><span class="key">Inversión</span><span class="val" style="color:${esPremium ? '#F87171' : esGratis ? '#FCD34D' : '#34D399'}; font-size:20px; font-family:'Syne',sans-serif;">${precio.monto}</span></div>
+
+
+
       <div class="warning-box" style="margin-top:12px;">
         ${esGratis
           ? '🎁 Prospecto de sábado gratuito. Al tocar el botón se abrirá WhatsApp para confirmar disponibilidad con el operador.'
           : '💬 Al tocar el botón se abrirá WhatsApp. Pregunta si está disponible y el operador te enviará los datos de transferencia de forma segura.'}
       </div>
-      <button class="sheet-cta ${btnClass}" onclick="${esGratis ? 'abrirWhatsAppGratis()' : 'abrirWhatsApp()'}">
-        ${btnText}
-      </button>
+
+      <button class="sheet-cta ${btnClass}" onclick="${esGratis ? 'abrirWhatsAppGratis()' : 'abrirWhatsApp()'}">${btnText}</button>
     `;
+
     document.getElementById('overlay').classList.add('show');
     document.getElementById('bottom-sheet').classList.add('open');
   }
@@ -1275,11 +1273,11 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
 
   // ── WHATSAPP ──
   function abrirWhatsApp() {
-    const p     = prospectoSeleccionado;
-    const id    = p ? p.id : '';
-    const trat  = p ? (p.tratamiento||'').replace(/\.$/,'') : '';
+    const p    = prospectoSeleccionado;
+    const id   = p ? p.id : '';
+    const trat = p ? (p.tratamiento||'').replace(/\.$/,'') : '';
     const precio = getPrecio(p.tratamiento, p.estado, p.extracciones).monto;
-    const msg   = encodeURIComponent(
+    const msg  = encodeURIComponent(
 `Hola, soy alumno de la Facultad de Odontología UANL 🦷
 
 Quiero adquirir el siguiente prospecto:
@@ -1309,40 +1307,39 @@ Quiero apartar el siguiente prospecto de sábado gratuito:
     window.open(`https://wa.me/${WHATSAPP}?text=${msg}`, '_blank');
   }
 
-  // ── LIGHTBOX ──
-  function abrirLightbox(url) {
-    document.getElementById('lightbox-img').src = url;
-    document.getElementById('lightbox').classList.add('show');
-  }
-  function cerrarLightbox() {
-    document.getElementById('lightbox').classList.remove('show');
-    document.getElementById('lightbox-img').src = '';
+  function copiarConcepto() {
+    const id = prospectoSeleccionado ? prospectoSeleccionado.id : '';
+    copiar(id);
   }
 
-  // ── GUIONES DINÁMICOS ──
+  // ── UTILS ──
+  function showPanel(id, el) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('panel-' + id).classList.add('active');
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    if (el) el.classList.add('active');
+    cerrarSheet();
+    window.scrollTo(0, 0);
+  }
+
+  function copiar(texto) {
+    navigator.clipboard.writeText(texto).then(() => toast('📋 Copiado al portapapeles'));
+  }
+
+  function toast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
+  }
+
   function actualizarGuiones() {
-    const alumno    = document.getElementById('input-alumno')?.value.trim() || '[ALUMNO]';
-    const prospecto = document.getElementById('input-prospecto')?.value.trim() || '[NOMBRE]';
-    const general  = document.getElementById('guion-general');
-    const infantil = document.getElementById('guion-infantil');
-    if (general) {
-      general.textContent = `Hola, ¿es ${prospecto}? 😊
-
-Le saludo de parte de la Facultad de Odontología de la UANL. Mi nombre es ${alumno} y me asignaron su caso para coordinar su cita.
-
-¿Tiene disponibilidad esta semana?
-
-— Soy alumno de clínica. Los tratamientos se realizan con supervisión de docentes especializados. 🦷`;
-    }
-    if (infantil) {
-      infantil.textContent = `Hola, buen día. ¿Es usted padre o madre de ${prospecto}? 😊
-
-Le contacto de parte de la Facultad de Odontología de la UANL. Mi nombre es ${alumno} y me asignaron el caso de su hijo/a para coordinar su cita de atención dental.
-
-¿Tienen disponibilidad esta semana para acudir?
-
-— Soy alumno de clínica. Los tratamientos se realizan con supervisión de docentes especializados. 🦷`;
-    }
+    const alumno    = (document.getElementById('input-alumno')?.value || '').trim() || '[ALUMNO]';
+    const prospecto = (document.getElementById('input-prospecto')?.value || '').trim() || '[NOMBRE]';
+    const g = document.getElementById('guion-general');
+    const i = document.getElementById('guion-infantil');
+    if (g) g.textContent = 'Hola, ¿es ' + prospecto + '? 😊\n\nLe saludo de parte de la Facultad de Odontología de la UANL. Mi nombre es ' + alumno + ' y me asignaron su caso para coordinar su cita.\n\n¿Tiene disponibilidad esta semana?\n\n— Soy alumno de clínica. Los tratamientos se realizan con supervisión de docentes especializados. 🦷';
+    if (i) i.textContent = 'Hola, buen día. ¿Es usted padre o madre de ' + prospecto + '? 😊\n\nLe contacto de parte de la Facultad de Odontología de la UANL. Mi nombre es ' + alumno + ' y me asignaron el caso de su hijo/a para coordinar su cita de atención dental.\n\n¿Tienen disponibilidad esta semana para acudir?\n\n— Soy alumno de clínica. Los tratamientos se realizan con supervisión de docentes especializados. 🦷';
   }
 
   function copiarGuion(id) {
@@ -1350,41 +1347,20 @@ Le contacto de parte de la Facultad de Odontología de la UANL. Mi nombre es ${a
     if (el) copiar(el.textContent);
   }
 
-  // ── UTILS ──
-  function toggleGuion(el) {
-    const body = el.nextElementSibling;
+  function toggleGuion(header) {
+    const body = header.nextElementSibling;
     body.classList.toggle('open');
+    header.querySelector('span:last-child').textContent = body.classList.contains('open') ? '▴' : '▾';
   }
-  function togglePolitica(el) {
-    const body = el.nextElementSibling;
+
+  function togglePolitica(header) {
+    const body = header.nextElementSibling;
     body.classList.toggle('open');
-  }
-  function copiar(texto) {
-    navigator.clipboard.writeText(texto).then(() => mostrarToast('📋 Copiado'));
-  }
-  function mostrarToast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 2000);
+    header.querySelector('span:last-child').textContent = body.classList.contains('open') ? '▴' : '▾';
   }
 
   // ── INIT ──
   cargarProspectos();
 </script>
-  <div id="overlay" class="overlay" onclick="cerrarSheet()"></div>
-
-  <div id="bottom-sheet" class="bottom-sheet">
-    <div class="sheet-handle"></div>
-    <div id="sheet-titulo" class="sheet-titulo"></div>
-    <div id="sheet-body"></div>
-  </div>
-
-  <div id="toast" class="toast"></div>
-
-  <div id="lightbox" class="lightbox" onclick="cerrarLightbox()">
-    <img id="lightbox-img" src="" style="max-width:95vw;max-height:90vh;border-radius:12px;object-fit:contain;">
-  </div>
-
 </body>
 </html>
