@@ -1,0 +1,1535 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Vinculat Odonto — Portal Alumnos</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy:    #0A1628;
+    --navy2:   #0F1E3A;
+    --blue:    #2563EB;
+    --teal:    #0EA5E9;
+    --green:   #10B981;
+    --amber:   #F59E0B;
+    --red:     #EF4444;
+    --purple:  #8B5CF6;
+    --gold:    #F59E0B;
+    --surface: #111827;
+    --card:    #1A2744;
+    --border:  #1E3A6E;
+    --text:    #F1F5F9;
+    --muted:   #64748B;
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  html { height: 100%; background: var(--navy); }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--navy);
+    color: var(--text);
+    min-height: 100vh;
+    padding-bottom: calc(72px + var(--safe-bottom));
+    max-width: 480px;
+    margin: 0 auto;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: linear-gradient(135deg, #0A1628 0%, #0F2448 100%);
+    padding: 20px 20px 16px;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    border-bottom: 1px solid var(--border);
+  }
+  .header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .logo-icon {
+    width: 38px; height: 38px;
+    background: linear-gradient(135deg, var(--blue), var(--teal));
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    box-shadow: 0 4px 12px rgba(37,99,235,0.4);
+  }
+  .logo-text {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 18px;
+    color: white;
+    letter-spacing: -0.5px;
+  }
+  .logo-text span { color: var(--teal); }
+
+  .sync-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--border);
+    border: none;
+    border-radius: 8px;
+    padding: 6px 12px;
+    color: #60A5FA;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.2s;
+  }
+  .sync-btn:active { transform: scale(0.95); }
+  .sync-btn.loading .sync-icon { animation: spin 1s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* STATS BAR */
+  .stats-bar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+  .stat-chip {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 8px 6px;
+    text-align: center;
+  }
+  .stat-chip .num {
+    font-family: 'Syne', sans-serif;
+    font-size: 20px;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 2px;
+  }
+  .stat-chip .lbl {
+    font-size: 9px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* ── FILTERS ── */
+  .filters {
+    padding: 14px 16px 0;
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .filters::-webkit-scrollbar { display: none; }
+  .filter-btn {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 7px 14px;
+    border-radius: 100px;
+    border: 1.5px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .filter-btn.active {
+    background: var(--blue);
+    border-color: var(--blue);
+    color: white;
+    box-shadow: 0 4px 12px rgba(37,99,235,0.35);
+  }
+  .filter-btn:active { transform: scale(0.95); }
+
+  /* ── SECTION TITLE ── */
+  .section-title {
+    padding: 18px 16px 10px;
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .section-count {
+    background: var(--border);
+    color: #60A5FA;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 100px;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  /* ── PROSPECT CARDS ── */
+  .cards {
+    padding: 0 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+    animation: fadeUp 0.3s ease both;
+  }
+  .card:active { transform: scale(0.98); }
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    border-radius: 18px 18px 0 0;
+  }
+  .card.disponible::before { background: linear-gradient(90deg, var(--green), var(--teal)); }
+  .card.vip::before        { background: linear-gradient(90deg, var(--red), #FF6B6B); }
+  .card.sabado::before     { background: linear-gradient(90deg, var(--gold), #FCD34D); }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    gap: 8px;
+  }
+  .card-id {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+  .card-badges { display: flex; gap: 5px; flex-wrap: wrap; justify-content: flex-end; }
+
+  .badge {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 100px;
+    white-space: nowrap;
+    letter-spacing: 0.3px;
+  }
+  .badge-green  { background: rgba(16,185,129,0.15); color: #34D399; border: 1px solid rgba(16,185,129,0.3); }
+  .badge-red    { background: rgba(239,68,68,0.15);  color: #F87171; border: 1px solid rgba(239,68,68,0.3); }
+  .badge-gold   { background: rgba(245,158,11,0.15); color: #FCD34D; border: 1px solid rgba(245,158,11,0.3); }
+  .badge-blue   { background: rgba(37,99,235,0.15);  color: #60A5FA; border: 1px solid rgba(37,99,235,0.3); }
+  .badge-new    { background: rgba(14,165,233,0.15); color: #38BDF8; border: 1px solid rgba(14,165,233,0.3); }
+
+  .card-tratamiento {
+    font-family: 'Syne', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 8px;
+    line-height: 1.3;
+  }
+
+  .card-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 14px;
+  }
+  .meta-chip {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    color: #94A3B8;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.07);
+    padding: 4px 8px;
+    border-radius: 6px;
+  }
+
+  .card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .card-precio {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+  }
+  .card-precio.gratis { color: var(--gold); }
+  .card-precio.premium { color: var(--red); }
+  .card-precio.normal { color: var(--green); }
+
+  .btn-adquirir {
+    padding: 10px 20px;
+    border-radius: 12px;
+    border: none;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.2s;
+  }
+  .btn-adquirir:active { transform: scale(0.95); }
+  .btn-normal  { background: var(--blue); color: white; box-shadow: 0 4px 12px rgba(37,99,235,0.35); }
+  .btn-premium { background: var(--red);  color: white; box-shadow: 0 4px 12px rgba(239,68,68,0.35); }
+  .btn-gratis  { background: linear-gradient(135deg, var(--gold), #FCD34D); color: #1A0A00; box-shadow: 0 4px 12px rgba(245,158,11,0.35); }
+
+  /* VIP BANNER */
+  .vip-banner {
+    margin: 14px 16px 0;
+    background: linear-gradient(135deg, #1A0A0A, #2D0A0A);
+    border: 1px solid rgba(239,68,68,0.4);
+    border-radius: 16px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .vip-banner:active { transform: scale(0.98); }
+  .vip-icon {
+    width: 42px; height: 42px;
+    background: rgba(239,68,68,0.2);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+  .vip-text { flex: 1; }
+  .vip-title { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 800; color: #F87171; margin-bottom: 2px; }
+  .vip-sub   { font-size: 11px; color: #94A3B8; }
+  .vip-count {
+    font-family: 'Syne', sans-serif;
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--red);
+  }
+
+  /* SABADO BANNER */
+  .sabado-banner {
+    margin: 12px 16px 0;
+    background: linear-gradient(135deg, #1A1200, #2D1E00);
+    border: 1px solid rgba(245,158,11,0.4);
+    border-radius: 16px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .sabado-icon {
+    width: 42px; height: 42px;
+    background: rgba(245,158,11,0.15);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+  .sabado-title { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 800; color: #FCD34D; margin-bottom: 2px; }
+  .sabado-sub   { font-size: 11px; color: #94A3B8; }
+
+  /* ── BOTTOM SHEET ── */
+  .overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 100;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+    backdrop-filter: blur(4px);
+  }
+  .overlay.show { opacity: 1; pointer-events: all; }
+
+  .bottom-sheet {
+    position: fixed;
+    bottom: 0; left: 50%;
+    transform: translateX(-50%) translateY(100%);
+    width: 100%;
+    max-width: 480px;
+    background: #0F1E3A;
+    border-radius: 24px 24px 0 0;
+    border: 1px solid var(--border);
+    border-bottom: none;
+    z-index: 101;
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    max-height: 90vh;
+    overflow-y: auto;
+    padding-bottom: calc(24px + var(--safe-bottom));
+  }
+  .bottom-sheet.open { transform: translateX(-50%) translateY(0); }
+
+  .sheet-handle {
+    width: 40px; height: 4px;
+    background: var(--border);
+    border-radius: 100px;
+    margin: 12px auto 0;
+  }
+  .sheet-header {
+    padding: 16px 20px 12px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .sheet-title { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 800; }
+  .sheet-close {
+    width: 32px; height: 32px;
+    background: var(--border);
+    border: none;
+    border-radius: 50%;
+    color: var(--muted);
+    font-size: 16px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .sheet-body { padding: 20px; }
+
+  .sheet-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    font-size: 13px;
+  }
+  .sheet-row:last-child { border-bottom: none; }
+  .sheet-row .key { color: var(--muted); }
+  .sheet-row .val { font-weight: 600; text-align: right; max-width: 60%; }
+
+  .clabe-box {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin: 16px 0;
+  }
+  .clabe-label { font-size: 11px; color: var(--muted); margin-bottom: 6px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+  .clabe-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: white;
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+    word-break: break-all;
+  }
+  .concepto-row { display: flex; justify-content: space-between; align-items: center; }
+  .concepto-val { font-size: 13px; color: #60A5FA; font-weight: 600; }
+
+  .copy-btn {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: var(--border);
+    border: none;
+    border-radius: 8px;
+    padding: 6px 12px;
+    color: #60A5FA;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.15s;
+  }
+  .copy-btn:active { transform: scale(0.95); background: var(--blue); color: white; }
+
+  .sheet-cta {
+    width: 100%;
+    padding: 16px;
+    border-radius: 14px;
+    border: none;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    margin-top: 8px;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .sheet-cta:active { transform: scale(0.98); }
+  .cta-primary { background: var(--blue); color: white; box-shadow: 0 6px 20px rgba(37,99,235,0.4); }
+  .cta-premium { background: var(--red); color: white; box-shadow: 0 6px 20px rgba(239,68,68,0.4); }
+  .cta-gratis  { background: linear-gradient(135deg, var(--gold), #FCD34D); color: #1A0A00; }
+
+  .warning-box {
+    background: rgba(245,158,11,0.1);
+    border: 1px solid rgba(245,158,11,0.3);
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 12px;
+    color: #FCD34D;
+    line-height: 1.5;
+    margin-bottom: 14px;
+  }
+
+  /* ── BOTTOM NAV ── */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 480px;
+    background: rgba(10,22,40,0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid var(--border);
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    padding-bottom: var(--safe-bottom);
+    z-index: 60;
+  }
+  .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 4px;
+    gap: 3px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+    background: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .nav-icon { font-size: 20px; transition: transform 0.2s; }
+  .nav-label { font-size: 9px; font-weight: 600; color: var(--muted); letter-spacing: 0.3px; text-transform: uppercase; }
+  .nav-item.active .nav-label { color: var(--blue); }
+  .nav-item.active .nav-icon { transform: scale(1.1); }
+  .nav-badge {
+    position: absolute;
+    top: 6px;
+    background: var(--red);
+    color: white;
+    font-size: 9px;
+    font-weight: 800;
+    padding: 1px 5px;
+    border-radius: 100px;
+    margin-left: 12px;
+    margin-top: -4px;
+  }
+
+  /* ── PANELS ── */
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* ── EMPTY STATE ── */
+  .empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--muted);
+  }
+  .empty .ei { font-size: 48px; margin-bottom: 12px; opacity: 0.4; }
+  .empty p { font-size: 14px; line-height: 1.6; }
+
+  /* LOADING */
+  .loading-state {
+    padding: 40px 20px;
+    text-align: center;
+  }
+  .spinner {
+    width: 40px; height: 40px;
+    border: 3px solid var(--border);
+    border-top-color: var(--blue);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 16px;
+  }
+  .loading-text { font-size: 13px; color: var(--muted); }
+
+  /* ── GUIONES PANEL ── */
+  .guion-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    margin: 0 16px 12px;
+    overflow: hidden;
+  }
+  .guion-header {
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    border-bottom: 1px solid var(--border);
+  }
+  .guion-title { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; }
+  .guion-body { padding: 16px; display: none; }
+  .guion-body.open { display: block; }
+  .guion-text {
+    font-size: 13px;
+    line-height: 1.7;
+    color: #CBD5E1;
+    background: rgba(0,0,0,0.2);
+    border-radius: 10px;
+    padding: 14px;
+    margin-bottom: 10px;
+    white-space: pre-line;
+  }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    bottom: 90px;
+    left: 50%;
+    transform: translateX(-50%) translateY(8px);
+    background: #1E3A6E;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 600;
+    z-index: 200;
+    opacity: 0;
+    transition: all 0.3s;
+    pointer-events: none;
+    white-space: nowrap;
+    border: 1px solid var(--border);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* POLITICAS */
+  .politica-item {
+    margin: 0 16px 10px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+  .politica-header {
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    gap: 10px;
+  }
+  .politica-body {
+    padding: 0 16px 14px;
+    font-size: 13px;
+    line-height: 1.7;
+    color: #94A3B8;
+    display: none;
+  }
+  .politica-body.open { display: block; }
+
+  /* PRECIOS TABLE */
+  .precio-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    font-size: 13px;
+  }
+  .precio-row:last-child { border-bottom: none; }
+  .precio-row .tipo { color: #94A3B8; }
+  .precio-row .monto { font-weight: 700; color: var(--green); font-family: 'Syne', sans-serif; }
+
+  /* ── CANAL WHATSAPP BANNER ── */
+  .wa-canal-banner {
+    margin: 14px 14px 4px;
+    background: linear-gradient(135deg, #0A2A1A 0%, #0D3321 50%, #0A2A1A 100%);
+    border: 1.5px solid #25D366;
+    border-radius: 18px;
+    padding: 16px;
+    position: relative;
+    overflow: hidden;
+    animation: fadeUp 0.4s ease both;
+    cursor: pointer;
+    text-decoration: none;
+    display: block;
+  }
+  .wa-canal-banner::before {
+    content: '';
+    position: absolute;
+    top: -30px; right: -30px;
+    width: 120px; height: 120px;
+    background: radial-gradient(circle, rgba(37,211,102,0.15) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .wa-canal-banner::after {
+    content: '';
+    position: absolute;
+    bottom: -20px; left: -20px;
+    width: 80px; height: 80px;
+    background: radial-gradient(circle, rgba(37,211,102,0.08) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .wa-banner-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .wa-banner-icon {
+    width: 42px; height: 42px;
+    background: #25D366;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(37,211,102,0.4);
+  }
+  .wa-banner-titles { flex: 1; }
+  .wa-banner-tag {
+    font-size: 9px;
+    font-weight: 800;
+    color: #25D366;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 2px;
+  }
+  .wa-banner-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 800;
+    color: white;
+    line-height: 1.2;
+  }
+  .wa-banner-desc {
+    font-size: 12px;
+    color: #86EFAC;
+    line-height: 1.6;
+    margin-bottom: 12px;
+  }
+  .wa-banner-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: #25D366;
+    color: #0A2A1A;
+    font-size: 13px;
+    font-weight: 800;
+    padding: 10px 16px;
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.2s;
+  }
+  .wa-canal-banner:active .wa-banner-btn {
+    transform: scale(0.97);
+    background: #1ebe5a;
+  }
+  .wa-banner-bell {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 10px;
+    background: rgba(37,211,102,0.1);
+    border: 1px solid rgba(37,211,102,0.2);
+    border-radius: 8px;
+    padding: 7px 10px;
+    font-size: 11px;
+    color: #86EFAC;
+  }
+
+
+  /* ── FOTO BADGE EN CARD ── */
+  .badge-foto {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: linear-gradient(135deg, rgba(14,165,233,0.2), rgba(99,102,241,0.2));
+    border: 1px solid rgba(14,165,233,0.4);
+    color: #38BDF8;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 100px;
+    animation: pulse-foto 2.5s ease-in-out infinite;
+  }
+  @keyframes pulse-foto {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(14,165,233,0.3); }
+    50%       { box-shadow: 0 0 0 4px rgba(14,165,233,0); }
+  }
+
+  /* ── FOTO PROSPECTO ── */
+  .foto-container {
+    width: 100%;
+    border-radius: 14px;
+    overflow: hidden;
+    margin-bottom: 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    position: relative;
+  }
+  .foto-img {
+    width: 100%;
+    max-height: 220px;
+    object-fit: cover;
+    display: block;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+  .foto-img:active { transform: scale(0.98); }
+  .foto-badge {
+    position: absolute;
+    top: 10px; left: 10px;
+    background: rgba(0,0,0,0.65);
+    backdrop-filter: blur(6px);
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 100px;
+    border: 1px solid rgba(255,255,255,0.15);
+  }
+  .foto-tap {
+    position: absolute;
+    bottom: 10px; right: 10px;
+    background: rgba(0,0,0,0.55);
+    backdrop-filter: blur(6px);
+    color: white;
+    font-size: 10px;
+    padding: 4px 8px;
+    border-radius: 8px;
+  }
+  /* LIGHTBOX */
+  .lightbox {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.95);
+    z-index: 300;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.25s;
+  }
+  .lightbox.show { opacity: 1; pointer-events: all; }
+  .lightbox img {
+    max-width: 95vw;
+    max-height: 90vh;
+    object-fit: contain;
+    border-radius: 12px;
+  }
+  .lightbox-close {
+    position: absolute;
+    top: 16px; right: 16px;
+    width: 36px; height: 36px;
+    background: rgba(255,255,255,0.15);
+    border: none; border-radius: 50%;
+    color: white; font-size: 16px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-top">
+    <div class="logo">
+      <div class="logo-icon">🦷</div>
+      <div class="logo-text">Vinculat <span>Odonto</span></div>
+    </div>
+    <button class="sync-btn" onclick="cargarProspectos()" id="sync-btn">
+      <span class="sync-icon">🔄</span>
+      <span id="sync-text">Actualizar</span>
+    </button>
+  </div>
+  <div class="stats-bar">
+    <div class="stat-chip">
+      <div class="num" style="color:#10B981;" id="stat-disponibles">—</div>
+      <div class="lbl">Disponibles</div>
+    </div>
+    <div class="stat-chip">
+      <div class="num" style="color:#EF4444;" id="stat-vip">—</div>
+      <div class="lbl">Premium</div>
+    </div>
+    <div class="stat-chip">
+      <div class="num" style="color:#F59E0B;" id="stat-sabado">—</div>
+      <div class="lbl">Sábado</div>
+    </div>
+    <div class="stat-chip">
+      <div class="num" style="color:#60A5FA;" id="stat-total">—</div>
+      <div class="lbl">Total</div>
+    </div>
+  </div>
+</div>
+
+<!-- PANELS -->
+
+<!-- ══ INICIO ══ -->
+<div class="panel active" id="panel-inicio">
+  <div id="vip-banner-container"></div>
+  <div id="sabado-banner-container"></div>
+
+  <!-- CANAL WHATSAPP -->
+  <a class="wa-canal-banner" href="https://whatsapp.com/channel/0029VbCVD7B0bIdsozNP8L1Y" target="_blank">
+    <div class="wa-banner-top">
+      <div class="wa-banner-icon">📢</div>
+      <div class="wa-banner-titles">
+        <div class="wa-banner-tag">Canal oficial · Vinculat Odonto</div>
+        <div class="wa-banner-title">Entérate de los pacientes que nos van llegando</div>
+      </div>
+    </div>
+    <div class="wa-banner-desc">
+      Publicamos cada nuevo prospecto disponible en tiempo real. Sé el primero en enterarte y adquirirlo antes que otros alumnos. 🦷
+    </div>
+    <div class="wa-banner-btn">
+      <span>📲</span> Unirme al canal de WhatsApp
+    </div>
+    <div class="wa-banner-bell">
+      🔔 Una vez dentro, activa la campanita para recibir notificaciones de cada nuevo paciente.
+    </div>
+  </a>
+
+  <div class="section-title">
+    Recientes
+    <span class="section-count" id="recientes-count">—</span>
+  </div>
+  <div class="cards" id="cards-recientes">
+    <div class="loading-state" id="loading-inicio">
+      <div class="spinner"></div>
+      <div class="loading-text">Conectando con tu base de datos...</div>
+      <div style="margin-top:10px; font-size:12px; color:#2563EB; font-weight:600;" id="timer-inicio">⏳ Espera unos segundos...</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PROSPECTOS ══ -->
+<div class="panel" id="panel-prospectos">
+  <div class="filters">
+    <button class="filter-btn active" onclick="filtrar('todos', this)">🦷 Todos</button>
+    <button class="filter-btn" onclick="filtrar('disponible', this)">🟢 Disponibles</button>
+    <button class="filter-btn" onclick="filtrar('vip', this)">🔴 Premium</button>
+    <button class="filter-btn" onclick="filtrar('sabado', this)">🎁 Sábado</button>
+  </div>
+  <div class="section-title">
+    Todos los prospectos
+    <span class="section-count" id="todos-count">—</span>
+  </div>
+  <div class="cards" id="cards-todos">
+    <div class="loading-state" id="loading-todos">
+      <div class="spinner"></div>
+      <div class="loading-text">Conectando con tu base de datos...</div>
+      <div style="margin-top:10px; font-size:12px; color:#2563EB; font-weight:600;" id="timer-todos">⏳ Espera unos segundos...</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ GUIONES ══ -->
+<div class="panel" id="panel-guiones">
+  <div class="section-title" style="margin-bottom:4px;">Scripts de contacto</div>
+
+  <div class="guion-card">
+    <div class="guion-header" onclick="toggleGuion(this)">
+      <span>💬 Primer contacto</span>
+      <span>▾</span>
+    </div>
+    <div class="guion-body open">
+      <div class="guion-text">Hola, ¿es [NOMBRE DEL PACIENTE]? 😊
+
+Le saludo de parte de la Facultad de Odontología de la UANL. Me asignaron su caso para [TRATAMIENTO] y me gustaría coordinar su cita.
+
+¿Tiene disponibilidad esta semana?
+
+— Soy alumno de clínica y atendemos con supervisión de docentes. ¡No tiene costo adicional! 🦷</div>
+      <button class="copy-btn" style="width:100%;justify-content:center;" onclick="copiar('Hola, ¿es [NOMBRE]? 😊\n\nLe saludo de parte de la Facultad de Odontología de la UANL. Me asignaron su caso para [TRATAMIENTO] y me gustaría coordinar su cita.\n\n¿Tiene disponibilidad esta semana?\n\n— Soy alumno de clínica y atendemos con supervisión de docentes. ¡No tiene costo adicional! 🦷')">📋 Copiar mensaje</button>
+    </div>
+  </div>
+
+  <div class="guion-card">
+    <div class="guion-header" onclick="toggleGuion(this)">
+      <span>🔁 No ha respondido</span>
+      <span>▾</span>
+    </div>
+    <div class="guion-body">
+      <div class="guion-text">Buenas tardes, le escribo nuevamente de la Facultad de Odontología UANL.
+
+Hace unos días le contacté sobre su tratamiento de [TRATAMIENTO]. ¿Le sigue interesando atenderse?
+
+Si ya no puede, con gusto le damos de baja para no molestarle más. 😊</div>
+      <button class="copy-btn" style="width:100%;justify-content:center;" onclick="copiar('Buenas tardes, le escribo nuevamente de la Facultad de Odontología UANL.\n\nHace unos días le contacté sobre su tratamiento. ¿Le sigue interesando atenderse?\n\nSi ya no puede, con gusto le damos de baja para no molestarle más. 😊')">📋 Copiar mensaje</button>
+    </div>
+  </div>
+
+  <div class="guion-card">
+    <div class="guion-header" onclick="toggleGuion(this)">
+      <span>📅 Confirmar cita</span>
+      <span>▾</span>
+    </div>
+    <div class="guion-body">
+      <div class="guion-text">¡Perfecto! Le confirmo su cita:
+
+📅 Día: [DÍA]
+🕐 Hora: [HORA]
+📍 Facultad de Odontología UANL
+
+Por favor llegue 10 minutos antes con una identificación oficial. Cualquier duda, aquí estoy. ✅</div>
+      <button class="copy-btn" style="width:100%;justify-content:center;" onclick="copiar('¡Perfecto! Le confirmo su cita:\n\n📅 Día: [DÍA]\n🕐 Hora: [HORA]\n📍 Facultad de Odontología UANL\n\nPor favor llegue 10 minutos antes con una identificación oficial. Cualquier duda, aquí estoy. ✅')">📋 Copiar mensaje</button>
+    </div>
+  </div>
+
+  <div style="margin: 0 16px; background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2); border-radius: 12px; padding: 14px 16px;">
+    <div style="font-size:12px; font-weight:700; color:#F87171; margin-bottom:8px;">⚠️ Recordatorios importantes</div>
+    <div style="font-size:12px; color:#94A3B8; line-height:1.7;">
+      • Nunca pidas INE por WhatsApp<br>
+      • No menciones el costo del prospecto al paciente<br>
+      • Endodoncia se reporta con el operador<br>
+      • Sube evidencia de contacto en 24h
+    </div>
+  </div>
+</div>
+
+<!-- ══ POLÍTICAS ══ -->
+<div class="panel" id="panel-politicas">
+  <div class="section-title" style="margin-bottom:4px;">Políticas del sistema</div>
+
+  <div class="politica-item">
+    <div class="politica-header" onclick="togglePolitica(this)">
+      <span>💰 Inversión por prospecto</span><span>▾</span>
+    </div>
+    <div class="politica-body open">
+      <div class="precio-row"><span class="tipo">Todos los tratamientos</span><span class="monto">$130</span></div>
+      <div class="precio-row"><span class="tipo">Muela del juicio (1 o 2)</span><span class="monto">$130</span></div>
+      <div class="precio-row"><span class="tipo">Extracción simple × 2</span><span class="monto">$260</span></div>
+      <div class="precio-row"><span class="tipo">Extracción simple × 3 o más</span><span class="monto">$390</span></div>
+      <div class="precio-row"><span class="tipo">Endodoncia / Fractura frontal / Diente oscuro</span><span class="monto" style="color:#F87171;">$1,500</span></div>
+      <div class="precio-row"><span class="tipo">Sábados</span><span class="monto" style="color:#FCD34D;">GRATIS 🎁</span></div>
+    </div>
+  </div>
+
+  <div class="politica-item">
+    <div class="politica-header" onclick="togglePolitica(this)">
+      <span>🔄 Garantía de reposición</span><span>▾</span>
+    </div>
+    <div class="politica-body">
+      Si el paciente no acude a la cita confirmada, tienes derecho a solicitar una reposición. Para activarla debes subir evidencia de que el paciente confirmó la cita y no se presentó. El operador validará la garantía desde el dashboard.
+    </div>
+  </div>
+
+  <div class="politica-item">
+    <div class="politica-header" onclick="togglePolitica(this)">
+      <span>🚫 Sin reembolso</span><span>▾</span>
+    </div>
+    <div class="politica-body">
+      No se realizan devoluciones en efectivo. Si el prospecto no es viable, el saldo queda a tu favor para el siguiente prospecto. La garantía es reposición de prospecto, no devolución de dinero.
+    </div>
+  </div>
+
+  <div class="politica-item">
+    <div class="politica-header" onclick="togglePolitica(this)">
+      <span>⚡ Asignación FIFO</span><span>▾</span>
+    </div>
+    <div class="politica-body">
+      Los prospectos se asignan por orden de pago. El primero en pagar y enviar comprobante recibe el prospecto. No hay reservas sin pago confirmado. Los datos del paciente se desbloquean solo después de que el operador valide tu pago.
+    </div>
+  </div>
+
+  <div class="politica-item">
+    <div class="politica-header" onclick="togglePolitica(this)">
+      <span>🔴 Casos VIP (Endodoncia)</span><span>▾</span>
+    </div>
+    <div class="politica-body">
+      Los casos de endodoncia son verificados directamente por el operador con foto e INE del paciente. Se publican en la sección Premium una vez verificados. El primero en pagar $1,500 y confirmar recibe el caso con foto, INE y datos completos.
+    </div>
+  </div>
+</div>
+
+<!-- ══ PAGO ══ -->
+<div class="panel" id="panel-pago">
+  <div class="section-title" style="margin-bottom:4px;">Realizar pago</div>
+  <div style="padding: 0 16px;">
+    <div style="background:rgba(37,99,235,0.08); border:1px solid rgba(37,99,235,0.25); border-radius:16px; padding:20px; text-align:center; margin-bottom:16px;">
+      <div style="font-size:40px; margin-bottom:12px;">💬</div>
+      <div style="font-family:'Syne',sans-serif; font-size:16px; font-weight:800; margin-bottom:8px; color:white;">¿Cómo adquirir un prospecto?</div>
+      <div style="font-size:13px; color:#94A3B8; line-height:1.7;">
+        1. Selecciona el prospecto que te interese<br>
+        2. Toca <strong style="color:white;">Adquirir</strong> — se abrirá WhatsApp<br>
+        3. Pregunta si está disponible<br>
+        4. El operador te enviará los datos de transferencia<br>
+        5. Realiza el pago y envía tu comprobante<br>
+        6. ¡Listo! Recibirás los datos del paciente
+      </div>
+    </div>
+    <div class="warning-box">
+      🔒 Los datos de pago se envían directamente por WhatsApp para mayor seguridad. Nunca compartas tu comprobante con otros alumnos.
+    </div>
+    <button class="sheet-cta cta-primary" onclick="showPanel('prospectos', document.querySelectorAll('.nav-item')[1])">
+      🦷 Ver prospectos disponibles
+    </button>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <button class="nav-item active" onclick="showPanel('inicio', this)">
+    <span class="nav-icon">🏠</span>
+    <span class="nav-label">Inicio</span>
+  </button>
+  <button class="nav-item" onclick="showPanel('prospectos', this)">
+    <span class="nav-icon">🦷</span>
+    <span class="nav-label">Prospectos</span>
+  </button>
+  <button class="nav-item" onclick="showPanel('pago', this)">
+    <span class="nav-icon">💳</span>
+    <span class="nav-label">Pagar</span>
+  </button>
+  <button class="nav-item" onclick="showPanel('guiones', this)">
+    <span class="nav-icon">💬</span>
+    <span class="nav-label">Guiones</span>
+  </button>
+  <button class="nav-item" onclick="showPanel('politicas', this)">
+    <span class="nav-icon">📋</span>
+    <span class="nav-label">Políticas</span>
+  </button>
+</nav>
+
+<!-- BOTTOM SHEET -->
+<div class="overlay" id="overlay" onclick="cerrarSheet()"></div>
+<div class="bottom-sheet" id="bottom-sheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-header">
+    <div class="sheet-title" id="sheet-titulo">Detalle del prospecto</div>
+    <button class="sheet-close" onclick="cerrarSheet()">✕</button>
+  </div>
+  <div class="sheet-body" id="sheet-body"></div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+  const API_URL = 'https://script.google.com/macros/s/AKfycbzOLUMmmIcNJJjlk_J7lkvYIfWzQ79gF1lth2oEqmZ6QcOZ3P8TS-5ay8pS-rDgIYmgcQ/exec';
+  const WHATSAPP = '528126026552'; // ← Cambia por tu número de WhatsApp con código de país
+  const CLABE    = '728969000084218503'; // ← Cambia por tu CLABE real
+
+  let todosLosProspectos = [];
+  let filtroActual = 'todos';
+  let prospectoSeleccionado = null;
+
+  // ── PRECIO POR TRATAMIENTO ──
+  function getPrecio(tratamiento, estado, extracciones) {
+    if (estado === 'VIP') return { monto: '$1,500', clase: 'premium' };
+    if (estado === 'Sabado') return { monto: 'GRATIS', clase: 'gratis' };
+    if (estado === 'Regalado') return { monto: 'GRATIS', clase: 'gratis' }; // historico, no debe aparecer
+
+    const t = (tratamiento || '').toLowerCase();
+    const e = (extracciones || '').toLowerCase();
+
+    // Endodoncia — diente frontal, fractura frontal, diente oscuro, nervio
+    if (
+      t.includes('endodoncia') ||
+      t.includes('nervio') ||
+      t.includes('frontal') ||
+      t.includes('fractura en diente') ||
+      t.includes('oscuro') ||
+      t.includes('fractura') && (t.includes('anterior') || t.includes('frente'))
+    ) return { monto: '$1,500', clase: 'premium' };
+
+    // Extracciones — se cobra por cantidad, máximo 3
+    // Incluye: extracción simple, sacar muela/diente, prótesis con extracciones
+    // EXCLUYE: muela del juicio (siempre $130 sin importar cantidad)
+    const esExtraccion = t.includes('extracción') || t.includes('extraccion') ||
+                         t.includes('sacar') || t.includes('prótesis') || t.includes('protesis');
+    const esJuicio = t.includes('juicio');
+
+    if (esExtraccion && !esJuicio) {
+      // Detectar cantidad del campo extracciones
+      let cantidad = 1;
+      if (e.includes('dos') || e.includes('2'))       cantidad = 2;
+      else if (e.includes('tres') || e.includes('3')) cantidad = 3;
+      else if (e.includes('cuatro') || e.includes('4') ||
+               e.includes('cinco') || e.includes('5') ||
+               e.includes('más') || e.includes('mas') ||
+               e.includes('varias'))                  cantidad = 3; // máximo 3
+
+      const total = cantidad * 130;
+      const detalle = cantidad > 1 ? ` (${cantidad} × $130)` : '';
+      return { monto: `$${total}${detalle}`, clase: 'normal' };
+    }
+
+    // Todo lo demás: $130 fijo
+    // (resinas, muela del juicio, corona, blanqueamiento, prótesis, valoración, infantil, etc.)
+    return { monto: '$130', clase: 'normal' };
+  }
+
+  // ── ICONO POR TRATAMIENTO ──
+  function getIcono(tratamiento) {
+    const t = (tratamiento || '').toLowerCase();
+    if (t.includes('endodoncia') || t.includes('nervio')) return '🔴';
+    if (t.includes('extracción') || t.includes('extracci') || t.includes('sacar')) return '🦷';
+    if (t.includes('resina') || t.includes('caries') || t.includes('empa')) return '🔵';
+    if (t.includes('juicio')) return '😬';
+    if (t.includes('corona')) return '👑';
+    if (t.includes('prótesis') || t.includes('dentadura')) return '🦴';
+    if (t.includes('infantil') || t.includes('menor') || t.includes('niño')) return '👶';
+    if (t.includes('blanquea')) return '✨';
+    if (t.includes('puente')) return '🔗';
+    if (t.includes('cirugía') || t.includes('cirugia')) return '⚕️';
+    return '🦷';
+  }
+
+  // ── LIMPIAR TRATAMIENTO ──
+  function limpiarTratamiento(t) {
+    return (t || '').replace(/\.$/, '').trim();
+  }
+
+  // ── CONSTRUIR CARD ──
+  function buildCard(p, delay = 0) {
+    const precio = getPrecio(p.tratamiento, p.estado, p.extracciones);
+    const icono  = getIcono(p.tratamiento);
+    const trat   = limpiarTratamiento(p.tratamiento);
+    const horarioParts = [];
+    if (p.horarioMana)  horarioParts.push('🌅 ' + p.horarioMana + ' (mañana)');
+    if (p.horarioTarde) horarioParts.push('🌆 ' + p.horarioTarde + ' (tarde)');
+    const horario = horarioParts.join(' · ') || 'A definir';
+    const folio  = (p.expediente || '').includes('primera') ? '🆕 Sin folio' : '📄 Con folio';
+
+    const badgeEstado = p.estado === 'VIP'
+      ? `<span class="badge badge-red">🔴 PREMIUM</span>`
+      : p.estado === 'Sabado'
+      ? `<span class="badge badge-gold">🎁 GRATIS</span>`
+      : `<span class="badge badge-green">🟢 Disponible</span>`;
+    const badgeFoto = p.foto ? `<span class="badge-foto">📷 Con foto</span>` : '';
+
+    const btnClase = p.estado === 'VIP' ? 'btn-premium' : p.estado === 'Sabado' ? 'btn-gratis' : 'btn-normal';
+    const btnText  = p.estado === 'Sabado' ? '🎁 Apartar' : 'Adquirir →';
+    const cardClase = p.estado === 'VIP' ? 'vip' : p.estado === 'Sabado' ? 'sabado' : 'disponible';
+
+    return `
+      <div class="card ${cardClase}" style="animation-delay:${delay}ms" onclick="abrirSheet(${JSON.stringify(p).replace(/"/g, '&quot;')})">
+        <div class="card-top">
+          <div class="card-id">${icono} ${p.id}</div>
+          <div class="card-badges">${badgeEstado}${badgeFoto}</div>
+        </div>
+        <div class="card-tratamiento">${trat}</div>
+        <div class="card-meta">
+          <div class="meta-chip">🕐 ${horario}</div>
+          <div class="meta-chip">${folio}</div>
+          ${p.extracciones ? `<div class="meta-chip">🔢 ${p.extracciones}</div>` : ''}
+        </div>
+        <div class="card-footer">
+          <div class="card-precio ${precio.clase}">${precio.monto}</div>
+          <button class="btn-adquirir ${btnClase}" onclick="event.stopPropagation();abrirSheet(${JSON.stringify(p).replace(/"/g, '&quot;')})">${btnText}</button>
+        </div>
+      </div>`;
+  }
+
+  // ── CARGAR PROSPECTOS ──
+  function iniciarTimer() {
+    let seg = 0;
+    const msgs = [
+      '⏳ Conectando con Google Sheets...',
+      '⏳ Leyendo prospectos...',
+      '⏳ Casi listo...',
+      '⏳ Un momento más...',
+      '⏳ Procesando datos...',
+    ];
+    const ids = ['timer-inicio','timer-todos'];
+    const interval = setInterval(() => {
+      seg++;
+      const msg = msgs[Math.min(seg-1, msgs.length-1)] + ` (${seg}s)`;
+      ids.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = msg;
+      });
+    }, 1000);
+    return interval;
+  }
+
+  async function cargarProspectos() {
+    const btn  = document.getElementById('sync-btn');
+    const txt  = document.getElementById('sync-text');
+    btn.classList.add('loading');
+    txt.textContent = 'Cargando...';
+    const timer = iniciarTimer();
+
+    try {
+      const res  = await fetch(API_URL);
+      const json = await res.json();
+
+      if (!json.ok) throw new Error('API error');
+
+      todosLosProspectos = json.data.reverse(); // más nuevos primero
+      renderTodo();
+      toast('✅ Actualizado correctamente');
+    } catch(e) {
+      toast('❌ Error al cargar. Reintenta.');
+    } finally {
+      btn.classList.remove('loading');
+      txt.textContent = 'Actualizar';
+      clearInterval(timer);
+    }
+  }
+
+  // ── RENDER ──
+  function renderTodo() {
+    const disponibles = todosLosProspectos.filter(p => p.estado === 'Disponible');
+    const vips        = todosLosProspectos.filter(p => p.estado === 'VIP');
+    const sabados     = todosLosProspectos.filter(p => p.estado === 'Sabado');
+    const total       = todosLosProspectos.length;
+
+    // Stats
+    document.getElementById('stat-disponibles').textContent = disponibles.length;
+    document.getElementById('stat-vip').textContent  = vips.length;
+    document.getElementById('stat-sabado').textContent = sabados.length;
+    document.getElementById('stat-total').textContent  = total;
+
+    // VIP Banner
+    const vipBanner = document.getElementById('vip-banner-container');
+    vipBanner.innerHTML = vips.length > 0 ? `
+      <div class="vip-banner" onclick="filtrar('vip', null); showPanel('prospectos', document.querySelectorAll('.nav-item')[1])">
+        <div class="vip-icon">🔴</div>
+        <div class="vip-text">
+          <div class="vip-title">Casos Premium disponibles</div>
+          <div class="vip-sub">Endodoncia verificada · $1,500 por caso</div>
+        </div>
+        <div class="vip-count">${vips.length}</div>
+      </div>` : '';
+
+    // Sábado Banner
+    const sabBanner = document.getElementById('sabado-banner-container');
+    sabBanner.innerHTML = sabados.length > 0 ? `
+      <div class="sabado-banner">
+        <div class="sabado-icon">🎁</div>
+        <div class="vip-text">
+          <div class="sabado-title">${sabados.length} prospecto${sabados.length > 1 ? 's' : ''} de sábado disponible${sabados.length > 1 ? 's' : ''}</div>
+          <div class="sabado-sub">Gratis para alumnos activos — solo este sábado</div>
+        </div>
+      </div>` : '';
+
+    // Recientes (últimos 5)
+    const recientes = todosLosProspectos.slice(0, 5); // ya están en orden nuevo→viejo
+    document.getElementById('recientes-count').textContent = recientes.length;
+    const recDiv = document.getElementById('cards-recientes');
+    if (recientes.length === 0) {
+      recDiv.innerHTML = `<div class="empty"><div class="ei">🦷</div><p>No hay prospectos disponibles en este momento.<br>Regresa más tarde.</p></div>`;
+    } else {
+      recDiv.innerHTML = recientes.map((p, i) => buildCard(p, i * 60)).join('');
+    }
+
+    // Todos
+    renderFiltro();
+  }
+
+  function renderFiltro() {
+    let lista = todosLosProspectos;
+    if (filtroActual !== 'todos') {
+      lista = todosLosProspectos.filter(p => p.estado.toLowerCase() === filtroActual);
+    }
+    document.getElementById('todos-count').textContent = lista.length;
+    const div = document.getElementById('cards-todos');
+    if (lista.length === 0) {
+      div.innerHTML = `<div class="empty"><div class="ei">🔍</div><p>No hay prospectos con este filtro.</p></div>`;
+    } else {
+      div.innerHTML = lista.map((p, i) => buildCard(p, i * 40)).join('');
+    }
+  }
+
+  function filtrar(tipo, btn) {
+    filtroActual = tipo;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    renderFiltro();
+  }
+
+  // ── BOTTOM SHEET ──
+  function abrirSheet(p) {
+    if (typeof p === 'string') p = JSON.parse(p);
+    prospectoSeleccionado = p;
+
+    const precio = getPrecio(p.tratamiento, p.estado, p.extracciones);
+    const trat   = limpiarTratamiento(p.tratamiento);
+    const horarioParts = [];
+    if (p.horarioMana)  horarioParts.push('🌅 ' + p.horarioMana + ' (mañana)');
+    if (p.horarioTarde) horarioParts.push('🌆 ' + p.horarioTarde + ' (tarde)');
+    const horario = horarioParts.join(' · ') || 'A definir';
+    const folio  = (p.expediente || '').includes('primera') ? 'No tiene folio' : 'Sí tiene folio';
+
+    const esGratis  = p.estado === 'Sabado';
+    const esPremium = p.estado === 'VIP';
+    const btnClass  = esPremium ? 'cta-premium' : esGratis ? 'cta-gratis' : 'cta-primary';
+    const btnText   = esGratis ? '🎁 Apartar — preguntar por WhatsApp' : esPremium ? '🔴 Preguntar disponibilidad · $1,500' : `💬 Preguntar disponibilidad · ${precio.monto}`;
+
+    document.getElementById('sheet-titulo').textContent = p.id + ' — ' + trat;
+
+    // Convertir link de Google Drive a link directo de imagen
+    function getDriveImgUrl(url) {
+      if (!url || url.toString().trim() === '') return null;
+      const str = url.toString().trim();
+      // Ya es link lh3 directo — usarlo tal cual
+      if (str.includes('lh3.googleusercontent.com')) return str;
+      // Link de Drive formato /d/ID/
+      const m1 = str.match(/\/d\/([a-zA-Z0-9_-]{25,})/);
+      if (m1) return 'https://lh3.googleusercontent.com/d/' + m1[1];
+      // Link de Drive formato ?id=ID
+      const m2 = str.match(/[?&]id=([a-zA-Z0-9_-]{25,})/);
+      if (m2) return 'https://lh3.googleusercontent.com/d/' + m2[1];
+      // Cualquier otro link http — usarlo directo
+      if (str.startsWith('http')) return str;
+      return null;
+    }
+    const fotoUrl = getDriveImgUrl(p.foto);
+
+    document.getElementById('sheet-body').innerHTML = `
+      ${fotoUrl ? `
+      <div class="foto-container">
+        <img class="foto-img" src="${fotoUrl}" alt="Foto del caso"
+             onclick="abrirLightbox('${fotoUrl}')"
+             onerror="this.parentElement.style.display='none'">
+        <div class="foto-badge">📷 Foto del caso</div>
+        <div class="foto-tap">🔍 Toca para ampliar</div>
+      </div>` : ''}
+      <div class="sheet-row"><span class="key">Tratamiento</span><span class="val">${trat}</span></div>
+      <div class="sheet-row"><span class="key">Horario preferido</span><span class="val">${horario}</span></div>
+      <div class="sheet-row"><span class="key">Expediente</span><span class="val">${folio}</span></div>
+      ${p.extracciones ? `<div class="sheet-row"><span class="key">Extracciones</span><span class="val">${p.extracciones}</span></div>` : ''}
+      <div class="sheet-row"><span class="key">Estado</span><span class="val" style="color:${esPremium ? '#F87171' : esGratis ? '#FCD34D' : '#34D399'}">${p.estado}</span></div>
+      <div class="sheet-row"><span class="key">Inversión</span><span class="val" style="color:${esPremium ? '#F87171' : esGratis ? '#FCD34D' : '#34D399'}; font-size:20px; font-family:'Syne',sans-serif;">${precio.monto}</span></div>
+
+
+
+      <div class="warning-box" style="margin-top:12px;">
+        ${esGratis
+          ? '🎁 Prospecto de sábado gratuito. Al tocar el botón se abrirá WhatsApp para confirmar disponibilidad con el operador.'
+          : '💬 Al tocar el botón se abrirá WhatsApp. Pregunta si está disponible y el operador te enviará los datos de transferencia de forma segura.'}
+      </div>
+
+      <button class="sheet-cta ${btnClass}" onclick="${esGratis ? 'abrirWhatsAppGratis()' : 'abrirWhatsApp()'}">${btnText}</button>
+    `;
+
+    document.getElementById('overlay').classList.add('show');
+    document.getElementById('bottom-sheet').classList.add('open');
+  }
+
+  function cerrarSheet() {
+    document.getElementById('overlay').classList.remove('show');
+    document.getElementById('bottom-sheet').classList.remove('open');
+  }
+
+  // ── WHATSAPP ──
+  function abrirWhatsApp() {
+    const p    = prospectoSeleccionado;
+    const id   = p ? p.id : '';
+    const trat = p ? (p.tratamiento||'').replace(/\.$/,'') : '';
+    const precio = getPrecio(p.tratamiento, p.estado, p.extracciones).monto;
+    const msg  = encodeURIComponent(
+`Hola, soy alumno de la Facultad de Odontología UANL 🦷
+
+Quiero adquirir el siguiente prospecto:
+📋 *ID:* ${id}
+🔧 *Tratamiento:* ${trat}
+💰 *Inversión:* ${precio}
+
+¿Está disponible? De ser así, por favor indícame los datos para realizar la transferencia y confirmar mi lugar. ✅`
+    );
+    window.open(`https://wa.me/${WHATSAPP}?text=${msg}`, '_blank');
+  }
+
+  function abrirWhatsAppGratis() {
+    const p    = prospectoSeleccionado;
+    const id   = p ? p.id : '';
+    const trat = p ? (p.tratamiento||'').replace(/\.$/,'') : '';
+    const msg  = encodeURIComponent(
+`Hola, soy alumno de la Facultad de Odontología UANL 🦷
+
+Quiero apartar el siguiente prospecto de sábado gratuito:
+📋 *ID:* ${id}
+🔧 *Tratamiento:* ${trat}
+🎁 *Inversión:* GRATIS
+
+¿Está disponible? ✅`
+    );
+    window.open(`https://wa.me/${WHATSAPP}?text=${msg}`, '_blank');
+  }
+
+  function copiarConcepto() {
+    const id = prospectoSeleccionado ? prospectoSeleccionado.id : '';
+    copiar(id);
+  }
+
+  // ── UTILS ──
+  function showPanel(id, el) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('panel-' + id).classList.add('active');
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    if (el) el.classList.add('active');
+    cerrarSheet();
+    window.scrollTo(0, 0);
+  }
+
+  function copiar(texto) {
+    navigator.clipboard.writeText(texto).then(() => toast('📋 Copiado al portapapeles'));
+  }
+
+  function toast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
+  }
+
+  function toggleGuion(header) {
+    const body = header.nextElementSibling;
+    body.classList.toggle('open');
+    header.querySelector('span:last-child').textContent = body.classList.contains('open') ? '▴' : '▾';
+  }
+
+  function togglePolitica(header) {
+    const body = header.nextElementSibling;
+    body.classList.toggle('open');
+    header.querySelector('span:last-child').textContent = body.classList.contains('open') ? '▴' : '▾';
+  }
+
+
+  // ── LIGHTBOX ──
+  function abrirLightbox(url) {
+    document.getElementById('lightbox-img').src = url;
+    document.getElementById('lightbox').classList.add('show');
+  }
+  function cerrarLightbox() {
+    document.getElementById('lightbox').classList.remove('show');
+    document.getElementById('lightbox-img').src = '';
+  }
+
+  // ── INIT ──
+  cargarProspectos();
+</script>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="cerrarLightbox()">
+  <button class="lightbox-close" onclick="cerrarLightbox()">✕</button>
+  <img id="lightbox-img" src="" alt="Foto del caso">
+</div>
+
+</body>
+</html>
