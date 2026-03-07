@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Vinculat — Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:      #060D1A;
+    --surface: #0C1829;
+    --card:    #111F35;
+    --border:  #1A3058;
+    --blue:    #2563EB;
+    --teal:    #0EA5E9;
+    --green:   #10B981;
+    --amber:   #F59E0B;
+    --red:     #EF4444;
+    --purple:  #8B5CF6;
+    --text:    #F1F5F9;
+    --muted:   #4B6A9B;
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html { background: var(--bg); }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    max-width: 480px;
+    margin: 0 auto;
+    padding-bottom: calc(72px + var(--safe-bottom));
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 16px 12px;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+  .header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .logo-icon {
+    width: 34px; height: 34px;
+    background: linear-gradient(135deg, var(--red), #FF6B6B);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+  .logo-text {
+    font-family: 'Syne', sans-serif;
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: -0.3px;
+  }
+  .logo-text span { color: var(--red); }
+
+  .header-actions { display: flex; gap: 8px; }
+  .icon-btn {
+    width: 34px; height: 34px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .icon-btn:active { transform: scale(0.92); }
+
+  /* KPI GRID */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+  .kpi {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 10px 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .kpi-icon {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .kpi-data { flex: 1; min-width: 0; }
+  .kpi-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 2px;
+  }
+  .kpi-label { font-size: 10px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  /* ── NAV ── */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 100%; max-width: 480px;
+    background: rgba(6,13,26,0.97);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid var(--border);
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    padding-bottom: var(--safe-bottom);
+    z-index: 60;
+  }
+  .nav-item {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 10px 4px; gap: 3px;
+    cursor: pointer; border: none; background: none;
+    position: relative;
+  }
+  .nav-icon { font-size: 19px; }
+  .nav-label { font-size: 9px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.3px; }
+  .nav-item.active .nav-label { color: var(--red); }
+  .nav-badge {
+    position: absolute;
+    top: 5px; right: 18px;
+    background: var(--red);
+    color: white;
+    font-size: 9px; font-weight: 800;
+    padding: 1px 4px;
+    border-radius: 100px;
+    min-width: 16px;
+    text-align: center;
+  }
+
+  /* ── PANELS ── */
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* SECTION TITLE */
+  .sec {
+    padding: 16px 16px 8px;
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .sec-badge {
+    background: var(--border);
+    color: #60A5FA;
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 100px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+  }
+
+  /* ── PROSPECT ROW ── */
+  .prospect-list { padding: 0 12px; display: flex; flex-direction: column; gap: 8px; }
+
+  .prow {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 12px 14px;
+    cursor: pointer;
+    transition: all 0.15s;
+    animation: fadeUp 0.25s ease both;
+    position: relative;
+    overflow: hidden;
+  }
+  .prow::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    border-radius: 14px 0 0 14px;
+  }
+  .prow.disponible::before { background: var(--green); }
+  .prow.asignado::before   { background: var(--blue); }
+  .prow.vip::before        { background: var(--red); }
+  .prow.garantia::before   { background: var(--amber); }
+  .prow.contactado::before { background: var(--purple); }
+  .prow.norespond::before  { background: var(--muted); }
+  .prow.regalado::before   { background: var(--teal); }
+  .prow.sabado::before     { background: var(--amber); }
+  .prow:active { transform: scale(0.98); }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .prow-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 5px;
+  }
+  .prow-id {
+    font-family: 'Syne', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--muted);
+  }
+  .estado-badge {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 100px;
+  }
+  .eb-disponible { background: rgba(16,185,129,0.15); color: #34D399; }
+  .eb-asignado   { background: rgba(37,99,235,0.15);  color: #60A5FA; }
+  .eb-vip        { background: rgba(239,68,68,0.15);  color: #F87171; }
+  .eb-garantia   { background: rgba(245,158,11,0.15); color: #FCD34D; }
+  .eb-contactado { background: rgba(139,92,246,0.15); color: #A78BFA; }
+  .eb-norespond  { background: rgba(75,106,155,0.15); color: #94A3B8; }
+  .eb-regalado   { background: rgba(14,165,233,0.15); color: #38BDF8; }
+  .eb-sabado     { background: rgba(245,158,11,0.15); color: #FCD34D; }
+
+  .prow-trat {
+    font-size: 14px;
+    font-weight: 600;
+    color: white;
+    margin-bottom: 4px;
+    line-height: 1.3;
+  }
+  .prow-meta {
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  /* ── FILTERS ── */
+  .filters {
+    padding: 10px 12px 0;
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .filters::-webkit-scrollbar { display: none; }
+  .fbtn {
+    padding: 5px 12px;
+    border-radius: 100px;
+    border: 1.5px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.15s;
+    flex-shrink: 0;
+  }
+  .fbtn.active { background: var(--red); border-color: var(--red); color: white; }
+  .fbtn:active { transform: scale(0.95); }
+
+  /* ── BOTTOM SHEET ── */
+  .overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.75);
+    z-index: 100;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.3s;
+    backdrop-filter: blur(4px);
+  }
+  .overlay.show { opacity: 1; pointer-events: all; }
+
+  .bsheet {
+    position: fixed;
+    bottom: 0; left: 50%;
+    transform: translateX(-50%) translateY(100%);
+    width: 100%; max-width: 480px;
+    background: #0C1829;
+    border-radius: 22px 22px 0 0;
+    border: 1px solid var(--border);
+    border-bottom: none;
+    z-index: 101;
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    max-height: 92vh;
+    overflow-y: auto;
+    padding-bottom: calc(20px + var(--safe-bottom));
+  }
+  .bsheet.open { transform: translateX(-50%) translateY(0); }
+
+  .sh-handle { width: 38px; height: 4px; background: var(--border); border-radius: 100px; margin: 12px auto 0; }
+  .sh-header {
+    padding: 14px 18px 12px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .sh-title { font-family: 'Syne', sans-serif; font-size: 17px; font-weight: 800; }
+  .sh-close {
+    width: 30px; height: 30px;
+    background: var(--border); border: none; border-radius: 50%;
+    color: var(--muted); font-size: 14px;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+  }
+  .sh-body { padding: 16px 18px; }
+
+  .sh-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 9px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    font-size: 13px;
+  }
+  .sh-row:last-child { border-bottom: none; }
+  .sh-key { color: var(--muted); }
+  .sh-val { font-weight: 600; text-align: right; max-width: 60%; }
+
+  /* ESTADO SELECTOR */
+  .estado-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin: 14px 0;
+  }
+  .estado-opt {
+    padding: 10px 8px;
+    border-radius: 12px;
+    border: 1.5px solid var(--border);
+    background: var(--card);
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.15s;
+  }
+  .estado-opt:active { transform: scale(0.96); }
+  .estado-opt.sel-disponible  { border-color: var(--green);  background: rgba(16,185,129,0.12); color: #34D399; }
+  .estado-opt.sel-asignado    { border-color: var(--blue);   background: rgba(37,99,235,0.12);  color: #60A5FA; }
+  .estado-opt.sel-vip         { border-color: var(--red);    background: rgba(239,68,68,0.12);  color: #F87171; }
+  .estado-opt.sel-garantia    { border-color: var(--amber);  background: rgba(245,158,11,0.12); color: #FCD34D; }
+  .estado-opt.sel-contactado  { border-color: var(--purple); background: rgba(139,92,246,0.12); color: #A78BFA; }
+  .estado-opt.sel-norespond   { border-color: var(--muted);  background: rgba(75,106,155,0.12); color: #94A3B8; }
+  .estado-opt.sel-regalado    { border-color: var(--teal);   background: rgba(14,165,233,0.12); color: #38BDF8; }
+  .estado-opt.sel-sabado      { border-color: var(--amber);  background: rgba(245,158,11,0.12); color: #FCD34D; }
+
+  /* BUTTONS */
+  .btn {
+    width: 100%; padding: 14px;
+    border-radius: 12px; border: none;
+    font-size: 14px; font-weight: 700;
+    cursor: pointer; font-family: 'DM Sans', sans-serif;
+    transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    margin-top: 8px;
+  }
+  .btn:active { transform: scale(0.98); }
+  .btn-primary { background: var(--blue); color: white; box-shadow: 0 4px 16px rgba(37,99,235,0.3); }
+  .btn-green   { background: var(--green); color: white; box-shadow: 0 4px 16px rgba(16,185,129,0.3); }
+  .btn-red     { background: var(--red); color: white; }
+  .btn-ghost   { background: var(--card); border: 1px solid var(--border); color: var(--muted); margin-top: 6px; }
+
+  /* ALERT CARDS */
+  .alert-card {
+    margin: 0 12px 10px;
+    border-radius: 14px;
+    padding: 14px;
+    border: 1px solid;
+    animation: fadeUp 0.25s ease both;
+  }
+  .alert-card.critica  { background: rgba(239,68,68,0.08); border-color: rgba(239,68,68,0.3); }
+  .alert-card.media    { background: rgba(245,158,11,0.08); border-color: rgba(245,158,11,0.3); }
+  .alert-card.info     { background: rgba(37,99,235,0.08);  border-color: rgba(37,99,235,0.3); }
+  .alert-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+  .alert-tipo { font-size: 11px; font-weight: 700; }
+  .alert-critica .alert-tipo { color: #F87171; }
+  .alert-media   .alert-tipo { color: #FCD34D; }
+  .alert-info    .alert-tipo { color: #60A5FA; }
+  .alert-id { font-family: 'Syne', sans-serif; font-size: 12px; color: var(--muted); }
+  .alert-desc { font-size: 13px; color: #CBD5E1; margin-bottom: 10px; line-height: 1.5; }
+  .alert-btn {
+    padding: 7px 14px;
+    border-radius: 8px; border: none;
+    font-size: 11px; font-weight: 700;
+    cursor: pointer; font-family: 'DM Sans', sans-serif;
+    transition: all 0.15s;
+  }
+  .alert-btn:active { transform: scale(0.95); }
+  .ab-red    { background: rgba(239,68,68,0.2); color: #F87171; }
+  .ab-amber  { background: rgba(245,158,11,0.2); color: #FCD34D; }
+  .ab-blue   { background: rgba(37,99,235,0.2); color: #60A5FA; }
+
+  /* RESUMEN */
+  .resumen-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    padding: 0 12px;
+    margin-bottom: 16px;
+  }
+  .res-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px;
+  }
+  .res-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 28px;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .res-label { font-size: 11px; color: var(--muted); font-weight: 600; }
+
+  /* VIP FORM */
+  .vip-form { display: flex; flex-direction: column; gap: 10px; }
+  .form-group { display: flex; flex-direction: column; gap: 5px; }
+  .form-label { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+  .form-input {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 11px 14px;
+    color: white;
+    font-size: 14px;
+    font-family: 'DM Sans', sans-serif;
+    outline: none;
+    transition: border-color 0.15s;
+    width: 100%;
+  }
+  .form-input:focus { border-color: var(--red); }
+
+  /* LOADING / EMPTY */
+  .loading-state { padding: 40px 20px; text-align: center; }
+  .spinner { width: 36px; height: 36px; border: 3px solid var(--border); border-top-color: var(--red); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 12px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-text { font-size: 13px; color: var(--muted); }
+  .empty { text-align: center; padding: 50px 20px; color: var(--muted); }
+  .empty .ei { font-size: 44px; margin-bottom: 10px; opacity: 0.3; }
+  .empty p { font-size: 13px; line-height: 1.6; }
+
+  /* TOAST */
+  .toast {
+    position: fixed; bottom: 84px; left: 50%;
+    transform: translateX(-50%) translateY(8px);
+    background: #1A3058; color: white;
+    padding: 9px 18px; border-radius: 100px;
+    font-size: 13px; font-weight: 600;
+    z-index: 200; opacity: 0;
+    transition: all 0.3s; pointer-events: none;
+    white-space: nowrap; border: 1px solid var(--border);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* PAGO PENDIENTE */
+  .pago-card {
+    margin: 0 12px 10px;
+    background: var(--card);
+    border: 1px solid rgba(245,158,11,0.4);
+    border-radius: 14px;
+    padding: 14px;
+    animation: fadeUp 0.25s ease both;
+  }
+  .pago-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  .pago-id { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 800; }
+  .pago-tiempo { font-size: 11px; color: var(--amber); font-weight: 600; }
+  .pago-trat { font-size: 13px; color: #94A3B8; margin-bottom: 12px; }
+  .pago-btns { display: flex; gap: 8px; }
+  .pago-btn {
+    flex: 1; padding: 9px;
+    border-radius: 9px; border: none;
+    font-size: 12px; font-weight: 700;
+    cursor: pointer; font-family: 'DM Sans', sans-serif;
+    transition: all 0.15s;
+  }
+  .pago-btn:active { transform: scale(0.96); }
+  .pb-validar  { background: rgba(16,185,129,0.2); color: #34D399; }
+  .pb-rechazar { background: rgba(239,68,68,0.15); color: #F87171; }
+
+  /* ── LOGIN ── */
+  .login-screen {
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
+    z-index: 999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+  }
+  .login-logo {
+    width: 72px; height: 72px;
+    background: linear-gradient(135deg, var(--red), #FF6B6B);
+    border-radius: 22px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 36px;
+    margin-bottom: 24px;
+    box-shadow: 0 8px 32px rgba(239,68,68,0.35);
+  }
+  .login-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 26px;
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 6px;
+  }
+  .login-sub {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 40px;
+    text-align: center;
+  }
+  .pin-dots {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 36px;
+  }
+  .pin-dot {
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    background: var(--border);
+    transition: all 0.2s;
+  }
+  .pin-dot.filled { background: var(--red); box-shadow: 0 0 12px rgba(239,68,68,0.5); }
+  .pin-dot.error  { background: var(--red); animation: shake 0.4s ease; }
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    20%      { transform: translateX(-6px); }
+    60%      { transform: translateX(6px); }
+    80%      { transform: translateX(-3px); }
+  }
+  .pin-pad {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    width: 100%;
+    max-width: 280px;
+  }
+  .pin-key {
+    height: 68px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: all 0.12s;
+    user-select: none;
+  }
+  .pin-key:active { transform: scale(0.93); background: var(--border); }
+  .pin-key .num {
+    font-family: 'Syne', sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+    color: white;
+    line-height: 1;
+  }
+  .pin-key .letters {
+    font-size: 8px;
+    color: var(--muted);
+    font-weight: 600;
+    letter-spacing: 1px;
+    margin-top: 2px;
+  }
+  .pin-key.del { background: transparent; border-color: transparent; }
+  .pin-key.del .num { font-size: 20px; color: var(--muted); }
+  .login-error {
+    margin-top: 20px;
+    font-size: 12px;
+    color: var(--red);
+    font-weight: 600;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .login-error.show { opacity: 1; }
+
+</style>
+</head>
+<body>
+
+
+<!-- LOGIN SCREEN -->
+<div class="login-screen" id="login-screen">
+  <div class="login-logo">⚙️</div>
+  <div class="login-title">Vinculat Admin</div>
+  <div class="login-sub">Ingresa tu PIN de acceso</div>
+  <div class="pin-dots" id="pin-dots">
+    <div class="pin-dot" id="dot-0"></div>
+    <div class="pin-dot" id="dot-1"></div>
+    <div class="pin-dot" id="dot-2"></div>
+    <div class="pin-dot" id="dot-3"></div>
+  </div>
+  <div class="pin-pad">
+    <div class="pin-key" onclick="pinPress('1')"><div class="num">1</div><div class="letters"></div></div>
+    <div class="pin-key" onclick="pinPress('2')"><div class="num">2</div><div class="letters">ABC</div></div>
+    <div class="pin-key" onclick="pinPress('3')"><div class="num">3</div><div class="letters">DEF</div></div>
+    <div class="pin-key" onclick="pinPress('4')"><div class="num">4</div><div class="letters">GHI</div></div>
+    <div class="pin-key" onclick="pinPress('5')"><div class="num">5</div><div class="letters">JKL</div></div>
+    <div class="pin-key" onclick="pinPress('6')"><div class="num">6</div><div class="letters">MNO</div></div>
+    <div class="pin-key" onclick="pinPress('7')"><div class="num">7</div><div class="letters">PQRS</div></div>
+    <div class="pin-key" onclick="pinPress('8')"><div class="num">8</div><div class="letters">TUV</div></div>
+    <div class="pin-key" onclick="pinPress('9')"><div class="num">9</div><div class="letters">WXYZ</div></div>
+    <div class="pin-key" style="visibility:hidden;"></div>
+    <div class="pin-key" onclick="pinPress('0')"><div class="num">0</div><div class="letters"></div></div>
+    <div class="pin-key del" onclick="pinDel()"><div class="num">⌫</div></div>
+  </div>
+  <div class="login-error" id="login-error">PIN incorrecto. Intenta de nuevo.</div>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-row">
+    <div class="logo">
+      <div class="logo-icon">⚙️</div>
+      <div class="logo-text">Vinculat <span>Admin</span></div>
+    </div>
+    <div class="header-actions">
+      <div class="icon-btn" onclick="cargarTodo()" title="Sincronizar">🔄</div>
+      <div class="icon-btn" onclick="showPanel('vip'); showNav(4)" title="Nuevo VIP">➕</div>
+    </div>
+  </div>
+  <div class="kpi-grid">
+    <div class="kpi">
+      <div class="kpi-icon" style="background:rgba(16,185,129,0.15);">🟢</div>
+      <div class="kpi-data">
+        <div class="kpi-num" style="color:#10B981;" id="k-disponibles">—</div>
+        <div class="kpi-label">Disponibles</div>
+      </div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-icon" style="background:rgba(37,99,235,0.15);">💳</div>
+      <div class="kpi-data">
+        <div class="kpi-num" style="color:#60A5FA;" id="k-asignados">—</div>
+        <div class="kpi-label">Asignados</div>
+      </div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-icon" style="background:rgba(245,158,11,0.15);">⚠️</div>
+      <div class="kpi-data">
+        <div class="kpi-num" style="color:#F59E0B;" id="k-garantias">—</div>
+        <div class="kpi-label">Garantías</div>
+      </div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-icon" style="background:rgba(239,68,68,0.15);">🔴</div>
+      <div class="kpi-data">
+        <div class="kpi-num" style="color:#EF4444;" id="k-vip">—</div>
+        <div class="kpi-label">VIP activos</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PROSPECTOS ══ -->
+<div class="panel active" id="panel-prospectos">
+  <div class="filters">
+    <button class="fbtn active" onclick="filtrar('todos',this)">Todos</button>
+    <button class="fbtn" onclick="filtrar('Disponible',this)">🟢 Disponibles</button>
+    <button class="fbtn" onclick="filtrar('Asignado',this)">💳 Asignados</button>
+    <button class="fbtn" onclick="filtrar('VIP',this)">🔴 VIP</button>
+    <button class="fbtn" onclick="filtrar('Garantia',this)">⚠️ Garantías</button>
+    <button class="fbtn" onclick="filtrar('Contactado',this)">🟣 Contactados</button>
+    <button class="fbtn" onclick="filtrar('No respondio',this)">⚪ Sin resp.</button>
+    <button class="fbtn" onclick="filtrar('Regalado',this)">🎁 Regalados</button>
+    <button class="fbtn" onclick="filtrar('Sabado',this)">📅 Sábado</button>
+  </div>
+  <div class="sec">
+    Prospectos
+    <span class="sec-badge" id="count-prospectos">—</span>
+  </div>
+  <div class="prospect-list" id="list-prospectos">
+    <div class="loading-state"><div class="spinner"></div><div class="loading-text">Cargando...</div></div>
+  </div>
+</div>
+
+<!-- ══ PAGOS ══ -->
+<div class="panel" id="panel-pagos">
+  <div class="sec">
+    Pagos pendientes de validar
+    <span class="sec-badge" id="count-pagos">—</span>
+  </div>
+  <div id="list-pagos">
+    <div class="loading-state"><div class="spinner"></div><div class="loading-text">Cargando...</div></div>
+  </div>
+</div>
+
+<!-- ══ ALERTAS ══ -->
+<div class="panel" id="panel-alertas">
+  <div class="sec">
+    Alertas activas
+    <span class="sec-badge" id="count-alertas">—</span>
+  </div>
+  <div id="list-alertas">
+    <div class="loading-state"><div class="spinner"></div><div class="loading-text">Cargando...</div></div>
+  </div>
+</div>
+
+<!-- ══ RESUMEN ══ -->
+<div class="panel" id="panel-resumen">
+  <div class="sec">Resumen del mes</div>
+  <div class="resumen-grid" id="resumen-grid">
+    <div class="loading-state" style="grid-column:span 2"><div class="spinner"></div></div>
+  </div>
+  <div class="sec">Desglose por tratamiento</div>
+  <div class="prospect-list" id="resumen-detalle"></div>
+</div>
+
+<!-- ══ NUEVO VIP ══ -->
+<div class="panel" id="panel-vip">
+  <div class="sec">Crear caso VIP manualmente</div>
+  <div style="padding: 0 12px;">
+    <div class="vip-form">
+      <div class="form-group">
+        <label class="form-label">Nombre del paciente</label>
+        <input class="form-input" id="vip-nombre" placeholder="Nombre completo" type="text">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Teléfono / WhatsApp</label>
+        <input class="form-input" id="vip-tel" placeholder="81XXXXXXXX" type="tel">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Tipo de endodoncia</label>
+        <input class="form-input" id="vip-motivo" placeholder="Ej: Fractura diente frontal, diente oscuro..." type="text">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Horario preferido</label>
+        <input class="form-input" id="vip-horario" placeholder="Ej: Mañanas, Martes y Jueves" type="text">
+      </div>
+      <div style="background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.2); border-radius:10px; padding:12px; font-size:12px; color:#F87171; line-height:1.6;">
+        ⚠️ Solo crea casos VIP después de verificar foto e INE del paciente directamente por WhatsApp.
+      </div>
+      <button class="btn btn-red" onclick="crearVIP()">🔴 Publicar caso VIP · $1,500</button>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <button class="nav-item active" onclick="showPanel('prospectos'); showNav(0)">
+    <span class="nav-icon">🦷</span>
+    <span class="nav-label">Prospectos</span>
+  </button>
+  <button class="nav-item" onclick="showPanel('pagos'); showNav(1)">
+    <span class="nav-icon">💳</span>
+    <span class="nav-label">Pagos</span>
+    <span class="nav-badge" id="badge-pagos" style="display:none">0</span>
+  </button>
+  <button class="nav-item" onclick="showPanel('alertas'); showNav(2)">
+    <span class="nav-icon">⚠️</span>
+    <span class="nav-label">Alertas</span>
+    <span class="nav-badge" id="badge-alertas" style="display:none">0</span>
+  </button>
+  <button class="nav-item" onclick="showPanel('resumen'); showNav(3)">
+    <span class="nav-icon">📊</span>
+    <span class="nav-label">Resumen</span>
+  </button>
+  <button class="nav-item" onclick="showPanel('vip'); showNav(4)">
+    <span class="nav-icon">🔴</span>
+    <span class="nav-label">Nuevo VIP</span>
+  </button>
+</nav>
+
+<!-- BOTTOM SHEET -->
+<div class="overlay" id="overlay" onclick="cerrarSheet()"></div>
+<div class="bsheet" id="bsheet">
+  <div class="sh-handle"></div>
+  <div class="sh-header">
+    <div class="sh-title" id="sh-titulo">Detalle</div>
+    <button class="sh-close" onclick="cerrarSheet()">✕</button>
+  </div>
+  <div class="sh-body" id="sh-body"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  const API = 'https://script.google.com/macros/s/AKfycbzOLUMmmIcNJJjlk_J7lkvYIfWzQ79gF1lth2oEqmZ6QcOZ3P8TS-5ay8pS-rDgIYmgcQ/exec';
+
+  // ── ESTADO GLOBAL ──
+  let todos = [];
+  let filtroActual = 'todos';
+  let prospectoActivo = null;
+
+  const ESTADOS = ['Disponible','Asignado','VIP','Garantia','Contactado','No respondio','Regalado','Sabado'];
+
+  function badgeClass(e) {
+    const map = {
+      'Disponible':'eb-disponible','Asignado':'eb-asignado','VIP':'eb-vip',
+      'Garantia':'eb-garantia','Contactado':'eb-contactado',
+      'No respondio':'eb-norespond','Regalado':'eb-regalado','Sabado':'eb-sabado'
+    };
+    return map[e] || 'eb-norespond';
+  }
+  function rowClass(e) {
+    const map = {
+      'Disponible':'disponible','Asignado':'asignado','VIP':'vip',
+      'Garantia':'garantia','Contactado':'contactado',
+      'No respondio':'norespond','Regalado':'regalado','Sabado':'sabado'
+    };
+    return map[e] || 'norespond';
+  }
+
+  function getPrecio(trat, estado, extr) {
+    if (estado === 'VIP') return '$1,500';
+    if (estado === 'Sabado' || estado === 'Regalado') return 'GRATIS';
+    const t = (trat||'').toLowerCase();
+    const e = (extr||'').toLowerCase();
+    if (t.includes('endodoncia')||t.includes('nervio')||t.includes('frontal')||t.includes('fractura')||t.includes('oscuro')) return '$1,500';
+    if ((t.includes('extracción')||t.includes('extraccion')) && !t.includes('juicio')) {
+      let c = 1;
+      if (e.includes('dos')||e.includes('2')) c=2;
+      else if (e.includes('tres')||e.includes('3')) c=3;
+      else if (e.includes('cuatro')||e.includes('4')||e.includes('cinco')||e.includes('más')||e.includes('mas')) c=3;
+      return '$'+(c*130)+(c>1?' ('+c+'×$130)':'');
+    }
+    return '$130';
+  }
+
+  // ── CARGAR DATOS ──
+  async function cargarTodo() {
+    try {
+      const res  = await fetch(API);
+      const json = await res.json();
+      if (!json.ok) throw new Error();
+      todos = json.data.reverse();
+      renderProspectos();
+      renderPagos();
+      renderAlertas();
+      renderResumen();
+      actualizarKPIs();
+    } catch(e) {
+      toast('❌ Error al cargar datos');
+    }
+  }
+
+  // ── KPIs ──
+  function actualizarKPIs() {
+    document.getElementById('k-disponibles').textContent = todos.filter(p=>p.estado==='Disponible').length;
+    document.getElementById('k-asignados').textContent   = todos.filter(p=>p.estado==='Asignado').length;
+    document.getElementById('k-garantias').textContent   = todos.filter(p=>p.estado==='Garantia').length;
+    document.getElementById('k-vip').textContent         = todos.filter(p=>p.estado==='VIP').length;
+  }
+
+  // ── PROSPECTOS ──
+  function renderProspectos() {
+    let lista = filtroActual === 'todos' ? todos : todos.filter(p => p.estado === filtroActual);
+    document.getElementById('count-prospectos').textContent = lista.length;
+    const div = document.getElementById('list-prospectos');
+    if (!lista.length) {
+      div.innerHTML = `<div class="empty"><div class="ei">🔍</div><p>Sin prospectos con este filtro.</p></div>`;
+      return;
+    }
+    div.innerHTML = lista.map((p, i) => `
+      <div class="prow ${rowClass(p.estado)}" style="animation-delay:${i*30}ms" onclick='abrirSheet(${JSON.stringify(p)})'>
+        <div class="prow-top">
+          <div class="prow-id">${p.id}</div>
+          <div class="estado-badge ${badgeClass(p.estado)}">${p.estado}</div>
+        </div>
+        <div class="prow-trat">${(p.tratamiento||'').replace(/\.$/,'')}</div>
+        <div class="prow-meta">${getPrecio(p.tratamiento, p.estado, p.extracciones)} · ${[p.horarioMana,p.horarioTarde].filter(Boolean).join('/')||'Sin horario'}</div>
+      </div>`).join('');
+  }
+
+  function filtrar(tipo, btn) {
+    filtroActual = tipo;
+    document.querySelectorAll('.fbtn').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    renderProspectos();
+  }
+
+  // ── PAGOS PENDIENTES ──
+  function renderPagos() {
+    // Asignados sin comprobante validado (estado=Asignado pero aún sin confirmación)
+    const pendientes = todos.filter(p => p.estado === 'Asignado');
+    const badge = document.getElementById('badge-pagos');
+    badge.textContent = pendientes.length;
+    badge.style.display = pendientes.length > 0 ? 'block' : 'none';
+    document.getElementById('count-pagos').textContent = pendientes.length;
+
+    const div = document.getElementById('list-pagos');
+    if (!pendientes.length) {
+      div.innerHTML = `<div class="empty"><div class="ei">✅</div><p>No hay pagos pendientes de validar.</p></div>`;
+      return;
+    }
+    div.innerHTML = pendientes.map((p, i) => `
+      <div class="pago-card" style="animation-delay:${i*40}ms">
+        <div class="pago-top">
+          <div class="pago-id">${p.id}</div>
+          <div class="pago-tiempo">⏳ Pendiente</div>
+        </div>
+        <div class="pago-trat">${(p.tratamiento||'').replace(/\.$/,'')} · ${getPrecio(p.tratamiento, p.estado, p.extracciones)}</div>
+        <div class="pago-btns">
+          <button class="pago-btn pb-validar" onclick="cambiarEstado('${p.id}','Asignado','✅ Pago validado — datos desbloqueados')">✅ Validar pago</button>
+          <button class="pago-btn pb-rechazar" onclick="cambiarEstado('${p.id}','Disponible','🔄 Regresado a disponible')">↩️ Rechazar</button>
+        </div>
+      </div>`).join('');
+  }
+
+  // ── ALERTAS ──
+  function renderAlertas() {
+    const garantias   = todos.filter(p => p.estado === 'Garantia');
+    const noResp      = todos.filter(p => p.estado === 'No respondio');
+    const contactados = todos.filter(p => p.estado === 'Contactado');
+
+    const total = garantias.length + noResp.length;
+    const badge = document.getElementById('badge-alertas');
+    badge.textContent = total;
+    badge.style.display = total > 0 ? 'block' : 'none';
+    document.getElementById('count-alertas').textContent = total;
+
+    const div = document.getElementById('list-alertas');
+    let html = '';
+
+    garantias.forEach((p, i) => {
+      html += `
+        <div class="alert-card critica" style="animation-delay:${i*40}ms">
+          <div class="alert-top">
+            <div class="alert-tipo">🟠 GARANTÍA SOLICITADA</div>
+            <div class="alert-id">${p.id}</div>
+          </div>
+          <div class="alert-desc">${(p.tratamiento||'').replace(/\.$/,'')} · Alumno reportó que el paciente no se presentó o no respondió.</div>
+          <div style="display:flex;gap:8px;">
+            <button class="alert-btn ab-amber" onclick='abrirSheet(${JSON.stringify(p)})'>Ver detalle</button>
+            <button class="alert-btn ab-blue" onclick="cambiarEstado('${p.id}','Disponible','🔄 Garantía procesada — prospecto reactivado')">✅ Reponer</button>
+          </div>
+        </div>`;
+    });
+
+    noResp.forEach((p, i) => {
+      html += `
+        <div class="alert-card media" style="animation-delay:${(garantias.length+i)*40}ms">
+          <div class="alert-top">
+            <div class="alert-tipo">⚪ SIN RESPUESTA</div>
+            <div class="alert-id">${p.id}</div>
+          </div>
+          <div class="alert-desc">${(p.tratamiento||'').replace(/\.$/,'')} · El paciente no ha respondido al alumno asignado.</div>
+          <div style="display:flex;gap:8px;">
+            <button class="alert-btn ab-amber" onclick='abrirSheet(${JSON.stringify(p)})'>Ver detalle</button>
+            <button class="alert-btn ab-blue" onclick="cambiarEstado('${p.id}','Disponible','🔄 Regresado a disponible')">↩️ Reactivar</button>
+          </div>
+        </div>`;
+    });
+
+    contactados.forEach((p, i) => {
+      html += `
+        <div class="alert-card info" style="animation-delay:${(garantias.length+noResp.length+i)*40}ms">
+          <div class="alert-top">
+            <div class="alert-tipo">🟣 EN PROCESO VIP</div>
+            <div class="alert-id">${p.id}</div>
+          </div>
+          <div class="alert-desc">${(p.tratamiento||'').replace(/\.$/,'')} · Esperando foto e INE del paciente para publicar como VIP.</div>
+          <div style="display:flex;gap:8px;">
+            <button class="alert-btn ab-blue" onclick="cambiarEstado('${p.id}','VIP','🔴 Publicado como VIP')">🔴 Publicar VIP</button>
+            <button class="alert-btn ab-amber" onclick='abrirSheet(${JSON.stringify(p)})'>Ver</button>
+          </div>
+        </div>`;
+    });
+
+    if (!html) {
+      html = `<div class="empty"><div class="ei">🎉</div><p>Sin alertas activas.<br>Todo está en orden.</p></div>`;
+    }
+    div.innerHTML = html;
+  }
+
+  // ── RESUMEN ──
+  function renderResumen() {
+    const asignados  = todos.filter(p => p.estado === 'Asignado' || p.estado === 'Regalado');
+    const ingresos   = asignados.reduce((sum, p) => {
+      const pr = getPrecio(p.tratamiento, p.estado, p.extracciones);
+      const num = parseInt((pr||'0').replace(/[^0-9]/g,'')) || 0;
+      return sum + num;
+    }, 0);
+
+    document.getElementById('resumen-grid').innerHTML = `
+      <div class="res-card">
+        <div class="res-num" style="color:#10B981;">${todos.filter(p=>p.estado==='Disponible').length}</div>
+        <div class="res-label">Disponibles ahora</div>
+      </div>
+      <div class="res-card">
+        <div class="res-num" style="color:#60A5FA;">${todos.filter(p=>p.estado==='Asignado').length}</div>
+        <div class="res-label">Asignados (pagados)</div>
+      </div>
+      <div class="res-card">
+        <div class="res-num" style="color:#0EA5E9;">${todos.filter(p=>p.estado==='Regalado').length}</div>
+        <div class="res-label">Regalados</div>
+      </div>
+      <div class="res-card">
+        <div class="res-num" style="color:#F59E0B;">$${ingresos.toLocaleString()}</div>
+        <div class="res-label">Ingresos estimados</div>
+      </div>
+      <div class="res-card" style="grid-column:span 2;">
+        <div class="res-num" style="color:#EF4444;">${todos.filter(p=>p.estado==='VIP').length}</div>
+        <div class="res-label">Casos VIP activos ($1,500 c/u)</div>
+      </div>`;
+
+    // Desglose por tipo
+    const tipos = {};
+    todos.forEach(p => {
+      const t = (p.tratamiento||'Otros').replace(/\.$/,'').split('(')[0].trim();
+      tipos[t] = (tipos[t]||0) + 1;
+    });
+    const sorted = Object.entries(tipos).sort((a,b) => b[1]-a[1]).slice(0, 8);
+    document.getElementById('resumen-detalle').innerHTML = sorted.map(([t, n]) => `
+      <div class="prow disponible" style="cursor:default;">
+        <div class="prow-top">
+          <div class="prow-trat" style="margin:0;">${t}</div>
+          <div class="estado-badge eb-disponible">${n}</div>
+        </div>
+      </div>`).join('');
+  }
+
+  // ── BOTTOM SHEET ──
+  function abrirSheet(p) {
+    if (typeof p === 'string') p = JSON.parse(p);
+    prospectoActivo = p;
+    document.getElementById('sh-titulo').textContent = p.id;
+
+    const estadoOpts = ESTADOS.map(e => `
+      <div class="estado-opt ${p.estado===e?'sel-'+e.toLowerCase().replace(' ',''):''}"
+           onclick="selEstado('${e}',this)">${e}</div>`).join('');
+
+    document.getElementById('sh-body').innerHTML = `
+      <div class="sh-row"><span class="sh-key">Tratamiento</span><span class="sh-val">${(p.tratamiento||'').replace(/\.$/,'')}</span></div>
+      <div class="sh-row"><span class="sh-key">Horario</span><span class="sh-val">${[p.horarioMana,p.horarioTarde].filter(Boolean).join(' / ')||'No indicado'}</span></div>
+      <div class="sh-row"><span class="sh-key">Expediente</span><span class="sh-val">${(p.expediente||'').includes('primera')?'Sin folio':'Con folio'}</span></div>
+      ${p.extracciones?`<div class="sh-row"><span class="sh-key">Extracciones</span><span class="sh-val">${p.extracciones}</span></div>`:''}
+      <div class="sh-row"><span class="sh-key">Precio</span><span class="sh-val" style="color:#10B981;">${getPrecio(p.tratamiento,p.estado,p.extracciones)}</span></div>
+      <div class="sh-row"><span class="sh-key">Estado actual</span><span class="sh-val"><span class="estado-badge ${badgeClass(p.estado)}">${p.estado}</span></span></div>
+
+      <div style="font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-top:14px;margin-bottom:8px;">Cambiar estado</div>
+      <div class="estado-grid" id="estado-grid">${estadoOpts}</div>
+
+      <button class="btn btn-primary" onclick="guardarEstado()">💾 Guardar cambio</button>
+      <button class="btn btn-ghost" onclick="cerrarSheet()">Cancelar</button>
+    `;
+
+    document.getElementById('overlay').classList.add('show');
+    document.getElementById('bsheet').classList.add('open');
+  }
+
+  let estadoSeleccionado = null;
+  function selEstado(e, el) {
+    estadoSeleccionado = e;
+    document.querySelectorAll('.estado-opt').forEach(o => {
+      o.className = 'estado-opt';
+    });
+    el.className = 'estado-opt sel-' + e.toLowerCase().replace(' ','').replace('respondio','norespond');
+  }
+
+  async function guardarEstado() {
+    if (!estadoSeleccionado || !prospectoActivo) return;
+    if (estadoSeleccionado === prospectoActivo.estado) { cerrarSheet(); return; }
+    await cambiarEstado(prospectoActivo.id, estadoSeleccionado, '✅ Estado actualizado a: ' + estadoSeleccionado);
+    cerrarSheet();
+  }
+
+  async function cambiarEstado(id, nuevoEstado, msg) {
+    toast('⏳ Guardando...');
+    try {
+      const url = API + '?accion=cambiarEstado&id=' + encodeURIComponent(id) + '&estado=' + encodeURIComponent(nuevoEstado);
+      const res  = await fetch(url);
+      const json = await res.json();
+      if (!json.ok) throw new Error(json.error || 'Error');
+      // Actualizar localmente
+      const idx = todos.findIndex(p => p.id === id);
+      if (idx !== -1) todos[idx].estado = nuevoEstado;
+      renderProspectos();
+      renderPagos();
+      renderAlertas();
+      renderResumen();
+      actualizarKPIs();
+      toast(msg || '✅ Listo');
+    } catch(e) {
+      toast('❌ Error al guardar. Intenta de nuevo.');
+    }
+  }
+
+  // ── CREAR VIP ──
+  async function crearVIP() {
+    const nombre  = document.getElementById('vip-nombre').value.trim();
+    const tel     = document.getElementById('vip-tel').value.trim();
+    const motivo  = document.getElementById('vip-motivo').value.trim();
+    const horario = document.getElementById('vip-horario').value.trim();
+
+    if (!nombre || !tel || !motivo) { toast('⚠️ Completa nombre, teléfono y tipo'); return; }
+
+    toast('⏳ Creando caso VIP...');
+    try {
+      const url = API + '?accion=crearVIP&nombre=' + encodeURIComponent(nombre) +
+                  '&telefono=' + encodeURIComponent(tel) +
+                  '&motivo=' + encodeURIComponent(motivo) +
+                  '&horario=' + encodeURIComponent(horario);
+      await fetch(url);
+      document.getElementById('vip-nombre').value = '';
+      document.getElementById('vip-tel').value = '';
+      document.getElementById('vip-motivo').value = '';
+      document.getElementById('vip-horario').value = '';
+      toast('🔴 Caso VIP creado y publicado');
+      setTimeout(() => cargarTodo(), 1500);
+    } catch(e) {
+      toast('❌ Error al crear caso VIP');
+    }
+  }
+
+  // ── UTILS ──
+  function showPanel(id) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('panel-' + id).classList.add('active');
+    cerrarSheet();
+    window.scrollTo(0,0);
+  }
+  function showNav(idx) {
+    document.querySelectorAll('.nav-item').forEach((n,i) => {
+      n.classList.toggle('active', i === idx);
+    });
+  }
+  function cerrarSheet() {
+    document.getElementById('overlay').classList.remove('show');
+    document.getElementById('bsheet').classList.remove('open');
+    estadoSeleccionado = null;
+  }
+  function toast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
+  }
+
+
+  // ── PIN LOGIN ──
+  const PIN_CORRECTO = '2906'; // ← Cambia este PIN por el tuyo
+  let pinActual = '';
+  let pinBloqueado = false;
+
+  function pinPress(num) {
+    if (pinBloqueado || pinActual.length >= 4) return;
+    pinActual += num;
+    actualizarDots();
+    if (pinActual.length === 4) {
+      setTimeout(verificarPin, 150);
+    }
+  }
+
+  function pinDel() {
+    if (pinBloqueado) return;
+    pinActual = pinActual.slice(0, -1);
+    actualizarDots();
+  }
+
+  function actualizarDots() {
+    for (let i = 0; i < 4; i++) {
+      const dot = document.getElementById('dot-' + i);
+      dot.className = 'pin-dot' + (i < pinActual.length ? ' filled' : '');
+    }
+  }
+
+  function verificarPin() {
+    if (pinActual === PIN_CORRECTO) {
+      document.getElementById('login-screen').style.opacity = '0';
+      document.getElementById('login-screen').style.transition = 'opacity 0.4s';
+      setTimeout(() => {
+        document.getElementById('login-screen').style.display = 'none';
+        cargarTodo();
+      }, 400);
+    } else {
+      pinBloqueado = true;
+      for (let i = 0; i < 4; i++) {
+        document.getElementById('dot-' + i).className = 'pin-dot error';
+      }
+      document.getElementById('login-error').classList.add('show');
+      setTimeout(() => {
+        pinActual = '';
+        pinBloqueado = false;
+        actualizarDots();
+        document.getElementById('login-error').classList.remove('show');
+      }, 1200);
+    }
+  }
+
+  // ── INIT ── (cargarTodo() se llama desde verificarPin)
+
+</script>
+</body>
+</html>
