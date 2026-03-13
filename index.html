@@ -1078,9 +1078,10 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
 <div class="toast" id="toast"></div>
 
 <script>
-  const API_URL = 'https://script.google.com/macros/s/AKfycbzOLUMmmIcNJJjlk_J7lkvYIfWzQ79gF1lth2oEqmZ6QcOZ3P8TS-5ay8pS-rDgIYmgcQ/exec';
+  const API_URL = 'https://script.google.com/macros/s/AKfycbxputh4gccLqIjyB_THQH-TosFWwjmn6p-FPsUkoR59oAGNOX4KCaC_BB2kbGx5VS6IRA/exec';
   const WHATSAPP = '528126026552'; // ← Cambia por tu número de WhatsApp con código de país
   const CLABE    = '728969000084218503'; // ← Cambia por tu CLABE real
+  let PRECIOS = { vip:1500, infantil_manana:200, infantil_tarde:130, extraccion_2:260, extraccion_3:390, general:130 };
 
   let todosLosProspectos = [];
   let filtroActual = 'todos';
@@ -1091,49 +1092,21 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
   let prospectoSeleccionado = null;
 
   // ── PRECIO POR TRATAMIENTO ──
-  function getPrecio(tratamiento, estado, extracciones) {
-    if (estado === 'VIP') return { monto: '$1,500', clase: 'premium' };
+  function getPrecio(trat, estado, extr, horarioMana, horarioTarde) {
+    const t = (trat || '').toLowerCase();
+    if (estado === 'VIP') return { monto: '$' + PRECIOS.vip.toLocaleString(), clase: 'premium' };
     if (estado === 'Sabado') return { monto: 'GRATIS', clase: 'gratis' };
-    if (estado === 'Regalado') return { monto: 'GRATIS', clase: 'gratis' }; // historico, no debe aparecer
-
-    const t = (tratamiento || '').toLowerCase();
-    const e = (extracciones || '').toLowerCase();
-
-    // Endodoncia — diente frontal, fractura frontal, diente oscuro, nervio
-    if (
-      t.includes('endodoncia') ||
-      t.includes('nervio') ||
-      t.includes('frontal') ||
-      t.includes('fractura en diente') ||
-      t.includes('oscuro') ||
-      t.includes('fractura') && (t.includes('anterior') || t.includes('frente'))
-    ) return { monto: '$1,500', clase: 'premium' };
-
-    // Extracciones — se cobra por cantidad, máximo 3
-    // Incluye: extracción simple, sacar muela/diente, prótesis con extracciones
-    // EXCLUYE: muela del juicio (siempre $130 sin importar cantidad)
-    const esExtraccion = t.includes('extracción') || t.includes('extraccion') ||
-                         t.includes('sacar') || t.includes('prótesis') || t.includes('protesis');
-    const esJuicio = t.includes('juicio');
-
-    if (esExtraccion && !esJuicio) {
-      // Detectar cantidad del campo extracciones
-      let cantidad = 1;
-      if (e.includes('dos') || e.includes('2'))       cantidad = 2;
-      else if (e.includes('tres') || e.includes('3')) cantidad = 3;
-      else if (e.includes('cuatro') || e.includes('4') ||
-               e.includes('cinco') || e.includes('5') ||
-               e.includes('más') || e.includes('mas') ||
-               e.includes('varias'))                  cantidad = 3; // máximo 3
-
-      const total = cantidad * 130;
-      const detalle = cantidad > 1 ? ` (${cantidad} × $130)` : '';
-      return { monto: `$${total}${detalle}`, clase: 'normal' };
+    if (t.match(/endo|nervio|fractura|frontal|oscuro|anterior/)) return { monto: '$' + PRECIOS.vip.toLocaleString(), clase: 'premium' };
+    if (t.includes('infantil') || t.includes('niño') || t.includes('pedi')) {
+      if (horarioMana && String(horarioMana).trim()) return { monto: '$' + PRECIOS.infantil_manana.toLocaleString(), clase: 'normal' };
+      return { monto: '$' + PRECIOS.infantil_tarde.toLocaleString(), clase: 'normal' };
     }
-
-    // Todo lo demás: $130 fijo
-    // (resinas, muela del juicio, corona, blanqueamiento, prótesis, valoración, infantil, etc.)
-    return { monto: '$130', clase: 'normal' };
+    const n = parseInt(extr) || 0;
+    if (t.includes('extrac')) {
+      if (n >= 3) return { monto: '$' + PRECIOS.extraccion_3.toLocaleString(), clase: 'normal' };
+      if (n === 2) return { monto: '$' + PRECIOS.extraccion_2.toLocaleString(), clase: 'normal' };
+    }
+    return { monto: '$' + PRECIOS.general.toLocaleString(), clase: 'normal' };
   }
 
   // ── ICONO POR TRATAMIENTO ──
@@ -1159,7 +1132,7 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
 
   // ── CONSTRUIR CARD ──
   function buildCard(p, delay = 0) {
-    const precio = getPrecio(p.tratamiento, p.estado, p.extracciones);
+    const precio = getPrecio(p.tratamiento, p.estado, p.extracciones, p.horarioMana, p.horarioTarde);
     const icono  = getIcono(p.tratamiento);
     const trat   = limpiarTratamiento(p.tratamiento);
     const horarioParts = [];
@@ -1234,6 +1207,7 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
       if (!json.ok) throw new Error('API error');
 
       todosLosProspectos = json.data.reverse(); // más nuevos primero
+      if (json.precios) PRECIOS = json.precios;
       renderTodo();
       toast('✅ Actualizado correctamente');
     } catch(e) {
@@ -1321,7 +1295,7 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
     if (typeof p === 'string') p = JSON.parse(p);
     prospectoSeleccionado = p;
 
-    const precio = getPrecio(p.tratamiento, p.estado, p.extracciones);
+    const precio = getPrecio(p.tratamiento, p.estado, p.extracciones, p.horarioMana, p.horarioTarde);
     const trat   = limpiarTratamiento(p.tratamiento);
     const horarioParts = [];
     if (p.horarioMana)  horarioParts.push('🌅 ' + p.horarioMana + ' (mañana)');
@@ -1385,7 +1359,7 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
     const p    = prospectoSeleccionado;
     const id   = p ? p.id : '';
     const trat = p ? (p.tratamiento||'').replace(/\.$/,'') : '';
-    const precio = getPrecio(p.tratamiento, p.estado, p.extracciones).monto;
+    const precio = getPrecio(p.tratamiento, p.estado, p.extracciones, p.horarioMana, p.horarioTarde).monto;
     const msg  = encodeURIComponent(
 `Hola, soy alumno de la Facultad de Odontología UANL 🦷
 
@@ -1490,7 +1464,7 @@ Quiero apartar el siguiente prospecto de sábado gratuito:
     document.getElementById('paso2').style.display = 'none';
     document.getElementById('paso3').style.display = 'none';
     document.getElementById('pasoExito').style.display = 'none';
-    const pc = getPrecio(p.tratamiento, p.estado, p.extracciones);
+    const pc = getPrecio(p.tratamiento, p.estado, p.extracciones, p.horarioMana, p.horarioTarde);
     document.getElementById('sol-trat-label').textContent =
       `${getIcono(p.tratamiento)} ${limpiarTratamiento(p.tratamiento)} · ${pc.monto}`;
     document.getElementById('pagoMonto').textContent = pc.monto;
@@ -1550,7 +1524,7 @@ Quiero apartar el siguiente prospecto de sábado gratuito:
     const txt = document.getElementById('btnEnviarTxt');
     btn.disabled = true;
     txt.textContent = 'Enviando...';
-    const pc = getPrecio(prospectoSeleccionado.tratamiento, prospectoSeleccionado.estado, prospectoSeleccionado.extracciones);
+    const pc = getPrecio(prospectoSeleccionado.tratamiento, prospectoSeleccionado.estado, prospectoSeleccionado.extracciones, prospectoSeleccionado.horarioMana, prospectoSeleccionado.horarioTarde);
     const ref = 'VIN-' + String(prospectoSeleccionado.id).padStart(3,'0');
     try {
       const resp = await fetch(API_URL + '?accion=registrarSolicitud' +
