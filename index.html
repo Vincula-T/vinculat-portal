@@ -1098,9 +1098,7 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
     if (estado === 'Sabado') return { monto: 'GRATIS', clase: 'gratis' };
     if (t.match(/endo|nervio|fractura|frontal|oscuro|anterior/)) return { monto: '$' + PRECIOS.vip.toLocaleString(), clase: 'premium' };
     if (t.includes('infantil') || t.includes('niño') || t.includes('pedi')) {
-      const camposHorario = [horarioMana, horarioTarde].map(v => String(v || '').toLowerCase());
-      const tieneMana = camposHorario.some(v => v.match(/ma[ñn]/));
-      if (tieneMana) return { monto: '$' + PRECIOS.infantil_manana.toLocaleString(), clase: 'normal' };
+      if (horarioMana && String(horarioMana).trim()) return { monto: '$' + PRECIOS.infantil_manana.toLocaleString(), clase: 'normal' };
       return { monto: '$' + PRECIOS.infantil_tarde.toLocaleString(), clase: 'normal' };
     }
     const n = parseInt(extr) || 0;
