@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Vinculat Odonto — Portal Alumnos</title>
+<title>Enlace Odontológico Universitario — Portal Alumnos</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -768,7 +768,7 @@
   <div class="header-top">
     <div class="logo">
       <div class="logo-icon">🦷</div>
-      <div class="logo-text">Vinculat <span>Odonto</span></div>
+      <div class="logo-text">Enlace <span>Odontológico</span></div>
     </div>
     <button class="sync-btn" onclick="cargarProspectos()" id="sync-btn">
       <span class="sync-icon">🔄</span>
@@ -815,10 +815,10 @@
   </button>
 
   <div style="margin-top:12px;background:linear-gradient(135deg,#0f3d1f,#145a28);border:1px solid #1a7a35;border-radius:16px;padding:18px 16px;">
-    <div style="font-size:10px;font-weight:800;color:#4ade80;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Canal oficial · Vinculat Odonto</div>
+    <div style="font-size:10px;font-weight:800;color:#4ade80;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Canal oficial · Enlace Odontológico Universitario</div>
     <div style="font-size:17px;font-weight:800;color:white;line-height:1.3;margin-bottom:8px;">Entérate de los pacientes que nos van llegando</div>
     <div style="font-size:13px;color:#86efac;line-height:1.5;margin-bottom:14px;">Publicamos cada nuevo prospecto disponible en tiempo real. Sé el primero en enterarte y adquirirlo antes que otros alumnos. 🦷</div>
-    <a href="https://whatsapp.com/channel/0029VbCVD7B0bIdsozNP8L1Y5gT" target="_blank"
+    <a href="AQUI_VA_TU_LINK_DEL_CANAL" target="_blank"
        style="display:flex;align-items:center;justify-content:center;gap:8px;background:#25D366;color:white;font-size:14px;font-weight:800;padding:13px;border-radius:12px;text-decoration:none;">
       📢 Unirme al canal de WhatsApp
     </a>
@@ -900,8 +900,8 @@ Le contacto de parte de la Facultad de Odontología de la UANL. Mi nombre es [AL
 
 Hace unos días le contacté sobre su tratamiento de [TRATAMIENTO]. ¿Le sigue interesando atenderse?
 
-Si ya no puede, con gusto le damos de baja para no molestarle más. 😊</div>
-      <button class="copy-btn" style="width:100%;justify-content:center;" onclick="copiar('Buenas tardes, le escribo nuevamente de la Facultad de Odontología UANL.\n\nHace unos días le contacté sobre su tratamiento. ¿Le sigue interesando atenderse?\n\nSi ya no puede, con gusto le damos de baja para no molestarle más. 😊')">📋 Copiar mensaje</button>
+Si ya no puede, con gusto le damos de baja para no molestarle más. Si más adelante desea retomar su tratamiento, le invitamos a llenar nuevamente nuestro formulario de registro. 😊</div>
+      <button class="copy-btn" style="width:100%;justify-content:center;" onclick="copiar('Buenas tardes, le escribo nuevamente de la Facultad de Odontología UANL.\n\nHace unos días le contacté sobre su tratamiento. ¿Le sigue interesando atenderse?\n\nSi ya no puede, con gusto le damos de baja para no molestarle más. Si más adelante desea retomar su tratamiento, le invitamos a llenar nuevamente nuestro formulario de registro. 😊')">📋 Copiar mensaje</button>
     </div>
   </div>
 
@@ -1081,13 +1081,14 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
   const API_URL = 'https://script.google.com/macros/s/AKfycbwPDQoVUqbrJwob52woIh2Kg2DoV8Z3z5JAY6-rOg8Tnpl71AO5y2wfPYQAfDjcoCdICw/exec';
   const WHATSAPP = '528126026552'; 
   const CLABE    = '728969000084218503'; 
-  let PRECIOS = { vip:1500, infantil_manana:200, infantil_tarde:130, extraccion_2:260, extraccion_3:390, aparato:250, general:130 };
+  // Ampliamos los precios base para abarcar los distintos tratamientos
+  let PRECIOS = { vip:1500, infantil_manana:200, infantil_tarde:130, extraccion_2:260, extraccion_3:390, aparato:250, general:130, blanqueamiento:1500, mantenedor:320, corona_acero:285 };
 
   let todosLosProspectos = [];
   let filtroActual = 'todos';
   let prospectoSeleccionado = null;
   let nombreAlumnoSolicitud = '';
-  let telefonoAlumnoSolicitud = ''; // NUEVO: Teléfono del alumno
+  let telefonoAlumnoSolicitud = '';
   let comprobanteB64 = '';
 
   // ── DETECTOR PREMIUM GLOBAL ──
@@ -1124,8 +1125,14 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
     // 2. SABADO GRATIS
     if (estado === 'Sabado') return { monto: 'GRATIS', clase: 'gratis' };
 
-    // 3. LÓGICA INFANTIL 8 a 12 AÑOS
+    // Lógicas extendidas para detectar tratamientos específicos
+    if (t.includes('blanquea')) return { monto: '$' + PRECIOS.blanqueamiento.toLocaleString(), clase: 'normal' };
+    if (t.includes('mantenedor')) return { monto: '$' + PRECIOS.mantenedor.toLocaleString(), clase: 'normal' };
+    
     let esInfantil = t.includes('infantil') || t.includes('niño') || t.includes('pedi') || t.includes('menor');
+    if (t.includes('corona') && (t.includes('acero') || esInfantil)) return { monto: '$' + PRECIOS.corona_acero.toLocaleString(), clase: 'normal' };
+
+    // 3. LÓGICA INFANTIL 8 a 12 AÑOS
     let edadNum = parseInt(edad) || 0;
     let es8a12 = edadNum >= 8 && edadNum <= 12;
 
@@ -1153,7 +1160,7 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
       if (n >= 2) return { monto: '$' + PRECIOS.extraccion_2.toLocaleString(), clase: 'normal' };
     }
 
-    // 7. GENERAL
+    // 7. GENERAL (Limpieza, periodoncia, resina, etc)
     return { monto: '$' + PRECIOS.general.toLocaleString(), clase: 'normal' };
   }
 
@@ -1169,6 +1176,8 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
     if (t.includes('blanquea')) return '✨';
     if (t.includes('puente')) return '🔗';
     if (t.includes('cirugía') || t.includes('cirugia')) return '⚕️';
+    if (t.includes('periodoncia') || t.includes('encía') || t.includes('limpieza')) return '🫧';
+    if (t.includes('mantenedor')) return '⚙️';
     return '🦷';
   }
 
@@ -1233,7 +1242,7 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
       if (!json.ok) throw new Error('API error');
 
       todosLosProspectos = json.data.reverse(); 
-      if (json.precios) PRECIOS = json.precios;
+      if (json.precios) PRECIOS = Object.assign(PRECIOS, json.precios);
       renderTodo();
       toast('✅ Actualizado correctamente');
     } catch(e) {
@@ -1427,7 +1436,7 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
     prospectoSeleccionado = p;
     comprobanteB64 = '';
     document.getElementById('inputNombreAlumno').value = '';
-    document.getElementById('inputTelefonoAlumno').value = ''; // NUEVO: Limpia el input del teléfono
+    document.getElementById('inputTelefonoAlumno').value = ''; 
     document.getElementById('paso1').style.display = 'block';
     document.getElementById('paso2').style.display = 'none';
     document.getElementById('paso3').style.display = 'none';
@@ -1448,15 +1457,13 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
 
   function irPaso2() {
     const nombre = document.getElementById('inputNombreAlumno').value.trim();
-    const telefono = document.getElementById('inputTelefonoAlumno').value.trim(); // NUEVO: Recupera teléfono
+    const telefono = document.getElementById('inputTelefonoAlumno').value.trim(); 
     
-    // Validación de nombre
     if (!nombre) {
       document.getElementById('inputNombreAlumno').style.borderColor = '#EF4444';
       return;
     }
     
-    // NUEVO: Validación de teléfono
     if (!telefono || telefono.length < 10) {
       document.getElementById('inputTelefonoAlumno').style.borderColor = '#EF4444';
       return;
@@ -1466,7 +1473,7 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
     document.getElementById('inputTelefonoAlumno').style.borderColor = '#1E3A6E';
     
     nombreAlumnoSolicitud = nombre;
-    telefonoAlumnoSolicitud = telefono; // NUEVO: Guarda el teléfono
+    telefonoAlumnoSolicitud = telefono; 
 
     document.getElementById('paso1').style.display = 'none';
     document.getElementById('paso2').style.display = 'block';
@@ -1504,7 +1511,7 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
       await fetch(API_URL + '?accion=registrarSolicitud' +
         '&id=' + encodeURIComponent(prospectoSeleccionado.id) +
         '&alumno=' + encodeURIComponent(nombreAlumnoSolicitud) +
-        '&telAlumno=' + encodeURIComponent(telefonoAlumnoSolicitud) + // NUEVO: Envía el teléfono al backend
+        '&telAlumno=' + encodeURIComponent(telefonoAlumnoSolicitud) + 
         '&ref=' + encodeURIComponent(ref) +
         '&monto=' + encodeURIComponent(pc.monto) +
         '&comprobante=' + encodeURIComponent(comprobanteB64.substring(0, 5000)),
