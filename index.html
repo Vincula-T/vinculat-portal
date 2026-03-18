@@ -25,736 +25,187 @@
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-
   html { height: 100%; background: var(--navy); }
-
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--navy);
-    color: var(--text);
-    min-height: 100vh;
-    padding-bottom: calc(72px + var(--safe-bottom));
-    max-width: 480px;
-    margin: 0 auto;
-    position: relative;
-    overflow-x: hidden;
-  }
+  body { font-family: 'DM Sans', sans-serif; background: var(--navy); color: var(--text); min-height: 100vh; padding-bottom: calc(72px + var(--safe-bottom)); max-width: 480px; margin: 0 auto; position: relative; overflow-x: hidden; }
 
   /* ── HEADER ── */
-  .header {
-    background: linear-gradient(135deg, #0A1628 0%, #0F2448 100%);
-    padding: 20px 20px 16px;
-    position: sticky;
-    top: 0;
-    z-index: 50;
-    border-bottom: 1px solid var(--border);
-  }
-  .header-top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 14px;
-  }
-  .logo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .logo-icon {
-    width: 38px; height: 38px;
-    background: linear-gradient(135deg, var(--blue), var(--teal));
-    border-radius: 12px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 20px;
-    box-shadow: 0 4px 12px rgba(37,99,235,0.4);
-  }
-  .logo-text {
-    font-family: 'Syne', sans-serif;
-    font-weight: 800;
-    font-size: 18px;
-    color: white;
-    letter-spacing: -0.5px;
-  }
+  .header { background: linear-gradient(135deg, #0A1628 0%, #0F2448 100%); padding: 20px 20px 16px; position: sticky; top: 0; z-index: 50; border-bottom: 1px solid var(--border); }
+  .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .logo { display: flex; align-items: center; gap: 10px; }
+  .logo-icon { width: 38px; height: 38px; background: linear-gradient(135deg, var(--blue), var(--teal)); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 4px 12px rgba(37,99,235,0.4); }
+  .logo-text { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 18px; color: white; letter-spacing: -0.5px; }
   .logo-text span { color: var(--teal); }
 
-  .sync-btn {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    background: var(--border);
-    border: none;
-    border-radius: 8px;
-    padding: 6px 12px;
-    color: #60A5FA;
-    font-size: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    font-family: 'DM Sans', sans-serif;
-    transition: all 0.2s;
-  }
+  .sync-btn { display: flex; align-items: center; gap: 6px; background: var(--border); border: none; border-radius: 8px; padding: 6px 12px; color: #60A5FA; font-size: 12px; font-weight: 600; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.2s; }
   .sync-btn:active { transform: scale(0.95); }
   .sync-btn.loading .sync-icon { animation: spin 1s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
 
   /* STATS BAR */
-  .stats-bar {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 8px;
-  }
-  .stat-chip {
-    background: rgba(255,255,255,0.05);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 8px 6px;
-    text-align: center;
-  }
-  .stat-chip .num {
-    font-family: 'Syne', sans-serif;
-    font-size: 20px;
-    font-weight: 800;
-    line-height: 1;
-    margin-bottom: 2px;
-  }
-  .stat-chip .lbl {
-    font-size: 9px;
-    font-weight: 600;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
+  .stats-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .stat-chip { background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 10px; padding: 8px 6px; text-align: center; }
+  .stat-chip .num { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800; line-height: 1; margin-bottom: 2px; }
+  .stat-chip .lbl { font-size: 9px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
 
   /* ── FILTERS ── */
-  .filters {
-    padding: 14px 16px 0;
-    display: flex;
-    gap: 8px;
-    overflow-x: auto;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-  }
+  .filters { padding: 14px 16px 0; display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none; }
   .filters::-webkit-scrollbar { display: none; }
-  .filter-btn {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    padding: 7px 14px;
-    border-radius: 100px;
-    border: 1.5px solid var(--border);
-    background: transparent;
-    color: var(--muted);
-    font-size: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    white-space: nowrap;
-    font-family: 'DM Sans', sans-serif;
-    transition: all 0.2s;
-    flex-shrink: 0;
-  }
-  .filter-btn.active {
-    background: var(--blue);
-    border-color: var(--blue);
-    color: white;
-    box-shadow: 0 4px 12px rgba(37,99,235,0.35);
-  }
+  .filter-btn { display: flex; align-items: center; gap: 5px; padding: 7px 14px; border-radius: 100px; border: 1.5px solid var(--border); background: transparent; color: var(--muted); font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; font-family: 'DM Sans', sans-serif; transition: all 0.2s; flex-shrink: 0; }
+  .filter-btn.active { background: var(--blue); border-color: var(--blue); color: white; box-shadow: 0 4px 12px rgba(37,99,235,0.35); }
   .filter-btn:active { transform: scale(0.95); }
 
   /* ── SECTION TITLE ── */
-  .section-title {
-    padding: 18px 16px 10px;
-    font-family: 'Syne', sans-serif;
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .section-count {
-    background: var(--border);
-    color: #60A5FA;
-    font-size: 11px;
-    padding: 2px 8px;
-    border-radius: 100px;
-    font-family: 'DM Sans', sans-serif;
-  }
+  .section-title { padding: 18px 16px 10px; font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 1.5px; display: flex; align-items: center; justify-content: space-between; }
+  .section-count { background: var(--border); color: #60A5FA; font-size: 11px; padding: 2px 8px; border-radius: 100px; font-family: 'DM Sans', sans-serif; }
 
   /* ── PROSPECT CARDS ── */
-  .cards {
-    padding: 0 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 18px;
-    padding: 16px;
-    cursor: pointer;
-    transition: all 0.2s;
-    position: relative;
-    overflow: hidden;
-    animation: fadeUp 0.3s ease both;
-  }
+  .cards { padding: 0 16px; display: flex; flex-direction: column; gap: 12px; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 18px; padding: 16px; cursor: pointer; transition: all 0.2s; position: relative; overflow: hidden; animation: fadeUp 0.3s ease both; }
   .card:active { transform: scale(0.98); }
-  .card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-    border-radius: 18px 18px 0 0;
-  }
+  .card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; border-radius: 18px 18px 0 0; }
   .card.disponible::before { background: linear-gradient(90deg, var(--green), var(--teal)); }
   .card.vip::before        { background: linear-gradient(90deg, var(--red), #FF6B6B); }
   .card.sabado::before     { background: linear-gradient(90deg, var(--gold), #FCD34D); }
 
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(12px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
 
-  .card-top {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    margin-bottom: 10px;
-    gap: 8px;
-  }
-  .card-id {
-    font-family: 'Syne', sans-serif;
-    font-size: 11px;
-    font-weight: 700;
-    color: var(--muted);
-    letter-spacing: 1px;
-  }
+  .card-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 10px; gap: 8px; }
+  .card-id { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; color: var(--muted); letter-spacing: 1px; }
   .card-badges { display: flex; gap: 5px; flex-wrap: wrap; justify-content: flex-end; }
-
-  .badge {
-    font-size: 10px;
-    font-weight: 700;
-    padding: 3px 8px;
-    border-radius: 100px;
-    white-space: nowrap;
-    letter-spacing: 0.3px;
-  }
+  .badge { font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 100px; white-space: nowrap; letter-spacing: 0.3px; }
   .badge-green  { background: rgba(16,185,129,0.15); color: #34D399; border: 1px solid rgba(16,185,129,0.3); }
-  .badge-foto {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    background: linear-gradient(135deg, rgba(14,165,233,0.2), rgba(99,102,241,0.2));
-    border: 1px solid rgba(14,165,233,0.4);
-    color: #38BDF8;
-    font-size: 10px;
-    font-weight: 700;
-    padding: 3px 8px;
-    border-radius: 100px;
-    animation: pulse-foto 2.5s ease-in-out infinite;
-  }
-  @keyframes pulse-foto {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(14,165,233,0.3); }
-    50%       { box-shadow: 0 0 0 4px rgba(14,165,233,0); }
-  }
+  .badge-foto { display: inline-flex; align-items: center; gap: 4px; background: linear-gradient(135deg, rgba(14,165,233,0.2), rgba(99,102,241,0.2)); border: 1px solid rgba(14,165,233,0.4); color: #38BDF8; font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 100px; animation: pulse-foto 2.5s ease-in-out infinite; }
+  @keyframes pulse-foto { 0%, 100% { box-shadow: 0 0 0 0 rgba(14,165,233,0.3); } 50% { box-shadow: 0 0 0 4px rgba(14,165,233,0); } }
   .badge-red    { background: rgba(239,68,68,0.15);  color: #F87171; border: 1px solid rgba(239,68,68,0.3); }
   .badge-gold   { background: rgba(245,158,11,0.15); color: #FCD34D; border: 1px solid rgba(245,158,11,0.3); }
   .badge-blue   { background: rgba(37,99,235,0.15);  color: #60A5FA; border: 1px solid rgba(37,99,235,0.3); }
-  .badge-new    { background: rgba(14,165,233,0.15); color: #38BDF8; border: 1px solid rgba(14,165,233,0.3); }
-
-  .card-tratamiento {
-    font-family: 'Syne', sans-serif;
-    font-size: 16px;
-    font-weight: 700;
-    color: white;
-    margin-bottom: 8px;
-    line-height: 1.3;
-  }
-
-  .card-meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    margin-bottom: 14px;
-  }
-  .meta-chip {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 11px;
-    color: #94A3B8;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.07);
-    padding: 4px 8px;
-    border-radius: 6px;
-  }
-
-  .card-footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .card-precio {
-    font-family: 'Syne', sans-serif;
-    font-size: 22px;
-    font-weight: 800;
-  }
+  .card-tratamiento { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; color: white; margin-bottom: 8px; line-height: 1.3; }
+  .card-meta { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+  .meta-chip { display: flex; align-items: center; gap: 4px; font-size: 11px; color: #94A3B8; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07); padding: 4px 8px; border-radius: 6px; }
+  .card-footer { display: flex; align-items: center; justify-content: space-between; }
+  .card-precio { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; }
   .card-precio.gratis { color: var(--gold); }
   .card-precio.premium { color: var(--red); }
   .card-precio.normal { color: var(--green); }
-
-  .btn-adquirir {
-    padding: 10px 20px;
-    border-radius: 12px;
-    border: none;
-    font-size: 13px;
-    font-weight: 700;
-    cursor: pointer;
-    font-family: 'DM Sans', sans-serif;
-    transition: all 0.2s;
-  }
+  .btn-adquirir { padding: 10px 20px; border-radius: 12px; border: none; font-size: 13px; font-weight: 700; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.2s; }
   .btn-adquirir:active { transform: scale(0.95); }
   .btn-normal  { background: var(--blue); color: white; box-shadow: 0 4px 12px rgba(37,99,235,0.35); }
   .btn-premium { background: var(--red);  color: white; box-shadow: 0 4px 12px rgba(239,68,68,0.35); }
   .btn-gratis  { background: linear-gradient(135deg, var(--gold), #FCD34D); color: #1A0A00; box-shadow: 0 4px 12px rgba(245,158,11,0.35); }
 
-  /* VIP BANNER */
-  .vip-banner {
-    margin: 14px 16px 0;
-    background: linear-gradient(135deg, #1A0A0A, #2D0A0A);
-    border: 1px solid rgba(239,68,68,0.4);
-    border-radius: 16px;
-    padding: 14px 16px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
+  /* BANNER VIP & SABADO */
+  .vip-banner { margin: 14px 16px 0; background: linear-gradient(135deg, #1A0A0A, #2D0A0A); border: 1px solid rgba(239,68,68,0.4); border-radius: 16px; padding: 14px 16px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: all 0.2s; }
   .vip-banner:active { transform: scale(0.98); }
-  .vip-icon {
-    width: 42px; height: 42px;
-    background: rgba(239,68,68,0.2);
-    border-radius: 12px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 22px;
-    flex-shrink: 0;
-  }
+  .vip-icon { width: 42px; height: 42px; background: rgba(239,68,68,0.2); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
   .vip-text { flex: 1; }
   .vip-title { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 800; color: #F87171; margin-bottom: 2px; }
   .vip-sub   { font-size: 11px; color: #94A3B8; }
-  .vip-count {
-    font-family: 'Syne', sans-serif;
-    font-size: 24px;
-    font-weight: 800;
-    color: var(--red);
-  }
-
-  /* SABADO BANNER */
-  .sabado-banner {
-    margin: 12px 16px 0;
-    background: linear-gradient(135deg, #1A1200, #2D1E00);
-    border: 1px solid rgba(245,158,11,0.4);
-    border-radius: 16px;
-    padding: 14px 16px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  .sabado-icon {
-    width: 42px; height: 42px;
-    background: rgba(245,158,11,0.15);
-    border-radius: 12px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 22px;
-    flex-shrink: 0;
-  }
+  .vip-count { font-family: 'Syne', sans-serif; font-size: 24px; font-weight: 800; color: var(--red); }
+  .sabado-banner { margin: 12px 16px 0; background: linear-gradient(135deg, #1A1200, #2D1E00); border: 1px solid rgba(245,158,11,0.4); border-radius: 16px; padding: 14px 16px; display: flex; align-items: center; gap: 12px; }
+  .sabado-icon { width: 42px; height: 42px; background: rgba(245,158,11,0.15); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
   .sabado-title { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 800; color: #FCD34D; margin-bottom: 2px; }
   .sabado-sub   { font-size: 11px; color: #94A3B8; }
 
   /* ── BOTTOM SHEET ── */
-  .overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.7);
-    z-index: 100;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s;
-    backdrop-filter: blur(4px);
-  }
+  .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 100; opacity: 0; pointer-events: none; transition: opacity 0.3s; backdrop-filter: blur(4px); }
   .overlay.show { opacity: 1; pointer-events: all; }
-
-  .bottom-sheet {
-    position: fixed;
-    bottom: 0; left: 50%;
-    transform: translateX(-50%) translateY(100%);
-    width: 100%;
-    max-width: 480px;
-    background: #0F1E3A;
-    border-radius: 24px 24px 0 0;
-    border: 1px solid var(--border);
-    border-bottom: none;
-    z-index: 101;
-    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
-    max-height: 90vh;
-    overflow-y: auto;
-    padding-bottom: calc(24px + var(--safe-bottom));
-  }
+  .bottom-sheet { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%) translateY(100%); width: 100%; max-width: 480px; background: #0F1E3A; border-radius: 24px 24px 0 0; border: 1px solid var(--border); border-bottom: none; z-index: 101; transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1); max-height: 90vh; overflow-y: auto; padding-bottom: calc(24px + var(--safe-bottom)); }
   .bottom-sheet.open { transform: translateX(-50%) translateY(0); }
-
-  .sheet-handle {
-    width: 40px; height: 4px;
-    background: var(--border);
-    border-radius: 100px;
-    margin: 12px auto 0;
-  }
-  .sheet-header {
-    padding: 16px 20px 12px;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
+  .sheet-handle { width: 40px; height: 4px; background: var(--border); border-radius: 100px; margin: 12px auto 0; }
+  .sheet-header { padding: 16px 20px 12px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
   .sheet-title { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 800; }
-  .sheet-close {
-    width: 32px; height: 32px;
-    background: var(--border);
-    border: none;
-    border-radius: 50%;
-    color: var(--muted);
-    font-size: 16px;
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-  }
+  .sheet-close { width: 32px; height: 32px; background: var(--border); border: none; border-radius: 50%; color: var(--muted); font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
   .sheet-body { padding: 20px; }
-
-  .sheet-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-    font-size: 13px;
-  }
+  .sheet-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 13px; }
   .sheet-row:last-child { border-bottom: none; }
   .sheet-row .key { color: var(--muted); }
   .sheet-row .val { font-weight: 600; text-align: right; max-width: 60%; }
-
-  .clabe-box {
-    background: rgba(255,255,255,0.04);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 14px 16px;
-    margin: 16px 0;
-  }
-  .clabe-label { font-size: 11px; color: var(--muted); margin-bottom: 6px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
-  .clabe-num {
-    font-family: 'Syne', sans-serif;
-    font-size: 18px;
-    font-weight: 700;
-    color: white;
-    letter-spacing: 2px;
-    margin-bottom: 10px;
-    word-break: break-all;
-  }
-  .concepto-row { display: flex; justify-content: space-between; align-items: center; }
-  .concepto-val { font-size: 13px; color: #60A5FA; font-weight: 600; }
-
-  .copy-btn {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    background: var(--border);
-    border: none;
-    border-radius: 8px;
-    padding: 6px 12px;
-    color: #60A5FA;
-    font-size: 11px;
-    font-weight: 700;
-    cursor: pointer;
-    font-family: 'DM Sans', sans-serif;
-    transition: all 0.15s;
-  }
-  .copy-btn:active { transform: scale(0.95); background: var(--blue); color: white; }
-
-  .sheet-cta {
-    width: 100%;
-    padding: 16px;
-    border-radius: 14px;
-    border: none;
-    font-size: 15px;
-    font-weight: 700;
-    cursor: pointer;
-    font-family: 'DM Sans', sans-serif;
-    margin-top: 8px;
-    transition: all 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-  }
+  .sheet-cta { width: 100%; padding: 16px; border-radius: 14px; border: none; font-size: 15px; font-weight: 700; cursor: pointer; font-family: 'DM Sans', sans-serif; margin-top: 8px; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
   .sheet-cta:active { transform: scale(0.98); }
   .cta-primary { background: var(--blue); color: white; box-shadow: 0 6px 20px rgba(37,99,235,0.4); }
   .cta-premium { background: var(--red); color: white; box-shadow: 0 6px 20px rgba(239,68,68,0.4); }
   .cta-gratis  { background: linear-gradient(135deg, var(--gold), #FCD34D); color: #1A0A00; box-shadow: 0 4px 12px rgba(245,158,11,0.35); }
-
-  .warning-box {
-    background: rgba(245,158,11,0.1);
-    border: 1px solid rgba(245,158,11,0.3);
-    border-radius: 10px;
-    padding: 10px 12px;
-    font-size: 12px;
-    color: #FCD34D;
-    line-height: 1.5;
-    margin-bottom: 14px;
-  }
+  .warning-box { background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.3); border-radius: 10px; padding: 10px 12px; font-size: 12px; color: #FCD34D; line-height: 1.5; margin-bottom: 14px; }
 
   /* ── BOTTOM NAV ── */
-  .bottom-nav {
-    position: fixed;
-    bottom: 0; left: 50%;
-    transform: translateX(-50%);
-    width: 100%;
-    max-width: 480px;
-    background: rgba(10,22,40,0.95);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-top: 1px solid var(--border);
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    padding-bottom: var(--safe-bottom);
-    z-index: 60;
-  }
-  .nav-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 10px 4px;
-    gap: 3px;
-    cursor: pointer;
-    transition: all 0.2s;
-    border: none;
-    background: none;
-    -webkit-tap-highlight-color: transparent;
-  }
+  .bottom-nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; background: rgba(10,22,40,0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-top: 1px solid var(--border); display: grid; grid-template-columns: repeat(5, 1fr); padding-bottom: var(--safe-bottom); z-index: 60; }
+  .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px 4px; gap: 3px; cursor: pointer; transition: all 0.2s; border: none; background: none; -webkit-tap-highlight-color: transparent; }
   .nav-icon { font-size: 20px; transition: transform 0.2s; }
   .nav-label { font-size: 9px; font-weight: 600; color: var(--muted); letter-spacing: 0.3px; text-transform: uppercase; }
   .nav-item.active .nav-label { color: var(--blue); }
   .nav-item.active .nav-icon { transform: scale(1.1); }
-  .nav-badge {
-    position: absolute;
-    top: 6px;
-    background: var(--red);
-    color: white;
-    font-size: 9px;
-    font-weight: 800;
-    padding: 1px 5px;
-    border-radius: 100px;
-    margin-left: 12px;
-    margin-top: -4px;
-  }
-
-  /* ── PANELS ── */
+  
   .panel { display: none; }
   .panel.active { display: block; }
-
-  /* ── EMPTY STATE ── */
-  .empty {
-    text-align: center;
-    padding: 60px 20px;
-    color: var(--muted);
-  }
+  .empty { text-align: center; padding: 60px 20px; color: var(--muted); }
   .empty .ei { font-size: 48px; margin-bottom: 12px; opacity: 0.4; }
   .empty p { font-size: 14px; line-height: 1.6; }
-
-  /* LOADING */
-  .loading-state {
-    padding: 40px 20px;
-    text-align: center;
-  }
-  .spinner {
-    width: 40px; height: 40px;
-    border: 3px solid var(--border);
-    border-top-color: var(--blue);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-    margin: 0 auto 16px;
-  }
+  .loading-state { padding: 40px 20px; text-align: center; }
+  .spinner { width: 40px; height: 40px; border: 3px solid var(--border); border-top-color: var(--blue); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px; }
   .loading-text { font-size: 13px; color: var(--muted); }
 
-  /* ── GUIONES PANEL ── */
-  .guion-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    margin: 0 16px 12px;
-    overflow: hidden;
-  }
-  .guion-header {
-    padding: 14px 16px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    cursor: pointer;
-    border-bottom: 1px solid var(--border);
-  }
+  /* GUIONES Y POLITICAS */
+  .guion-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; margin: 0 16px 12px; overflow: hidden; }
+  .guion-header { padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; border-bottom: 1px solid var(--border); }
   .guion-title { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; }
   .guion-body { padding: 16px; display: none; }
   .guion-body.open { display: block; }
-  .guion-text {
-    font-size: 13px;
-    line-height: 1.7;
-    color: #CBD5E1;
-    background: rgba(0,0,0,0.2);
-    border-radius: 10px;
-    padding: 14px;
-    margin-bottom: 10px;
-    white-space: pre-line;
-  }
-
-  /* TOAST */
-  .toast {
-    position: fixed;
-    bottom: 90px;
-    left: 50%;
-    transform: translateX(-50%) translateY(8px);
-    background: #1E3A6E;
-    color: white;
-    padding: 10px 20px;
-    border-radius: 100px;
-    font-size: 13px;
-    font-weight: 600;
-    z-index: 200;
-    opacity: 0;
-    transition: all 0.3s;
-    pointer-events: none;
-    white-space: nowrap;
-    border: 1px solid var(--border);
-    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
-  }
-  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-  /* POLITICAS */
-  .politica-item {
-    margin: 0 16px 10px;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    overflow: hidden;
-  }
-  .politica-header {
-    padding: 14px 16px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 600;
-    gap: 10px;
-  }
-  .politica-body {
-    padding: 0 16px 14px;
-    font-size: 13px;
-    line-height: 1.7;
-    color: #94A3B8;
-    display: none;
-  }
+  .guion-text { font-size: 13px; line-height: 1.7; color: #CBD5E1; background: rgba(0,0,0,0.2); border-radius: 10px; padding: 14px; margin-bottom: 10px; white-space: pre-line; }
+  .politica-item { margin: 0 16px 10px; background: var(--card); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+  .politica-header { padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; font-size: 14px; font-weight: 600; gap: 10px; }
+  .politica-body { padding: 0 16px 14px; font-size: 13px; line-height: 1.7; color: #94A3B8; display: none; }
   .politica-body.open { display: block; }
-
-  /* PRECIOS TABLE */
-  .precio-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-    font-size: 13px;
-  }
+  .precio-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 13px; }
   .precio-row:last-child { border-bottom: none; }
   .precio-row .tipo { color: #94A3B8; }
   .precio-row .monto { font-weight: 700; color: var(--green); font-family: 'Syne', sans-serif; }
-/* ── SOLICITAR MODAL ── */
-.modal-overlay {
-  position: fixed; inset: 0; background: rgba(0,0,0,0.7);
-  z-index: 200; display: flex; align-items: flex-end;
-  justify-content: center; opacity: 0; pointer-events: none;
-  transition: opacity 0.3s;
-}
-.modal-overlay.active { opacity: 1; pointer-events: all; }
-.modal-box {
-  background: #0F1E3A; border-radius: 24px 24px 0 0;
-  padding: 24px 20px 40px; width: 100%; max-width: 480px;
-  transform: translateY(40px); transition: transform 0.3s;
-  border-top: 1px solid #1E3A6E;
-}
-.modal-overlay.active .modal-box { transform: translateY(0); }
-.modal-handle { width: 40px; height: 4px; background: #1E3A6E; border-radius: 2px; margin: 0 auto 20px; }
-.modal-title { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; margin-bottom: 6px; }
-.modal-subtitle { font-size: 13px; color: #64748B; margin-bottom: 20px; }
-.modal-input {
-  width: 100%; background: #1A2744; border: 1.5px solid #1E3A6E;
-  border-radius: 12px; padding: 14px 16px; color: #F1F5F9;
-  font-size: 15px; font-family: 'DM Sans', sans-serif; outline: none;
-  margin-bottom: 16px; transition: border-color 0.2s;
-}
-.modal-input:focus { border-color: #2563EB; }
-.modal-input::placeholder { color: #64748B; }
-.btn-solicitar-confirm {
-  width: 100%; padding: 16px; border: none; border-radius: 14px;
-  background: linear-gradient(135deg, #2563EB, #0EA5E9);
-  color: white; font-size: 16px; font-weight: 700;
-  font-family: 'DM Sans', sans-serif; cursor: pointer;
-  transition: opacity 0.2s; display: flex; align-items: center;
-  justify-content: center; gap: 8px;
-}
-.btn-solicitar-confirm:active { opacity: 0.85; }
-.btn-solicitar-confirm:disabled { opacity: 0.5; cursor: not-allowed; }
-/* Payment screen */
-.pago-box {
-  background: #0A1628; border: 1.5px solid #1E3A6E;
-  border-radius: 16px; padding: 18px; margin-bottom: 16px;
-}
-.pago-label { font-size: 11px; color: #64748B; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 6px; font-weight: 600; }
-.pago-value { font-size: 20px; font-weight: 700; color: #F1F5F9; letter-spacing: 1px; }
-.pago-monto { font-size: 32px; font-weight: 800; color: #10B981; font-family: 'Syne', sans-serif; }
-.pago-ref { font-size: 22px; font-weight: 700; color: #F59E0B; letter-spacing: 2px; }
-.copy-btn {
-  background: #1A2744; border: 1px solid #1E3A6E; border-radius: 8px;
-  padding: 6px 12px; color: #60A5FA; font-size: 12px; font-weight: 600;
-  cursor: pointer; font-family: 'DM Sans', sans-serif; margin-top: 8px;
-}
-.upload-zone {
-  border: 2px dashed #1E3A6E; border-radius: 14px; padding: 20px;
-  text-align: center; cursor: pointer; margin-bottom: 16px;
-  transition: border-color 0.2s; background: #0A1628;
-}
-.upload-zone:active { border-color: #2563EB; }
-.upload-zone input[type=file] { display: none; }
-.upload-icon { font-size: 32px; margin-bottom: 8px; }
-.upload-text { font-size: 14px; color: #64748B; }
-.upload-text strong { color: #60A5FA; display: block; margin-bottom: 4px; }
-.upload-preview { max-width: 100%; border-radius: 10px; margin-top: 10px; display: none; }
-.step-indicator {
-  display: flex; gap: 8px; margin-bottom: 20px; align-items: center;
-}
-.step { flex: 1; height: 4px; border-radius: 2px; background: #1E3A6E; }
-.step.active { background: #2563EB; }
-.step.done { background: #10B981; }
-.success-screen { text-align: center; padding: 20px 0; }
-.success-icon { font-size: 56px; margin-bottom: 16px; }
-.success-title { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 700; margin-bottom: 8px; }
-.success-text { font-size: 14px; color: #64748B; line-height: 1.6; }
-/* LIGHTBOX PARA FOTOS */
-#lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 999; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
-#lightbox-img { max-width: 90%; max-height: 85vh; border-radius: 12px; object-fit: contain; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-.lightbox-close { position: absolute; top: 20px; right: 20px; background: none; border: none; color: white; font-size: 32px; cursor: pointer; line-height: 1; }
+
+  /* MODALES Y TOAST */
+  .toast { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%) translateY(8px); background: #1E3A6E; color: white; padding: 10px 20px; border-radius: 100px; font-size: 13px; font-weight: 600; z-index: 200; opacity: 0; transition: all 0.3s; pointer-events: none; white-space: nowrap; border: 1px solid var(--border); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 200; display: flex; align-items: flex-end; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+  .modal-overlay.active { opacity: 1; pointer-events: all; }
+  .modal-box { background: #0F1E3A; border-radius: 24px 24px 0 0; padding: 24px 20px 40px; width: 100%; max-width: 480px; transform: translateY(40px); transition: transform 0.3s; border-top: 1px solid #1E3A6E; }
+  .modal-overlay.active .modal-box { transform: translateY(0); }
+  .modal-handle { width: 40px; height: 4px; background: #1E3A6E; border-radius: 2px; margin: 0 auto 20px; }
+  .modal-title { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+  .modal-subtitle { font-size: 13px; color: #64748B; margin-bottom: 20px; }
+  .modal-input { width: 100%; background: #1A2744; border: 1.5px solid #1E3A6E; border-radius: 12px; padding: 14px 16px; color: #F1F5F9; font-size: 15px; font-family: 'DM Sans', sans-serif; outline: none; margin-bottom: 16px; transition: border-color 0.2s; }
+  .modal-input:focus { border-color: #2563EB; }
+  .btn-solicitar-confirm { width: 100%; padding: 16px; border: none; border-radius: 14px; background: linear-gradient(135deg, #2563EB, #0EA5E9); color: white; font-size: 16px; font-weight: 700; font-family: 'DM Sans', sans-serif; cursor: pointer; transition: opacity 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .btn-solicitar-confirm:active { opacity: 0.85; }
+  .btn-solicitar-confirm:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .pago-box { background: #0A1628; border: 1.5px solid #1E3A6E; border-radius: 16px; padding: 18px; margin-bottom: 16px; }
+  .pago-label { font-size: 11px; color: #64748B; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 6px; font-weight: 600; }
+  .pago-value { font-size: 20px; font-weight: 700; color: #F1F5F9; letter-spacing: 1px; }
+  .pago-monto { font-size: 32px; font-weight: 800; color: #10B981; font-family: 'Syne', sans-serif; }
+  .pago-ref { font-size: 22px; font-weight: 700; color: #F59E0B; letter-spacing: 2px; }
+  .copy-btn { background: #1A2744; border: 1px solid #1E3A6E; border-radius: 8px; padding: 6px 12px; color: #60A5FA; font-size: 12px; font-weight: 600; cursor: pointer; font-family: 'DM Sans', sans-serif; margin-top: 8px; display:inline-flex; align-items:center; gap:5px; border: none; }
+  
+  .upload-zone { border: 2px dashed #1E3A6E; border-radius: 14px; padding: 20px; text-align: center; cursor: pointer; margin-bottom: 16px; transition: border-color 0.2s; background: #0A1628; }
+  .upload-zone:active { border-color: #2563EB; }
+  .upload-zone input[type=file] { display: none; }
+  .upload-text { font-size: 14px; color: #64748B; }
+  .upload-text strong { color: #60A5FA; display: block; margin-bottom: 4px; }
+  .upload-preview { max-width: 100%; border-radius: 10px; margin-top: 10px; display: none; }
+  .step-indicator { display: flex; gap: 8px; margin-bottom: 20px; align-items: center; }
+  .step { flex: 1; height: 4px; border-radius: 2px; background: #1E3A6E; }
+  .step.active { background: #2563EB; }
+  .step.done { background: #10B981; }
+  
+  /* NUEVO BOTÓN FLOTANTE WA */
+  .float-wa { position: fixed; bottom: 85px; right: 20px; background: #25D366; color: white; padding: 12px 18px; border-radius: 100px; font-weight: 700; text-decoration: none; box-shadow: 0 8px 20px rgba(37,211,102,0.4); z-index: 90; display: flex; align-items: center; gap: 8px; font-family: 'DM Sans', sans-serif; transition: transform 0.2s; }
+  .float-wa:active { transform: scale(0.95); }
+
 </style>
 </head>
 <body>
+
+<a href="https://wa.me/528126026552?text=Hola,%20tengo%20una%20duda%20sobre%20los%20prospectos" class="float-wa" target="_blank">
+  <span style="font-size: 20px;">💬</span> Soporte
+</a>
 
 <div class="header">
   <div class="header-top">
@@ -768,55 +219,30 @@
     </button>
   </div>
   <div class="stats-bar">
-    <div class="stat-chip">
-      <div class="num" style="color:#10B981;" id="stat-disponibles">—</div>
-      <div class="lbl">Disponibles</div>
-    </div>
-    <div class="stat-chip">
-      <div class="num" style="color:#EF4444;" id="stat-vip">—</div>
-      <div class="lbl">Premium</div>
-    </div>
-    <div class="stat-chip">
-      <div class="num" style="color:#F59E0B;" id="stat-sabado">—</div>
-      <div class="lbl">Sábado</div>
-    </div>
-    <div class="stat-chip">
-      <div class="num" style="color:#60A5FA;" id="stat-total">—</div>
-      <div class="lbl">Total</div>
-    </div>
+    <div class="stat-chip"><div class="num" style="color:#10B981;" id="stat-disponibles">—</div><div class="lbl">Disponibles</div></div>
+    <div class="stat-chip"><div class="num" style="color:#EF4444;" id="stat-vip">—</div><div class="lbl">Premium</div></div>
+    <div class="stat-chip"><div class="num" style="color:#F59E0B;" id="stat-sabado">—</div><div class="lbl">Sábado</div></div>
+    <div class="stat-chip"><div class="num" style="color:#60A5FA;" id="stat-total">—</div><div class="lbl">Total</div></div>
   </div>
 </div>
 
 <div class="panel active" id="panel-inicio">
   <div id="vip-banner-container"></div>
   <div id="sabado-banner-container"></div>
-  <div class="section-title">
-    Últimos prospectos
-    <span class="section-count" id="recientes-count">—</span>
-  </div>
+  <div class="section-title">Últimos prospectos<span class="section-count" id="recientes-count">—</span></div>
   <div class="cards" id="cards-recientes">
-    <div class="loading-state" id="loading-inicio">
-      <div class="spinner"></div>
-      <div class="loading-text">Conectando con tu base de datos...</div>
-      <div style="margin-top:10px; font-size:12px; color:#2563EB; font-weight:600;" id="timer-inicio">⏳ Espera unos segundos...</div>
-    </div>
+    <div class="loading-state" id="loading-inicio"><div class="spinner"></div><div class="loading-text">Conectando con tu base de datos...</div><div style="margin-top:10px; font-size:12px; color:#2563EB; font-weight:600;">⏳ Espera unos segundos...</div></div>
   </div>
-
   <button onclick="showPanel('prospectos')" style="width:100%;margin-top:4px;padding:14px;background:rgba(37,99,235,0.12);border:1px solid rgba(37,99,235,0.3);border-radius:14px;color:#60A5FA;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;">
     🦷 Ver lista completa de prospectos →
   </button>
-
   <div style="margin-top:12px;background:linear-gradient(135deg,#0f3d1f,#145a28);border:1px solid #1a7a35;border-radius:16px;padding:18px 16px;">
     <div style="font-size:10px;font-weight:800;color:#4ade80;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Canal oficial · Vinculat Odonto</div>
     <div style="font-size:17px;font-weight:800;color:white;line-height:1.3;margin-bottom:8px;">Entérate de los pacientes que nos van llegando</div>
     <div style="font-size:13px;color:#86efac;line-height:1.5;margin-bottom:14px;">Publicamos cada nuevo prospecto disponible en tiempo real. Sé el primero en enterarte y adquirirlo antes que otros alumnos. 🦷</div>
-    <a href="https://whatsapp.com/channel/0029VbCVD7B0bIdsozNP8L1Y5gT" target="_blank"
-       style="display:flex;align-items:center;justify-content:center;gap:8px;background:#25D366;color:white;font-size:14px;font-weight:800;padding:13px;border-radius:12px;text-decoration:none;">
-      📢 Unirme al canal de WhatsApp
-    </a>
+    <a href="https://whatsapp.com/channel/0029VbCVD7B0bIdsozNP8L1Y5gT" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:8px;background:#25D366;color:white;font-size:14px;font-weight:800;padding:13px;border-radius:12px;text-decoration:none;">📢 Unirme al canal de WhatsApp</a>
     <div style="margin-top:10px;font-size:11px;color:#4ade80;text-align:center;">🔔 Una vez dentro, activa la campanita para recibir notificaciones de cada nuevo paciente.</div>
   </div>
-
 </div>
 
 <div class="panel" id="panel-prospectos">
@@ -826,181 +252,35 @@
     <button class="filter-btn" onclick="filtrar('vip', this)">🔴 Premium</button>
     <button class="filter-btn" onclick="filtrar('sabado', this)">🎁 Sábado</button>
   </div>
-  <div class="section-title">
-    Todos los prospectos
-    <span class="section-count" id="todos-count">—</span>
-  </div>
+  <div class="section-title">Todos los prospectos<span class="section-count" id="todos-count">—</span></div>
   <div class="cards" id="cards-todos">
-    <div class="loading-state" id="loading-todos">
-      <div class="spinner"></div>
-      <div class="loading-text">Conectando con tu base de datos...</div>
-      <div style="margin-top:10px; font-size:12px; color:#2563EB; font-weight:600;" id="timer-todos">⏳ Espera unos segundos...</div>
-    </div>
+    <div class="loading-state" id="loading-todos"><div class="spinner"></div><div class="loading-text">Conectando con tu base de datos...</div></div>
   </div>
 </div>
 
 <div class="panel" id="panel-guiones">
   <div class="section-title" style="margin-bottom:4px;">Scripts de contacto</div>
-
   <div class="guion-card">
-    <div class="guion-header" onclick="toggleGuion(this)">
-      <span>💬 Primer contacto</span>
-      <span>▾</span>
-    </div>
+    <div class="guion-header" onclick="toggleGuion(this)"><span>💬 Primer contacto</span><span>▾</span></div>
     <div class="guion-body open">
-
       <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;">
-        <div style="font-size:11px;font-weight:700;color:#4B6A9B;text-transform:uppercase;letter-spacing:0.5px;">Personaliza el mensaje</div>
-        <input id="input-alumno" type="text" placeholder="Tu nombre (alumno)"
-               oninput="actualizarGuiones()"
-               style="background:#0C1829;border:1px solid #1A3058;border-radius:9px;padding:10px 12px;color:white;font-size:13px;outline:none;width:100%;box-sizing:border-box;">
-        <input id="input-prospecto" type="text" placeholder="Nombre del prospecto / padre o madre"
-               oninput="actualizarGuiones()"
-               style="background:#0C1829;border:1px solid #1A3058;border-radius:9px;padding:10px 12px;color:white;font-size:13px;outline:none;width:100%;box-sizing:border-box;">
+        <input id="input-alumno" type="text" placeholder="Tu nombre (alumno)" oninput="actualizarGuiones()" style="background:#0C1829;border:1px solid #1A3058;border-radius:9px;padding:10px 12px;color:white;font-size:13px;outline:none;">
+        <input id="input-prospecto" type="text" placeholder="Nombre del prospecto" oninput="actualizarGuiones()" style="background:#0C1829;border:1px solid #1A3058;border-radius:9px;padding:10px 12px;color:white;font-size:13px;outline:none;">
       </div>
-
-      <div style="font-size:11px;font-weight:700;color:#34D399;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;">🟢 Versión general</div>
-      <div class="guion-text" id="guion-general">Hola, ¿es [NOMBRE]? 😊
-
-Le saludo de parte de la Facultad de Odontología de la UANL. Mi nombre es [ALUMNO] y me asignaron su caso para coordinar su cita.
-
-¿Tiene disponibilidad esta semana?
-
-— Soy alumno de clínica. Los tratamientos se realizan con supervisión de docentes especializados. 🦷</div>
+      <div class="guion-text" id="guion-general">Hola, ¿es [NOMBRE]? 😊 Le saludo de parte de la Facultad de Odontología... Mi nombre es [ALUMNO]...</div>
       <button class="copy-btn" style="width:100%;justify-content:center;margin-bottom:14px;" onclick="copiarGuion('guion-general')">📋 Copiar mensaje general</button>
-
-      <div style="font-size:11px;font-weight:700;color:#FCD34D;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;">🟡 Versión infantil (dirigida a padres)</div>
-      <div class="guion-text" id="guion-infantil">Hola, buen día. ¿Es usted padre o madre de [NOMBRE]? 😊
-
-Le contacto de parte de la Facultad de Odontología de la UANL. Mi nombre es [ALUMNO] y me asignaron el caso de su hijo/a para coordinar su cita de atención dental.
-
-¿Tienen disponibilidad esta semana para acudir?
-
-— Soy alumno de clínica. Los tratamientos se realizan con supervisión de docentes especializados. 🦷</div>
-      <button class="copy-btn" style="width:100%;justify-content:center;" onclick="copiarGuion('guion-infantil')">📋 Copiar mensaje infantil</button>
-
     </div>
   </div>
-
-  <div class="guion-card">
-    <div class="guion-header" onclick="toggleGuion(this)">
-      <span>🔁 No ha respondido</span>
-      <span>▾</span>
-    </div>
-    <div class="guion-body">
-      <div class="guion-text">Buenas tardes, le escribo nuevamente de la Facultad de Odontología UANL.
-
-Hace unos días le contacté sobre su tratamiento de [TRATAMIENTO]. ¿Le sigue interesando atenderse?
-
-Si ya no puede, con gusto le damos de baja para no molestarle más. 😊</div>
-      <button class="copy-btn" style="width:100%;justify-content:center;" onclick="copiar('Buenas tardes, le escribo nuevamente de la Facultad de Odontología UANL.\n\nHace unos días le contacté sobre su tratamiento. ¿Le sigue interesando atenderse?\n\nSi ya no puede, con gusto le damos de baja para no molestarle más. 😊')">📋 Copiar mensaje</button>
-    </div>
-  </div>
-
-  <div class="guion-card">
-    <div class="guion-header" onclick="toggleGuion(this)">
-      <span>📅 Confirmar cita</span>
-      <span>▾</span>
-    </div>
-    <div class="guion-body">
-      <div class="guion-text">¡Perfecto! Le confirmo su cita:
-
-📅 Día: [DÍA]
-🕐 Hora: [HORA]
-📍 Facultad de Odontología UANL
-
-Por favor llegue 10 minutos antes con una identificación oficial. Cualquier duda, aquí estoy. ✅</div>
-      <button class="copy-btn" style="width:100%;justify-content:center;" onclick="copiar('¡Perfecto! Le confirmo su cita:\n\n📅 Día: [DÍA]\n🕐 Hora: [HORA]\n📍 Facultad de Odontología UANL\n\nPor favor llegue 10 minutos antes con una identificación oficial. Cualquier duda, aquí estoy. ✅')">📋 Copiar mensaje</button>
-    </div>
-  </div>
-
-  <div class="guion-card">
-    <div class="guion-header" onclick="toggleGuion(this)">
-      <span>📌 Guía de manejo de prospectos</span>
-      <span>▾</span>
-    </div>
-    <div class="guion-body">
-      <div style="display:flex;flex-direction:column;gap:12px;">
-
-        <div style="background:rgba(37,99,235,0.08);border:1px solid rgba(37,99,235,0.2);border-radius:10px;padding:12px;">
-          <div style="font-size:11px;font-weight:800;color:#60A5FA;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;">💰 Confirmación de costos</div>
-          <div style="font-size:13px;color:#CBD5E1;line-height:1.6;">Los prospectos conocen los precios y saben que deben pagar sus tratamientos.</div>
-        </div>
-
-        <div style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:10px;padding:12px;">
-          <div style="font-size:11px;font-weight:800;color:#34D399;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;">🪪 Trámite de cita e INE</div>
-          <div style="font-size:13px;color:#CBD5E1;line-height:1.6;margin-bottom:10px;">Para formalizar la cita, el paciente debe acudir a la facultad con su INE y <strong style="color:white;">$70 MXN</strong> para la valoración.</div>
-          <div style="display:flex;flex-direction:column;gap:8px;">
-            <div style="background:rgba(255,255,255,0.04);border-radius:8px;padding:10px;font-size:12px;color:#94A3B8;line-height:1.6;">
-              <strong style="color:#34D399;">Opción A —</strong> Ofrécete a acompañarlo personalmente al trámite.
-            </div>
-            <div style="background:rgba(255,255,255,0.04);border-radius:8px;padding:10px;font-size:12px;color:#94A3B8;line-height:1.6;">
-              <strong style="color:#34D399;">Opción B —</strong> Si prefiere enviarla por mensaje, puede ocultar su dirección; solo es necesario que la foto, el nombre y la fecha de nacimiento sean visibles.
-            </div>
-          </div>
-        </div>
-
-        <div style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:10px;padding:12px;">
-          <div style="font-size:11px;font-weight:800;color:#FCD34D;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;">🔔 Seguimiento y garantía</div>
-          <div style="font-size:13px;color:#CBD5E1;line-height:1.6;">Avisa de inmediato a tu operador cuando el paciente confirme la cita. Si pasan <strong style="color:white;">24 horas</strong> sin respuesta del prospecto, repórtalo para activar tu garantía y que te asignen uno nuevo.</div>
-        </div>
-
-      </div>
-    </div>
-  </div>
-
 </div>
 
 <div class="panel" id="panel-politicas">
   <div class="section-title" style="margin-bottom:4px;">Políticas del sistema</div>
-
   <div class="politica-item">
-    <div class="politica-header" onclick="togglePolitica(this)">
-      <span>💰 Inversión por prospecto</span><span>▾</span>
-    </div>
+    <div class="politica-header" onclick="togglePolitica(this)"><span>💰 Inversión por prospecto</span><span>▾</span></div>
     <div class="politica-body open">
       <div class="precio-row"><span class="tipo">Todos los tratamientos</span><span class="monto">$130</span></div>
-      <div class="precio-row"><span class="tipo">Muela del juicio (1 o 2)</span><span class="monto">$130</span></div>
-      <div class="precio-row"><span class="tipo">Extracción simple × 2</span><span class="monto">$260</span></div>
-      <div class="precio-row"><span class="tipo">Extracción simple × 3 o más</span><span class="monto">$390</span></div>
-      <div class="precio-row"><span class="tipo">Endodoncia / Fractura frontal / Diente oscuro</span><span class="monto" style="color:#F87171;">$1,500</span></div>
+      <div class="precio-row"><span class="tipo">Casos Premium (Endo/Fractura)</span><span class="monto" style="color:#F87171;">$1,500</span></div>
       <div class="precio-row"><span class="tipo">Sábados</span><span class="monto" style="color:#FCD34D;">GRATIS 🎁</span></div>
-    </div>
-  </div>
-
-  <div class="politica-item">
-    <div class="politica-header" onclick="togglePolitica(this)">
-      <span>🔄 Garantía de reposición</span><span>▾</span>
-    </div>
-    <div class="politica-body">
-      Si el paciente no acude a la cita confirmada, tienes derecho a solicitar una reposición. Para activarla debes subir evidencia de que el paciente confirmó la cita y no se presentó. El operador validará la garantía desde el dashboard.
-    </div>
-  </div>
-
-  <div class="politica-item">
-    <div class="politica-header" onclick="togglePolitica(this)">
-      <span>🚫 Sin reembolso</span><span>▾</span>
-    </div>
-    <div class="politica-body">
-      No se realizan devoluciones en efectivo. Si el prospecto no es viable, el saldo queda a tu favor para el siguiente prospecto. La garantía es reposición de prospecto, no devolución de dinero.
-    </div>
-  </div>
-
-  <div class="politica-item">
-    <div class="politica-header" onclick="togglePolitica(this)">
-      <span>⚡ Asignación FIFO</span><span>▾</span>
-    </div>
-    <div class="politica-body">
-      Los prospectos se asignan por orden de pago. El primero en pagar y enviar comprobante recibe el prospecto. No hay reservas sin pago confirmado. Los datos del paciente se desbloquean solo después de que el operador valide tu pago.
-    </div>
-  </div>
-
-  <div class="politica-item">
-    <div class="politica-header" onclick="togglePolitica(this)">
-      <span>🔴 Casos VIP (Endodoncia)</span><span>▾</span>
-    </div>
-    <div class="politica-body">
-      Los casos de endodoncia son verificados directamente por el operador con foto e INE del paciente. Se publican en la sección Premium una vez verificados. El primero en pagar $1,500 y confirmar recibe el caso con foto, INE y datos completos.
     </div>
   </div>
 </div>
@@ -1012,53 +292,29 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
       <div style="font-size:40px; margin-bottom:12px;">💬</div>
       <div style="font-family:'Syne',sans-serif; font-size:16px; font-weight:800; margin-bottom:8px; color:white;">¿Cómo adquirir un prospecto?</div>
       <div style="font-size:13px; color:#94A3B8; line-height:1.7;">
-        1. Selecciona el prospecto que te interese<br>
-        2. Toca <strong style="color:white;">Adquirir</strong> — se abrirá WhatsApp<br>
-        3. Pregunta si está disponible<br>
-        4. El operador te enviará los datos de transferencia<br>
-        5. Realiza el pago y envía tu comprobante<br>
-        6. ¡Listo! Recibirás los datos del paciente
+        1. Toca <strong style="color:white;">Adquirir</strong> en el prospecto<br>
+        2. Déjanos tu Nombre y <b>WhatsApp</b><br>
+        3. Realiza el pago a nuestra CLABE<br>
+        4. Sube tu comprobante en la app<br>
+        5. Te enviaremos el paciente a tu chat
       </div>
     </div>
-    <div class="warning-box">
-      🔒 Los datos de pago se envían directamente por WhatsApp para mayor seguridad. Nunca compartas tu comprobante con otros alumnos.
-    </div>
-    <button class="sheet-cta cta-primary" onclick="showPanel('prospectos', document.querySelectorAll('.nav-item')[1])">
-      🦷 Ver prospectos disponibles
-    </button>
+    <button class="sheet-cta cta-primary" onclick="showPanel('prospectos', document.querySelectorAll('.nav-item')[1])">🦷 Ver prospectos disponibles</button>
   </div>
 </div>
 
 <nav class="bottom-nav">
-  <button class="nav-item active" onclick="showPanel('inicio', this)">
-    <span class="nav-icon">🏠</span>
-    <span class="nav-label">Inicio</span>
-  </button>
-  <button class="nav-item" onclick="showPanel('prospectos', this)">
-    <span class="nav-icon">🦷</span>
-    <span class="nav-label">Prospectos</span>
-  </button>
-  <button class="nav-item" onclick="showPanel('pago', this)">
-    <span class="nav-icon">💳</span>
-    <span class="nav-label">Pagar</span>
-  </button>
-  <button class="nav-item" onclick="showPanel('guiones', this)">
-    <span class="nav-icon">💬</span>
-    <span class="nav-label">Guiones</span>
-  </button>
-  <button class="nav-item" onclick="showPanel('politicas', this)">
-    <span class="nav-icon">📋</span>
-    <span class="nav-label">Políticas</span>
-  </button>
+  <button class="nav-item active" onclick="showPanel('inicio', this)"><span class="nav-icon">🏠</span><span class="nav-label">Inicio</span></button>
+  <button class="nav-item" onclick="showPanel('prospectos', this)"><span class="nav-icon">🦷</span><span class="nav-label">Prospectos</span></button>
+  <button class="nav-item" onclick="showPanel('pago', this)"><span class="nav-icon">💳</span><span class="nav-label">Pagar</span></button>
+  <button class="nav-item" onclick="showPanel('guiones', this)"><span class="nav-icon">💬</span><span class="nav-label">Guiones</span></button>
+  <button class="nav-item" onclick="showPanel('politicas', this)"><span class="nav-icon">📋</span><span class="nav-label">Políticas</span></button>
 </nav>
 
 <div class="overlay" id="overlay" onclick="cerrarSheet()"></div>
 <div class="bottom-sheet" id="bottom-sheet">
   <div class="sheet-handle"></div>
-  <div class="sheet-header">
-    <div class="sheet-title" id="sheet-titulo">Detalle del prospecto</div>
-    <button class="sheet-close" onclick="cerrarSheet()">✕</button>
-  </div>
+  <div class="sheet-header"><div class="sheet-title" id="sheet-titulo">Detalle</div><button class="sheet-close" onclick="cerrarSheet()">✕</button></div>
   <div class="sheet-body" id="sheet-body"></div>
 </div>
 
@@ -1079,21 +335,19 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
   let filtroActual = 'todos';
   let prospectoSeleccionado = null;
   let nombreAlumnoSolicitud = '';
+  let telefonoAlumnoSolicitud = '';
   let comprobanteB64 = '';
 
-  // ── DETECTOR PREMIUM GLOBAL ──
   function esCasoPremium(trat, estado) {
     if (estado === 'VIP') return true;
     const t = String(trat || '').toLowerCase();
     return !!t.match(/endo|nervio|fractura|frontal|oscuro|anterior/);
   }
 
-  // ── PRECIO POR TRATAMIENTO ──
   function tieneAparato(val) {
     if (!val) return false;
     if (val === true) return true;
-    const s = String(val).toLowerCase().trim();
-    return s === 'true' || s.charAt(0) === 's';
+    return String(val).toLowerCase().trim() === 'true' || String(val).toLowerCase().charAt(0) === 's';
   }
 
   function contarExtracciones(extr) {
@@ -1109,13 +363,9 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
     const t = String(trat || '').toLowerCase();
     const h = String(horario || '').toLowerCase();
 
-    // 1. VIP / PREMIUM Automático
     if (esCasoPremium(trat, estado)) return { monto: '$' + PRECIOS.vip.toLocaleString(), clase: 'premium' };
-
-    // 2. SABADO GRATIS
     if (estado === 'Sabado') return { monto: 'GRATIS', clase: 'gratis' };
 
-    // 3. LÓGICA INFANTIL 8 a 12 AÑOS
     let esInfantil = t.includes('infantil') || t.includes('niño') || t.includes('pedi') || t.includes('menor');
     let edadNum = parseInt(edad) || 0;
     let es8a12 = edadNum >= 8 && edadNum <= 12;
@@ -1128,23 +378,17 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
       return { monto: '$' + PRECIOS.infantil_tarde.toLocaleString(), clase: 'normal' };
     }
 
-    // 4. DEMÁS INFANTILES (fuera del rango o sin especificar)
     if (esInfantil) {
       if (/\bam\b|mañana|mañanas/i.test(h)) return { monto: '$' + PRECIOS.infantil_manana.toLocaleString(), clase: 'normal' };
       return { monto: '$' + PRECIOS.infantil_tarde.toLocaleString(), clase: 'normal' };
     }
 
-    // 5. APARATOS NO INFANTILES
     if (tieneAparato(aparato)) return { monto: '$' + PRECIOS.aparato.toLocaleString(), clase: 'normal' };
-
-    // 6. EXTRACCIONES
     const n = contarExtracciones(extr);
     if (t.includes('extrac') || t.includes('sacar') || t.includes('muela') || t.includes('juicio')) {
       if (n >= 3) return { monto: '$' + PRECIOS.extraccion_3.toLocaleString(), clase: 'normal' };
       if (n >= 2) return { monto: '$' + PRECIOS.extraccion_2.toLocaleString(), clase: 'normal' };
     }
-
-    // 7. GENERAL
     return { monto: '$' + PRECIOS.general.toLocaleString(), clase: 'normal' };
   }
 
@@ -1157,56 +401,31 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
     if (t.includes('corona')) return '👑';
     if (t.includes('prótesis') || t.includes('dentadura')) return '🦴';
     if (t.includes('infantil') || t.includes('menor') || t.includes('niño')) return '👶';
-    if (t.includes('blanquea')) return '✨';
-    if (t.includes('puente')) return '🔗';
-    if (t.includes('cirugía') || t.includes('cirugia')) return '⚕️';
     return '🦷';
   }
 
-  function limpiarTratamiento(t) {
-    return String(t || '').replace(/\.$/, '').trim();
-  }
+  function limpiarTratamiento(t) { return String(t || '').replace(/\.$/, '').trim(); }
 
-  // ── CONSTRUIR CARD ──
   function buildCard(p, delay = 0) {
     const precio = getPrecio(p.tratamiento, p.estado, p.extracciones, p.horario, p.aparato, p.edad);
-    const icono  = getIcono(p.tratamiento);
     const trat   = limpiarTratamiento(p.tratamiento);
     const horario = p.horario || 'A definir';
-    const folio  = String(p.expediente || '').includes('primera') ? '🆕 Sin folio' : '📄 Con folio';
     const idSafe = String(p.id).trim();
 
-    let numFotos = 0;
-    if (p.foto) {
-      numFotos = String(p.foto).split('|').filter(u => u.trim() !== '').length;
-    }
+    let numFotos = p.foto ? String(p.foto).split('|').filter(u => u.trim() !== '').length : 0;
     const badgeFoto = numFotos > 0 ? `<span class="badge-foto">📷 ${numFotos > 1 ? numFotos + ' Fotos' : 'Con foto'}</span>` : '';
-    
     const badgeAparato = tieneAparato(p.aparato) ? '<span class="badge-foto" style="background:rgba(251,191,36,0.15);color:#FCD34D;border-color:rgba(251,191,36,0.3);">🦷 Aparato</span>' : '';
     
     const isPrem = esCasoPremium(p.tratamiento, p.estado);
-    const badgeEstado = isPrem
-      ? `<span class="badge badge-red">🔴 PREMIUM</span>`
-      : p.estado === 'Sabado'
-      ? `<span class="badge badge-gold">🎁 GRATIS</span>`
-      : `<span class="badge badge-green">🟢 Disponible</span>`;
-
+    const badgeEstado = isPrem ? `<span class="badge badge-red">🔴 PREMIUM</span>` : p.estado === 'Sabado' ? `<span class="badge badge-gold">🎁 GRATIS</span>` : `<span class="badge badge-green">🟢 Disponible</span>`;
     const btnClase = isPrem ? 'btn-premium' : p.estado === 'Sabado' ? 'btn-gratis' : 'btn-normal';
     const btnText  = p.estado === 'Sabado' ? '🎁 Apartar' : 'Adquirir →';
-    const cardClase = isPrem ? 'vip' : p.estado === 'Sabado' ? 'sabado' : 'disponible';
 
     return `
-      <div class="card ${cardClase}" style="animation-delay:${delay}ms" onclick="abrirSheet('${idSafe}')">
-        <div class="card-top">
-          <div class="card-id">${icono} ${idSafe}</div>
-          <div class="card-badges">${badgeEstado}${badgeFoto}${badgeAparato}</div>
-        </div>
+      <div class="card ${isPrem ? 'vip' : p.estado === 'Sabado' ? 'sabado' : 'disponible'}" style="animation-delay:${delay}ms" onclick="abrirSheet('${idSafe}')">
+        <div class="card-top"><div class="card-id">${getIcono(p.tratamiento)} ${idSafe}</div><div class="card-badges">${badgeEstado}${badgeFoto}${badgeAparato}</div></div>
         <div class="card-tratamiento">${trat}</div>
-        <div class="card-meta">
-          <div class="meta-chip">🕐 ${horario}</div>
-          <div class="meta-chip">${folio}</div>
-          ${p.extracciones ? `<div class="meta-chip">🔢 ${p.extracciones}</div>` : ''}
-        </div>
+        <div class="card-meta"><div class="meta-chip">🕐 ${horario}</div></div>
         <div class="card-footer">
           <div class="card-precio ${precio.clase}">${precio.monto}</div>
           <button class="btn-adquirir ${btnClase}" onclick="event.stopPropagation(); ${p.estado === 'Sabado' ? `abrirWhatsAppGratis('${idSafe}')` : `solicitarProspecto('${idSafe}')`}">${btnText}</button>
@@ -1214,79 +433,42 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
       </div>`;
   }
 
-  // ── CARGAR PROSPECTOS ──
   async function cargarProspectos() {
-    const btn  = document.getElementById('sync-btn');
-    btn.classList.add('loading');
+    document.getElementById('sync-btn').classList.add('loading');
     try {
-      const res  = await fetch(API_URL);
+      const res = await fetch(API_URL);
       const json = await res.json();
       if (!json.ok) throw new Error('API error');
-
       todosLosProspectos = json.data.reverse(); 
       if (json.precios) PRECIOS = json.precios;
       renderTodo();
-      toast('✅ Actualizado correctamente');
-    } catch(e) {
-      toast('❌ Error al cargar. Reintenta.');
-    } finally {
-      btn.classList.remove('loading');
-    }
+      toast('✅ Actualizado');
+    } catch(e) { toast('❌ Error al cargar.'); }
+    finally { document.getElementById('sync-btn').classList.remove('loading'); }
   }
 
-  // ── RENDER ──
   function renderTodo() {
-    const vips        = todosLosProspectos.filter(p => esCasoPremium(p.tratamiento, p.estado));
+    const vips = todosLosProspectos.filter(p => esCasoPremium(p.tratamiento, p.estado));
     const disponibles = todosLosProspectos.filter(p => p.estado === 'Disponible' && !esCasoPremium(p.tratamiento, p.estado));
-    const sabados     = todosLosProspectos.filter(p => p.estado === 'Sabado');
-    const total       = todosLosProspectos.length;
+    const sabados = todosLosProspectos.filter(p => p.estado === 'Sabado');
 
     document.getElementById('stat-disponibles').textContent = disponibles.length;
     document.getElementById('stat-vip').textContent  = vips.length;
     document.getElementById('stat-sabado').textContent = sabados.length;
-    document.getElementById('stat-total').textContent  = total;
-
-    const vipBanner = document.getElementById('vip-banner-container');
-    vipBanner.innerHTML = vips.length > 0 ? `
-      <div class="vip-banner" onclick="filtrar('vip', null); showPanel('prospectos', document.querySelectorAll('.nav-item')[1])">
-        <div class="vip-icon">🔴</div>
-        <div class="vip-text">
-          <div class="vip-title">Casos Premium disponibles</div>
-          <div class="vip-sub">Endodoncia o Fractura · $1,500 por caso</div>
-        </div>
-        <div class="vip-count">${vips.length}</div>
-      </div>` : '';
-
-    const sabBanner = document.getElementById('sabado-banner-container');
-    sabBanner.innerHTML = sabados.length > 0 ? `
-      <div class="sabado-banner">
-        <div class="sabado-icon">🎁</div>
-        <div class="vip-text">
-          <div class="sabado-title">${sabados.length} prospecto${sabados.length > 1 ? 's' : ''} disponible${sabados.length > 1 ? 's' : ''}</div>
-          <div class="sabado-sub">Gratis para alumnos activos — solo este sábado</div>
-        </div>
-      </div>` : '';
+    document.getElementById('stat-total').textContent  = todosLosProspectos.length;
 
     const recientes = todosLosProspectos.slice(0, 5); 
     document.getElementById('recientes-count').textContent = recientes.length;
-    const recDiv = document.getElementById('cards-recientes');
-    if (recientes.length === 0) {
-      recDiv.innerHTML = `<div class="empty"><p>No hay prospectos.</p></div>`;
-    } else {
-      recDiv.innerHTML = recientes.map((p, i) => buildCard(p, i * 60)).join('');
-    }
+    document.getElementById('cards-recientes').innerHTML = recientes.length ? recientes.map((p, i) => buildCard(p, i * 60)).join('') : '<div class="empty"><p>No hay prospectos.</p></div>';
     renderFiltro();
   }
 
   function renderFiltro() {
     let lista = todosLosProspectos;
-    if (filtroActual === 'disponible') {
-      lista = todosLosProspectos.filter(p => p.estado === 'Disponible' && !esCasoPremium(p.tratamiento, p.estado));
-    } else if (filtroActual === 'vip') {
-      lista = todosLosProspectos.filter(p => esCasoPremium(p.tratamiento, p.estado));
-    } else if (filtroActual === 'sabado') {
-      lista = todosLosProspectos.filter(p => p.estado.toLowerCase() === 'sabado');
-    }
+    if (filtroActual === 'disponible') lista = todosLosProspectos.filter(p => p.estado === 'Disponible' && !esCasoPremium(p.tratamiento, p.estado));
+    else if (filtroActual === 'vip') lista = todosLosProspectos.filter(p => esCasoPremium(p.tratamiento, p.estado));
+    else if (filtroActual === 'sabado') lista = todosLosProspectos.filter(p => p.estado === 'Sabado');
+    
     document.getElementById('todos-count').textContent = lista.length;
     document.getElementById('cards-todos').innerHTML = lista.map((p, i) => buildCard(p, i * 40)).join('');
   }
@@ -1298,126 +480,54 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
     renderFiltro();
   }
 
-  // ── BOTTOM SHEET ──
   function abrirSheet(id) {
     const p = todosLosProspectos.find(x => String(x.id).trim() === String(id).trim());
     if (!p) return;
-    prospectoSeleccionado = p;
-
     const precio = getPrecio(p.tratamiento, p.estado, p.extracciones, p.horario, p.aparato, p.edad);
-    const trat   = limpiarTratamiento(p.tratamiento);
-    const horario = p.horario || 'A definir';
-    const folio  = String(p.expediente || '').includes('primera') ? 'No tiene folio' : 'Sí tiene folio';
-
     const esGratis  = p.estado === 'Sabado';
     const esPremium = esCasoPremium(p.tratamiento, p.estado);
-    const btnClass  = esPremium ? 'cta-premium' : esGratis ? 'cta-gratis' : 'cta-primary';
-    const btnText   = esGratis ? '🎁 Apartar — preguntar por WhatsApp' : esPremium ? '🔴 Preguntar disponibilidad · $1,500' : `💬 Preguntar disponibilidad · ${precio.monto}`;
+    const btnText   = esGratis ? '🎁 Apartar — preguntar por WhatsApp' : `Solicitar ahora · ${precio.monto}`;
 
-    let fotosHtml = '';
-    if (p.foto) {
-      const fotosArr = String(p.foto).split('|').map(u => u.trim()).filter(u => u.length > 0);
-      fotosArr.forEach((urlRaw, index) => {
-        let safeUrl = urlRaw.replace('http:', 'https:');
-        const matchId = safeUrl.match(/[?&]id=([a-zA-Z0-9_-]{25,})/);
-        if (matchId) safeUrl = 'https://drive.google.com/uc?export=view&id=' + matchId[1];
-        fotosHtml += `
-        <div style="margin-top:12px;border-radius:12px;overflow:hidden;border:1px solid var(--border);" onclick="abrirLightbox('${safeUrl}')">
-          <img src="${safeUrl}" alt="Foto ${index + 1}" style="width:100%;max-height:220px;object-fit:cover;display:block;">
-          <div style="text-align:center;padding:8px;font-size:11px;color:var(--muted)">🔍 Ampliar Foto ${index + 1}</div>
-        </div>`;
-      });
-    }
-
-    document.getElementById('sheet-titulo').textContent = p.id + ' — ' + trat;
+    document.getElementById('sheet-titulo').textContent = p.id;
     document.getElementById('sheet-body').innerHTML = `
-      <div class="sheet-row"><span class="key">Tratamiento</span><span class="val">${trat}</span></div>
-      <div class="sheet-row"><span class="key">Horario preferido</span><span class="val">${horario}</span></div>
-      <div class="sheet-row"><span class="key">Expediente</span><span class="val">${folio}</span></div>
+      <div class="sheet-row"><span class="key">Tratamiento</span><span class="val">${limpiarTratamiento(p.tratamiento)}</span></div>
+      <div class="sheet-row"><span class="key">Horario</span><span class="val">${p.horario || 'N/A'}</span></div>
       <div class="sheet-row"><span class="key">Inversión</span><span class="val" style="color:var(--green); font-size:20px;">${precio.monto}</span></div>
-      ${fotosHtml}
-      <button class="sheet-cta ${btnClass}" onclick="${esGratis ? `abrirWhatsAppGratis('${id}')` : `solicitarProspecto('${id}')`}">${btnText}</button>
+      <button class="sheet-cta ${esPremium ? 'cta-premium' : esGratis ? 'cta-gratis' : 'cta-primary'}" onclick="${esGratis ? `abrirWhatsAppGratis('${id}')` : `solicitarProspecto('${id}')`}">${btnText}</button>
     `;
-
     document.getElementById('overlay').classList.add('show');
     document.getElementById('bottom-sheet').classList.add('open');
   }
 
-  function cerrarSheet() {
-    document.getElementById('overlay').classList.remove('show');
-    document.getElementById('bottom-sheet').classList.remove('open');
-  }
-
-  // ── WHATSAPP ──
+  function cerrarSheet() { document.getElementById('overlay').classList.remove('show'); document.getElementById('bottom-sheet').classList.remove('open'); }
   function abrirWhatsAppGratis(id) {
-    const p = todosLosProspectos.find(x => String(x.id).trim() === String(id).trim());
-    if(!p) return;
-    const msg = encodeURIComponent(`Hola, soy alumno 🦷\nQuiero apartar el prospecto de sábado gratuito:\n📋 *ID:* ${p.id}\n🔧 *Tratamiento:* ${p.tratamiento}\n🎁 *Inversión:* GRATIS`);
-    window.open(`https://wa.me/${WHATSAPP}?text=${msg}`, '_blank');
+    const p = todosLosProspectos.find(x => x.id === id);
+    if(p) window.open(`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(`Hola, soy alumno 🦷\nQuiero apartar el prospecto GRATIS:\n📋 *ID:* ${p.id}\n🔧 *Tratamiento:* ${p.tratamiento}`)}`, '_blank');
   }
 
-  // ── UTILS ──
   function showPanel(id, el) {
     document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
     document.getElementById('panel-' + id).classList.add('active');
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
     if (el) el.classList.add('active');
-    cerrarSheet();
-    window.scrollTo(0, 0);
+    cerrarSheet(); window.scrollTo(0, 0);
   }
 
-  function copiar(texto) {
-    navigator.clipboard.writeText(texto).then(() => toast('📋 Copiado al portapapeles'));
-  }
+  function copiar(texto) { navigator.clipboard.writeText(texto).then(() => toast('📋 Copiado')); }
+  function toast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2500); }
+  function abrirLightbox(url) { document.getElementById('lightbox').style.opacity = '1'; document.getElementById('lightbox').style.pointerEvents = 'all'; document.getElementById('lightbox-img').src = url; }
+  function cerrarLightbox() { document.getElementById('lightbox').style.opacity = '0'; document.getElementById('lightbox').style.pointerEvents = 'none'; }
+  function toggleGuion(header) { header.nextElementSibling.classList.toggle('open'); }
+  function togglePolitica(header) { header.nextElementSibling.classList.toggle('open'); }
 
-  function toast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 2500);
-  }
-
-  function actualizarGuiones() {
-    const alumno    = (document.getElementById('input-alumno')?.value || '').trim() || '[ALUMNO]';
-    const prospecto = (document.getElementById('input-prospecto')?.value || '').trim() || '[NOMBRE]';
-    const g = document.getElementById('guion-general');
-    const i = document.getElementById('guion-infantil');
-    if (g) g.textContent = 'Hola, ¿es ' + prospecto + '? 😊\n\nLe saludo de parte de la Facultad de Odontología de la UANL. Mi nombre es ' + alumno + ' y me asignaron su caso para coordinar su cita.\n\n¿Tiene disponibilidad esta semana?\n\n— Soy alumno de clínica. Los tratamientos se realizan con supervisión de docentes especializados. 🦷';
-    if (i) i.textContent = 'Hola, buen día. ¿Es usted padre o madre de ' + prospecto + '? 😊\n\nLe contacto de parte de la Facultad de Odontología de la UANL. Mi nombre es ' + alumno + ' y me asignaron el caso de su hijo/a para coordinar su cita de atención dental.\n\n¿Tienen disponibilidad esta semana para acudir?\n\n— Soy alumno de clínica. Los tratamientos se realizan con supervisión de docentes especializados. 🦷';
-  }
-
-  function copiarGuion(id) {
-    const el = document.getElementById(id);
-    if (el) copiar(el.textContent);
-  }
-
-  function toggleGuion(header) {
-    const body = header.nextElementSibling;
-    body.classList.toggle('open');
-  }
-
-  function togglePolitica(header) {
-    const body = header.nextElementSibling;
-    body.classList.toggle('open');
-  }
-
-  function abrirLightbox(url) {
-    const lb = document.getElementById('lightbox');
-    document.getElementById('lightbox-img').src = url;
-    lb.style.opacity = '1'; lb.style.pointerEvents = 'all';
-  }
-  function cerrarLightbox() {
-    const lb = document.getElementById('lightbox');
-    lb.style.opacity = '0'; lb.style.pointerEvents = 'none';
-  }
-
-  // ── FLUJO SOLICITAR ──
+  // ── FLUJO DE SOLICITUD ──
   function solicitarProspecto(id) {
     const p = todosLosProspectos.find(x => String(x.id).trim() === String(id).trim());
     if (!p) return;
     prospectoSeleccionado = p;
     comprobanteB64 = '';
     document.getElementById('inputNombreAlumno').value = '';
+    document.getElementById('inputTelefonoAlumno').value = '';
     document.getElementById('paso1').style.display = 'block';
     document.getElementById('paso2').style.display = 'none';
     document.getElementById('paso3').style.display = 'none';
@@ -1431,36 +541,33 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
     document.getElementById('exitoRef').textContent = ref;
     document.getElementById('modalSolicitar').classList.add('active');
   }
-
-  function cerrarModalSolicitar() {
-    document.getElementById('modalSolicitar').classList.remove('active');
-  }
+  function cerrarModalSolicitar() { document.getElementById('modalSolicitar').classList.remove('active'); }
 
   function irPaso2() {
     const nombre = document.getElementById('inputNombreAlumno').value.trim();
-    if (!nombre) {
-      document.getElementById('inputNombreAlumno').style.borderColor = '#EF4444';
-      return;
-    }
+    const telefono = document.getElementById('inputTelefonoAlumno').value.trim();
+    
+    if (!nombre) { document.getElementById('inputNombreAlumno').style.borderColor = '#EF4444'; return; }
+    if (!telefono || telefono.length < 10) { document.getElementById('inputTelefonoAlumno').style.borderColor = '#EF4444'; return; }
+    
+    document.getElementById('inputNombreAlumno').style.borderColor = '#1E3A6E';
+    document.getElementById('inputTelefonoAlumno').style.borderColor = '#1E3A6E';
+    
     nombreAlumnoSolicitud = nombre;
+    telefonoAlumnoSolicitud = telefono; // Guardamos el número
     document.getElementById('paso1').style.display = 'none';
     document.getElementById('paso2').style.display = 'block';
   }
 
-  function irPaso3() {
-    document.getElementById('paso2').style.display = 'none';
-    document.getElementById('paso3').style.display = 'block';
-  }
-
+  function irPaso3() { document.getElementById('paso2').style.display = 'none'; document.getElementById('paso3').style.display = 'block'; }
   function previsualizarComprobante(event) {
     const file = event.target.files[0];
     if (!file) return;
     const reader = new FileReader();
     reader.onload = function(e) {
       comprobanteB64 = e.target.result;
-      const preview = document.getElementById('previewImg');
-      preview.src = comprobanteB64;
-      preview.style.display = 'block';
+      document.getElementById('previewImg').src = comprobanteB64;
+      document.getElementById('previewImg').style.display = 'block';
       document.getElementById('btnEnviar').disabled = false;
     };
     reader.readAsDataURL(file);
@@ -1468,9 +575,7 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
 
   async function enviarSolicitud() {
     const btn = document.getElementById('btnEnviar');
-    const txt = document.getElementById('btnEnviarTxt');
-    btn.disabled = true;
-    txt.textContent = 'Enviando...';
+    btn.disabled = true; document.getElementById('btnEnviarTxt').textContent = 'Enviando...';
     
     const pc = getPrecio(prospectoSeleccionado.tratamiento, prospectoSeleccionado.estado, prospectoSeleccionado.extracciones, prospectoSeleccionado.horario, prospectoSeleccionado.aparato, prospectoSeleccionado.edad);
     const ref = 'VIN-' + String(prospectoSeleccionado.id).padStart(3,'0');
@@ -1479,17 +584,16 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
       await fetch(API_URL + '?accion=registrarSolicitud' +
         '&id=' + encodeURIComponent(prospectoSeleccionado.id) +
         '&alumno=' + encodeURIComponent(nombreAlumnoSolicitud) +
+        '&telAlumno=' + encodeURIComponent(telefonoAlumnoSolicitud) + // Enviamos el teléfono al backend
         '&ref=' + encodeURIComponent(ref) +
         '&monto=' + encodeURIComponent(pc.monto) +
-        '&comprobante=' + encodeURIComponent(comprobanteB64.substring(0, 5000)),
-        { method: 'GET' }
+        '&comprobante=' + encodeURIComponent(comprobanteB64.substring(0, 5000))
       );
       document.getElementById('paso3').style.display = 'none';
       document.getElementById('pasoExito').style.display = 'block';
       await cargarProspectos();
     } catch(e) {
-      btn.disabled = false;
-      txt.textContent = 'Enviar comprobante';
+      btn.disabled = false; document.getElementById('btnEnviarTxt').textContent = 'Enviar comprobante';
       alert('Error al enviar.');
     }
   }
@@ -1503,9 +607,10 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
 
     <div id="paso1">
       <div class="step-indicator"><div class="step active"></div><div class="step"></div><div class="step"></div></div>
-      <div class="modal-title">¿Cuál es tu nombre?</div>
+      <div class="modal-title">Déjanos tus datos</div>
       <div class="modal-subtitle" id="sol-trat-label">Cargando tratamiento...</div>
       <input class="modal-input" id="inputNombreAlumno" type="text" placeholder="Tu nombre completo..." autocomplete="off">
+      <input class="modal-input" id="inputTelefonoAlumno" type="tel" placeholder="Tu número de WhatsApp (10 dígitos)..." autocomplete="off" style="margin-bottom: 16px;">
       <button class="btn-solicitar-confirm" onclick="irPaso2()">Continuar →</button>
     </div>
 
@@ -1534,12 +639,11 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
       <div style="text-align:center;">
         <div style="font-size:56px;margin-bottom:16px;">✅</div>
         <div class="modal-title">¡Solicitud enviada!</div>
-        <div class="modal-subtitle">Validaremos el pago y te enviaremos los datos por WhatsApp.<br><br><strong>Ref: <span id="exitoRef" style="color:var(--gold)"></span></strong></div>
+        <div class="modal-subtitle">Validaremos el pago y te enviaremos al paciente por WhatsApp.<br><br><strong>Ref: <span id="exitoRef" style="color:var(--gold)"></span></strong></div>
         <button onclick="cerrarModalSolicitar()" class="btn-solicitar-confirm" style="background:#1A2744;">Cerrar</button>
       </div>
     </div>
   </div>
 </div>
-
 </body>
 </html>
