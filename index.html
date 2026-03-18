@@ -1195,10 +1195,9 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
     const btnText  = p.estado === 'Sabado' ? '🎁 Apartar' : 'Adquirir →';
     const cardClase = isPrem ? 'vip' : p.estado === 'Sabado' ? 'sabado' : 'disponible';
 
-    const datosSeguros = JSON.stringify(p).replace(/"/g, '&quot;');
-
+    // 🛠️ SOLUCIÓN: Pasamos SOLO el ID como texto simple. ¡Imposible que se rompa!
     return `
-      <div class="card ${cardClase}" style="animation-delay:${delay}ms" onclick="abrirSheet(${datosSeguros})">
+      <div class="card ${cardClase}" style="animation-delay:${delay}ms" onclick="abrirSheet('${p.id}')">
         <div class="card-top">
           <div class="card-id">${icono} ${p.id}</div>
           <div class="card-badges">${badgeEstado}${badgeFoto}${badgeAparato}</div>
@@ -1211,7 +1210,7 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
         </div>
         <div class="card-footer">
           <div class="card-precio ${precio.clase}">${precio.monto}</div>
-          <button class="btn-adquirir ${btnClase}" onclick="event.stopPropagation(); ${p.estado === 'Sabado' ? `abrirWhatsApp('${p.id}')` : `solicitarProspecto(${datosSeguros})`}">${btnText}</button>
+          <button class="btn-adquirir ${btnClase}" onclick="event.stopPropagation(); ${p.estado === 'Sabado' ? `abrirWhatsApp('${p.id}')` : `solicitarProspecto('${p.id}')`}">${btnText}</button>
         </div>
       </div>`;
   }
@@ -1340,8 +1339,11 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
   }
 
   // ── BOTTOM SHEET ──
-  function abrirSheet(p) {
-    if (typeof p === 'string') p = JSON.parse(p);
+  function abrirSheet(id) {
+    // 🛠️ SOLUCIÓN: Buscamos el paciente por su ID en la lista original
+    const p = todosLosProspectos.find(x => x.id === id);
+    if (!p) return;
+    
     prospectoSeleccionado = p;
 
     const precio = getPrecio(p.tratamiento, p.estado, p.extracciones, p.horario, p.aparato, p.edad);
@@ -1412,11 +1414,11 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
   }
 
   // ── WHATSAPP ──
-  function abrirWhatsApp() {
-    const p    = prospectoSeleccionado;
+  function abrirWhatsApp(idOverride) {
+    const p    = idOverride ? todosLosProspectos.find(x => x.id === idOverride) : prospectoSeleccionado;
     const id   = p ? p.id : '';
     const trat = p ? (p.tratamiento||'').replace(/\.$/,'') : '';
-    const precio = getPrecio(p.tratamiento, p.estado, p.extracciones, p.horario, p.aparato, p.edad).monto;
+    const precio = p ? getPrecio(p.tratamiento, p.estado, p.extracciones, p.horario, p.aparato, p.edad).monto : '';
     const msg  = encodeURIComponent(
 `Hola, soy alumno de la Facultad de Odontología UANL 🦷
 
@@ -1519,7 +1521,11 @@ Quiero apartar el siguiente prospecto de sábado gratuito:
   }
 
   // ── FLUJO SOLICITAR ──────────────────────────────────────────
-  function solicitarProspecto(p) {
+  function solicitarProspecto(id) {
+    // 🛠️ SOLUCIÓN: Buscamos el paciente por su ID
+    const p = todosLosProspectos.find(x => x.id === id);
+    if (!p) return;
+
     prospectoSeleccionado = p;
     comprobanteB64 = '';
     document.getElementById('inputNombreAlumno').value = '';
