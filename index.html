@@ -1079,9 +1079,14 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
   let comprobanteB64 = '';
   let prospectoSeleccionado = null;
 
+  // ── DETECTOR PREMIUM GLOBAL ──
+  function esCasoPremium(trat, estado) {
+    if (estado === 'VIP') return true;
+    const t = (trat || '').toLowerCase();
+    return !!t.match(/endo|nervio|fractura|frontal|oscuro|anterior/);
+  }
+
   // ── PRECIO POR TRATAMIENTO ──
-  // Detecta aparato: viene como boolean true/false desde el Apps Script
-  // o como texto del formulario "Sí, me indicaron que necesita un aparato..."
   function tieneAparato(val) {
     if (!val) return false;
     if (val === true) return true;
@@ -1089,38 +1094,63 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
     return s === 'true' || s.charAt(0) === 's';
   }
 
-  // Convierte texto del formulario ("Una","Dos","Tres o más") a número
   function contarExtracciones(extr) {
     if (!extr) return 0;
     const s = String(extr).toLowerCase();
     if (s.includes('tres') || s.includes('3') || s.includes('más') || s.includes('mas')) return 3;
-    if (s.includes('dos') || s === '2') return 1;
+    if (s.includes('dos') || s === '2') return 2;
     if (s.includes('una') || s === '1') return 1;
-    return parseInt(extr) || 1; // número directo o default 1
+    return parseInt(extr) || 1;
   }
 
-  function getPrecio(trat, estado, extr, horario, aparato) {
+  function getPrecio(trat, estado, extr, horario, aparato, edad) {
     const t = (trat || '').toLowerCase();
-    if (estado === 'VIP') return { monto: '$' + PRECIOS.vip.toLocaleString(), clase: 'premium' };
+    const h = (horario || '').toLowerCase();
+
+    // 1. VIP / PREMIUM Automático
+    if (esCasoPremium(trat, estado)) return { monto: '$' + PRECIOS.vip.toLocaleString(), clase: 'premium' };
+
+    // 2. SABADO GRATIS
     if (estado === 'Sabado') return { monto: 'GRATIS', clase: 'gratis' };
-    if (t.match(/endo|nervio|fractura|frontal|oscuro|anterior/)) return { monto: '$' + PRECIOS.vip.toLocaleString(), clase: 'premium' };
-    if (tieneAparato(aparato)) return { monto: '$' + PRECIOS.aparato.toLocaleString(), clase: 'normal' };
-    if (t.includes('infantil') || t.includes('niño') || t.includes('pedi')) {
-      if (/\bam\b/i.test(horario || '')) return { monto: '$' + PRECIOS.infantil_manana.toLocaleString(), clase: 'normal' };
+
+    // 3. LÓGICA INFANTIL 8 a 12 AÑOS
+    let esInfantil = t.includes('infantil') || t.includes('niño') || t.includes('pedi') || t.includes('menor');
+    let edadNum = parseInt(edad) || 0;
+    let es8a12 = edadNum >= 8 && edadNum <= 12;
+
+    if (esInfantil && es8a12) {
+      let reqAparato = tieneAparato(aparato);
+      let puedeManana = /mañana|mañanas|\bam\b/i.test(h);
+
+      if (reqAparato && puedeManana) return { monto: '$500', clase: 'normal' };
+      if (reqAparato || puedeManana) return { monto: '$300', clase: 'normal' };
       return { monto: '$' + PRECIOS.infantil_tarde.toLocaleString(), clase: 'normal' };
     }
+
+    // 4. DEMÁS INFANTILES (fuera del rango o sin especificar)
+    if (esInfantil) {
+      if (/\bam\b|mañana|mañanas/i.test(h)) return { monto: '$' + PRECIOS.infantil_manana.toLocaleString(), clase: 'normal' };
+      return { monto: '$' + PRECIOS.infantil_tarde.toLocaleString(), clase: 'normal' };
+    }
+
+    // 5. APARATOS NO INFANTILES
+    if (tieneAparato(aparato)) return { monto: '$' + PRECIOS.aparato.toLocaleString(), clase: 'normal' };
+
+    // 6. EXTRACCIONES
     const n = contarExtracciones(extr);
     if (t.includes('extrac') || t.includes('sacar') || t.includes('muela') || t.includes('juicio')) {
       if (n >= 3) return { monto: '$' + PRECIOS.extraccion_3.toLocaleString(), clase: 'normal' };
       if (n >= 2) return { monto: '$' + PRECIOS.extraccion_2.toLocaleString(), clase: 'normal' };
     }
+
+    // 7. GENERAL
     return { monto: '$' + PRECIOS.general.toLocaleString(), clase: 'normal' };
   }
 
   // ── ICONO POR TRATAMIENTO ──
   function getIcono(tratamiento) {
     const t = (tratamiento || '').toLowerCase();
-    if (t.includes('endodoncia') || t.includes('nervio')) return '🔴';
+    if (t.includes('endodoncia') || t.includes('nervio') || t.includes('fractura')) return '🔴';
     if (t.includes('extracción') || t.includes('extracci') || t.includes('sacar')) return '🦷';
     if (t.includes('resina') || t.includes('caries') || t.includes('empa')) return '🔵';
     if (t.includes('juicio')) return '😬';
@@ -1140,7 +1170,7 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
 
   // ── CONSTRUIR CARD ──
   function buildCard(p, delay = 0) {
-    const precio = getPrecio(p.tratamiento, p.estado, p.extracciones, p.horario, p.aparato);
+    const precio = getPrecio(p.tratamiento, p.estado, p.extracciones, p.horario, p.aparato, p.edad);
     const icono  = getIcono(p.tratamiento);
     const trat   = limpiarTratamiento(p.tratamiento);
     const horario = p.horario || 'A definir';
@@ -1153,17 +1183,18 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
     const badgeFoto = numFotos > 0 ? `<span class="badge-foto">📷 ${numFotos > 1 ? numFotos + ' Fotos' : 'Con foto'}</span>` : '';
     
     const badgeAparato = tieneAparato(p.aparato) ? '<span class="badge-foto" style="background:rgba(251,191,36,0.15);color:#FCD34D;border-color:rgba(251,191,36,0.3);">🦷 Aparato</span>' : '';
-    const badgeEstado = p.estado === 'VIP'
+    
+    const isPrem = esCasoPremium(p.tratamiento, p.estado);
+    const badgeEstado = isPrem
       ? `<span class="badge badge-red">🔴 PREMIUM</span>`
       : p.estado === 'Sabado'
       ? `<span class="badge badge-gold">🎁 GRATIS</span>`
       : `<span class="badge badge-green">🟢 Disponible</span>`;
 
-    const btnClase = p.estado === 'VIP' ? 'btn-premium' : p.estado === 'Sabado' ? 'btn-gratis' : 'btn-normal';
+    const btnClase = isPrem ? 'btn-premium' : p.estado === 'Sabado' ? 'btn-gratis' : 'btn-normal';
     const btnText  = p.estado === 'Sabado' ? '🎁 Apartar' : 'Adquirir →';
-    const cardClase = p.estado === 'VIP' ? 'vip' : p.estado === 'Sabado' ? 'sabado' : 'disponible';
+    const cardClase = isPrem ? 'vip' : p.estado === 'Sabado' ? 'sabado' : 'disponible';
 
-    // 🛠️ SOLUCIÓN: Empaquetar los datos de forma segura para que el HTML no se trabe
     const datosSeguros = JSON.stringify(p).replace(/"/g, '&quot;');
 
     return `
@@ -1220,7 +1251,7 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
 
       if (!json.ok) throw new Error('API error');
 
-      todosLosProspectos = json.data.reverse(); // más nuevos primero
+      todosLosProspectos = json.data.reverse(); 
       if (json.precios) PRECIOS = json.precios;
       renderTodo();
       toast('✅ Actualizado correctamente');
@@ -1235,8 +1266,8 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
 
   // ── RENDER ──
   function renderTodo() {
-    const disponibles = todosLosProspectos.filter(p => p.estado === 'Disponible');
-    const vips        = todosLosProspectos.filter(p => p.estado === 'VIP');
+    const vips        = todosLosProspectos.filter(p => esCasoPremium(p.tratamiento, p.estado));
+    const disponibles = todosLosProspectos.filter(p => p.estado === 'Disponible' && !esCasoPremium(p.tratamiento, p.estado));
     const sabados     = todosLosProspectos.filter(p => p.estado === 'Sabado');
     const total       = todosLosProspectos.length;
 
@@ -1253,7 +1284,7 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
         <div class="vip-icon">🔴</div>
         <div class="vip-text">
           <div class="vip-title">Casos Premium disponibles</div>
-          <div class="vip-sub">Endodoncia verificada · $1,500 por caso</div>
+          <div class="vip-sub">Endodoncia o Fractura · $1,500 por caso</div>
         </div>
         <div class="vip-count">${vips.length}</div>
       </div>` : '';
@@ -1270,7 +1301,7 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
       </div>` : '';
 
     // Recientes (últimos 5)
-    const recientes = todosLosProspectos.slice(0, 5); // ya están en orden nuevo→viejo
+    const recientes = todosLosProspectos.slice(0, 5); 
     document.getElementById('recientes-count').textContent = recientes.length;
     const recDiv = document.getElementById('cards-recientes');
     if (recientes.length === 0) {
@@ -1279,15 +1310,19 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
       recDiv.innerHTML = recientes.map((p, i) => buildCard(p, i * 60)).join('');
     }
 
-    // Todos
     renderFiltro();
   }
 
   function renderFiltro() {
     let lista = todosLosProspectos;
-    if (filtroActual !== 'todos') {
-      lista = todosLosProspectos.filter(p => p.estado.toLowerCase() === filtroActual);
+    if (filtroActual === 'disponible') {
+      lista = todosLosProspectos.filter(p => p.estado === 'Disponible' && !esCasoPremium(p.tratamiento, p.estado));
+    } else if (filtroActual === 'vip') {
+      lista = todosLosProspectos.filter(p => esCasoPremium(p.tratamiento, p.estado));
+    } else if (filtroActual === 'sabado') {
+      lista = todosLosProspectos.filter(p => p.estado.toLowerCase() === 'sabado');
     }
+
     document.getElementById('todos-count').textContent = lista.length;
     const div = document.getElementById('cards-todos');
     if (lista.length === 0) {
@@ -1309,25 +1344,23 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
     if (typeof p === 'string') p = JSON.parse(p);
     prospectoSeleccionado = p;
 
-    const precio = getPrecio(p.tratamiento, p.estado, p.extracciones, p.horario, p.aparato);
+    const precio = getPrecio(p.tratamiento, p.estado, p.extracciones, p.horario, p.aparato, p.edad);
     const trat   = limpiarTratamiento(p.tratamiento);
     const horario = p.horario || 'A definir';
     const folio  = (p.expediente || '').includes('primera') ? 'No tiene folio' : 'Sí tiene folio';
 
     const esGratis  = p.estado === 'Sabado';
-    const esPremium = p.estado === 'VIP';
+    const esPremium = esCasoPremium(p.tratamiento, p.estado);
     const btnClass  = esPremium ? 'cta-premium' : esGratis ? 'cta-gratis' : 'cta-primary';
     const btnText   = esGratis ? '🎁 Apartar — preguntar por WhatsApp' : esPremium ? '🔴 Preguntar disponibilidad · $1,500' : `💬 Preguntar disponibilidad · ${precio.monto}`;
 
     const aparatoLabel = tieneAparato(p.aparato) ? ' · 🦷 Aparato' : '';
     document.getElementById('sheet-titulo').textContent = p.id + ' — ' + trat + aparatoLabel;
 
-    // -- NUEVO CÓDIGO PARA PROCESAR MÚLTIPLES FOTOS --
     let fotosHtml = '';
     if (p.foto) {
       const fotosArr = p.foto.split('|').map(u => u.trim()).filter(u => u.length > 0);
       fotosArr.forEach((urlRaw, index) => {
-        // Asegurarnos de que el link sea HTTPS seguro para Google Drive
         let safeUrl = urlRaw.replace('http:', 'https:');
         const matchId = safeUrl.match(/[?&]id=([a-zA-Z0-9_-]{25,})/);
         if (matchId) {
@@ -1355,7 +1388,7 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
       ${p.dolor ? `<div class="sheet-row"><span class="key">Dolor al frío/calor</span><span class="val">${p.dolor}</span></div>` : ''}
       ${p.fractura ? `<div class="sheet-row"><span class="key">Tamaño fractura</span><span class="val">${p.fractura}</span></div>` : ''}
       ${tieneAparato(p.aparato) ? `<div class="sheet-row"><span class="key">Requiere aparato</span><span class="val" style="color:#FCD34D;">🦷 Sí — incluido en el precio</span></div>` : ''}
-      <div class="sheet-row"><span class="key">Estado</span><span class="val" style="color:${esPremium ? '#F87171' : esGratis ? '#FCD34D' : '#34D399'}">${p.estado}</span></div>
+      <div class="sheet-row"><span class="key">Estado</span><span class="val" style="color:${esPremium ? '#F87171' : esGratis ? '#FCD34D' : '#34D399'}">${isPrem ? 'Premium' : p.estado}</span></div>
       <div class="sheet-row"><span class="key">Inversión</span><span class="val" style="color:${esPremium ? '#F87171' : esGratis ? '#FCD34D' : '#34D399'}; font-size:20px; font-family:'Syne',sans-serif;">${precio.monto}</span></div>
       
       ${fotosHtml}
@@ -1383,7 +1416,7 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
     const p    = prospectoSeleccionado;
     const id   = p ? p.id : '';
     const trat = p ? (p.tratamiento||'').replace(/\.$/,'') : '';
-    const precio = getPrecio(p.tratamiento, p.estado, p.extracciones, p.horario, p.aparato).monto;
+    const precio = getPrecio(p.tratamiento, p.estado, p.extracciones, p.horario, p.aparato, p.edad).monto;
     const msg  = encodeURIComponent(
 `Hola, soy alumno de la Facultad de Odontología UANL 🦷
 
@@ -1470,12 +1503,11 @@ Quiero apartar el siguiente prospecto de sábado gratuito:
   cargarProspectos();
   function abrirLightbox(url) {
     const lb = document.getElementById('lightbox');
-    // Si no tienes el elemento lightbox creado en el HTML, puedes quitar la función o añadir un div con id="lightbox"
     if(lb) {
         document.getElementById('lightbox-img').src = url;
         lb.style.opacity = '1'; lb.style.pointerEvents = 'all';
     } else {
-        window.open(url, '_blank'); // Abre la imagen en una nueva pestaña si no hay lightbox
+        window.open(url, '_blank'); 
     }
   }
   function cerrarLightbox() {
@@ -1495,7 +1527,7 @@ Quiero apartar el siguiente prospecto de sábado gratuito:
     document.getElementById('paso2').style.display = 'none';
     document.getElementById('paso3').style.display = 'none';
     document.getElementById('pasoExito').style.display = 'none';
-    const pc = getPrecio(p.tratamiento, p.estado, p.extracciones, p.horario, p.aparato);
+    const pc = getPrecio(p.tratamiento, p.estado, p.extracciones, p.horario, p.aparato, p.edad);
     document.getElementById('sol-trat-label').textContent =
       `${getIcono(p.tratamiento)} ${limpiarTratamiento(p.tratamiento)} · ${pc.monto}`;
     document.getElementById('pagoMonto').textContent = pc.monto;
@@ -1555,7 +1587,7 @@ Quiero apartar el siguiente prospecto de sábado gratuito:
     const txt = document.getElementById('btnEnviarTxt');
     btn.disabled = true;
     txt.textContent = 'Enviando...';
-    const pc = getPrecio(prospectoSeleccionado.tratamiento, prospectoSeleccionado.estado, prospectoSeleccionado.extracciones, prospectoSeleccionado.horario, prospectoSeleccionado.aparato);
+    const pc = getPrecio(prospectoSeleccionado.tratamiento, prospectoSeleccionado.estado, prospectoSeleccionado.extracciones, prospectoSeleccionado.horario, prospectoSeleccionado.aparato, prospectoSeleccionado.edad);
     const ref = 'VIN-' + String(prospectoSeleccionado.id).padStart(3,'0');
     try {
       const resp = await fetch(API_URL + '?accion=registrarSolicitud' +
