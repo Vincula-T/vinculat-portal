@@ -1060,6 +1060,11 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
 
 <div class="toast" id="toast"></div>
 
+<div id="lightbox" style="position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:999;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.3s;" onclick="cerrarLightbox()">
+  <button style="position:absolute;top:20px;right:20px;background:none;border:none;color:white;font-size:32px;cursor:pointer;line-height:1;">✕</button>
+  <img id="lightbox-img" src="" style="max-width:90%;max-height:85vh;border-radius:12px;object-fit:contain;box-shadow:0 10px 30px rgba(0,0,0,0.5);">
+</div>
+
 <script>
   const API_URL = 'https://script.google.com/macros/s/AKfycbwPDQoVUqbrJwob52woIh2Kg2DoV8Z3z5JAY6-rOg8Tnpl71AO5y2wfPYQAfDjcoCdICw/exec';
   const WHATSAPP = '528126026552'; // ← Cambia por tu número de WhatsApp con código de país
@@ -1158,8 +1163,11 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
     const btnText  = p.estado === 'Sabado' ? '🎁 Apartar' : 'Adquirir →';
     const cardClase = p.estado === 'VIP' ? 'vip' : p.estado === 'Sabado' ? 'sabado' : 'disponible';
 
+    // 🛠️ SOLUCIÓN: Empaquetar los datos de forma segura para que el HTML no se trabe
+    const datosSeguros = JSON.stringify(p).replace(/"/g, '&quot;');
+
     return `
-      <div class="card ${cardClase}" style="animation-delay:${delay}ms" onclick="abrirSheet(${JSON.stringify(p).replace(/"/g, '"')})">
+      <div class="card ${cardClase}" style="animation-delay:${delay}ms" onclick="abrirSheet(${datosSeguros})">
         <div class="card-top">
           <div class="card-id">${icono} ${p.id}</div>
           <div class="card-badges">${badgeEstado}${badgeFoto}${badgeAparato}</div>
@@ -1172,7 +1180,7 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
         </div>
         <div class="card-footer">
           <div class="card-precio ${precio.clase}">${precio.monto}</div>
-          <button class="btn-adquirir ${btnClase}" onclick="event.stopPropagation();${p.estado === 'Sabado' ? `abrirWhatsApp('${p.id}')` : `solicitarProspecto(${JSON.stringify(p).replace(/'/g,"\\'")})`}">${btnText}</button>
+          <button class="btn-adquirir ${btnClase}" onclick="event.stopPropagation(); ${p.estado === 'Sabado' ? `abrirWhatsApp('${p.id}')` : `solicitarProspecto(${datosSeguros})`}">${btnText}</button>
         </div>
       </div>`;
   }
