@@ -963,7 +963,8 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
     </div>
     <div class="politica-body open">
       <div class="precio-row"><span class="tipo">Todos los tratamientos</span><span class="monto">$130</span></div>
-      <div class="precio-row"><span class="tipo">Muela del juicio (1 o 2)</span><span class="monto">$130</span></div>
+      <div class="precio-row"><span class="tipo">Aparato / Ortodoncia</span><span class="monto">$300</span></div>
+      <div class="precio-row"><span class="tipo">Aparato (Turno Mañana)</span><span class="monto">$600</span></div>
       <div class="precio-row"><span class="tipo">Extracción simple × 2</span><span class="monto">$260</span></div>
       <div class="precio-row"><span class="tipo">Extracción simple × 3 o más</span><span class="monto">$390</span></div>
       <div class="precio-row"><span class="tipo">Endodoncia / Fractura frontal / Diente oscuro</span><span class="monto" style="color:#F87171;">$1,500</span></div>
@@ -1077,7 +1078,7 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
   const WHATSAPP = '528126026552'; 
   const CLABE    = '728969000084218503'; 
   // Ampliamos los precios base para abarcar los distintos tratamientos
-  let PRECIOS = { vip:1500, infantil_manana:200, infantil_tarde:130, extraccion_2:260, extraccion_3:390, aparato:250, general:130, blanqueamiento:1500, mantenedor:320, corona_acero:285 };
+  let PRECIOS = { vip:1500, infantil_manana:200, infantil_tarde:130, extraccion_2:260, extraccion_3:390, aparato:300, aparato_manana:600, general:130, blanqueamiento:1500, mantenedor:320, corona_acero:285 };
 
   let todosLosProspectos = [];
   let filtroActual = 'todos';
@@ -1094,11 +1095,16 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
   }
 
   // ── PRECIO POR TRATAMIENTO ──
-  function tieneAparato(val) {
+  function tieneAparato(val, trat) {
+    const t = String(trat || '').toLowerCase();
+    // Si el nombre del tratamiento incluye palabras clave de aparatos
+    if (t.includes('aparato') || t.includes('ortodoncia') || t.includes('bracket') || t.includes('braquet')) return true;
+    
     if (!val) return false;
     if (val === true) return true;
     const s = String(val).toLowerCase().trim();
-    return s === 'true' || s.charAt(0) === 's';
+    // Si la columna aparato dice "sí", "si", "requiere", "true"
+    return s === 'true' || s.charAt(0) === 's' || s.includes('requiere');
   }
 
   function contarExtracciones(extr) {
@@ -1120,6 +1126,15 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
     // 2. SABADO GRATIS
     if (estado === 'Sabado') return { monto: 'GRATIS', clase: 'gratis' };
 
+    // 3. APARATOS (Aplica a todas las edades: $600 por la mañana, $300 otros horarios)
+    let reqAparato = tieneAparato(aparato, trat);
+    let puedeManana = /mañana|mañanas|\bam\b/i.test(h);
+    
+    if (reqAparato) {
+      if (puedeManana) return { monto: '$600', clase: 'normal' };
+      return { monto: '$300', clase: 'normal' };
+    }
+
     // Lógicas extendidas para detectar tratamientos específicos
     if (t.includes('blanquea')) return { monto: '$' + PRECIOS.blanqueamiento.toLocaleString(), clase: 'normal' };
     if (t.includes('mantenedor')) return { monto: '$' + PRECIOS.mantenedor.toLocaleString(), clase: 'normal' };
@@ -1127,26 +1142,20 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
     let esInfantil = t.includes('infantil') || t.includes('niño') || t.includes('pedi') || t.includes('menor');
     if (t.includes('corona') && (t.includes('acero') || esInfantil)) return { monto: '$' + PRECIOS.corona_acero.toLocaleString(), clase: 'normal' };
 
-    // 3. LÓGICA INFANTIL 8 a 12 AÑOS
+    // 4. LÓGICA INFANTIL 8 a 12 AÑOS (Ya se validaron aparatos antes)
     let edadNum = parseInt(edad) || 0;
     let es8a12 = edadNum >= 8 && edadNum <= 12;
 
     if (esInfantil && es8a12) {
-      let reqAparato = tieneAparato(aparato);
-      let puedeManana = /mañana|mañanas|\bam\b/i.test(h);
-      if (reqAparato && puedeManana) return { monto: '$500', clase: 'normal' };
-      if (reqAparato || puedeManana) return { monto: '$300', clase: 'normal' };
+      if (puedeManana) return { monto: '$300', clase: 'normal' };
       return { monto: '$' + PRECIOS.infantil_tarde.toLocaleString(), clase: 'normal' };
     }
 
-    // 4. DEMÁS INFANTILES (fuera del rango o sin especificar)
+    // 5. DEMÁS INFANTILES (fuera del rango o sin especificar)
     if (esInfantil) {
-      if (/\bam\b|mañana|mañanas/i.test(h)) return { monto: '$' + PRECIOS.infantil_manana.toLocaleString(), clase: 'normal' };
+      if (puedeManana) return { monto: '$' + PRECIOS.infantil_manana.toLocaleString(), clase: 'normal' };
       return { monto: '$' + PRECIOS.infantil_tarde.toLocaleString(), clase: 'normal' };
     }
-
-    // 5. APARATOS NO INFANTILES
-    if (tieneAparato(aparato)) return { monto: '$' + PRECIOS.aparato.toLocaleString(), clase: 'normal' };
 
     // 6. EXTRACCIONES
     const n = contarExtracciones(extr);
@@ -1172,11 +1181,11 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
     if (t.includes('puente')) return '🔗';
     if (t.includes('cirugía') || t.includes('cirugia')) return '⚕️';
     if (t.includes('periodoncia') || t.includes('encía') || t.includes('limpieza')) return '🫧';
-    if (t.includes('mantenedor')) return '⚙️';
+    if (t.includes('mantenedor') || t.includes('ortodoncia') || t.includes('aparato')) return '⚙️';
     return '🦷';
   }
 
-  // ── NUEVA FUNCIÓN PARA FORMATEAR TÍTULOS DE TRATAMIENTO ──
+  // ── FUNCIÓN PARA FORMATEAR TÍTULOS DE TRATAMIENTO ──
   function formatearTratamiento(tratamiento, extracciones) {
     let t = String(tratamiento || '').replace(/\.$/, '').trim();
     let tLower = t.toLowerCase();
@@ -1190,7 +1199,6 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
     if (tLower.includes('extracci') || tLower.includes('sacar') || tLower.includes('muela') || tLower.includes('juicio')) {
       let n = contarExtracciones(extracciones);
       if (n > 1) {
-        // Obtenemos el texto exacto si está en la base (ej. "Tres o más"), o usamos el número
         let label = String(extracciones || '').trim();
         if (label && label.length < 15 && !label.toLowerCase().includes('no estoy')) {
             return `Extracciones (${label})`;
@@ -1243,7 +1251,7 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
       metaChips += `<div class="meta-chip">👤 ${p.edad} años</div>`;
     }
 
-    if (tieneAparato(p.aparato)) {
+    if (tieneAparato(p.aparato, p.tratamiento)) {
       metaChips += `<div class="meta-chip" style="color:#FCD34D; border-color:rgba(251,191,36,0.3);">⚙️ Requiere aparato</div>`;
     }
 
@@ -1402,7 +1410,7 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
 
     let extraRows = '';
     if (p.edad) extraRows += `<div class="sheet-row"><span class="key">Edad del paciente</span><span class="val">${p.edad} años</span></div>`;
-    if (tieneAparato(p.aparato)) extraRows += `<div class="sheet-row"><span class="key">Aparato / Ortodoncia</span><span class="val" style="color:#FCD34D;">Sí requiere</span></div>`;
+    if (tieneAparato(p.aparato, p.tratamiento)) extraRows += `<div class="sheet-row"><span class="key">Aparato / Ortodoncia</span><span class="val" style="color:#FCD34D;">Sí requiere</span></div>`;
 
     document.getElementById('sheet-titulo').textContent = p.id + ' — ' + trat;
     document.getElementById('sheet-body').innerHTML = `
