@@ -1588,7 +1588,7 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
     reader.readAsDataURL(file);
   }
 
-  async function enviarSolicitud() {
+ async function enviarSolicitud() {
     const btn = document.getElementById('btnEnviar');
     const txt = document.getElementById('btnEnviarTxt');
     btn.disabled = true;
@@ -1598,22 +1598,30 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
     const ref = 'VIN-' + String(prospectoSeleccionado.id).padStart(3,'0');
     
     try {
-      await fetch(API_URL + '?accion=registrarSolicitud' +
-        '&id=' + encodeURIComponent(prospectoSeleccionado.id) +
-        '&alumno=' + encodeURIComponent(nombreAlumnoSolicitud) +
-        '&telAlumno=' + encodeURIComponent(telefonoAlumnoSolicitud) + 
-        '&ref=' + encodeURIComponent(ref) +
-        '&monto=' + encodeURIComponent(pc.monto) +
-        '&comprobante=' + encodeURIComponent(comprobanteB64.substring(0, 5000)),
-        { method: 'GET' }
-      );
+      // Creamos un "paquete" con los datos completos, incluyendo la imagen entera
+      const payload = JSON.stringify({
+        accion: 'registrarSolicitud',
+        id: prospectoSeleccionado.id,
+        alumno: nombreAlumnoSolicitud,
+        telAlumno: telefonoAlumnoSolicitud,
+        ref: ref,
+        monto: pc.monto,
+        comprobante: comprobanteB64 // Aquí ya no cortamos la imagen
+      });
+
+      // Lo enviamos mediante método POST
+      await fetch(API_URL, { 
+        method: 'POST',
+        body: payload
+      });
+
       document.getElementById('paso3').style.display = 'none';
       document.getElementById('pasoExito').style.display = 'block';
       await cargarProspectos();
     } catch(e) {
       btn.disabled = false;
       txt.textContent = 'Enviar comprobante';
-      alert('Error al enviar.');
+      alert('Error al enviar la solicitud.');
     }
   }
 
