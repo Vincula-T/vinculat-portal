@@ -1730,18 +1730,28 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
     btn.disabled = true;
     txt.textContent = 'Enviando...';
     try {
+      // 1. Cambiar el prospecto malo a estado "Garantia"
+      await fetch(API_URL + '?accion=cambiarEstado&id=' + encodeURIComponent(garantiaFolioMalo) + '&estado=Garantia');
+
+      // 2. Registrar la solicitud del prospecto nuevo usando la misma
+      //    acción que los pagos normales — así el comprobante sube al Drive
+      //    y el admin lo ve en la sección de Pagos.
+      //    El tag [GARANTÍA:folio] en el nombre permite identificarla en el admin.
+      const ref = 'GAR-' + String(garantiaProspectoId).padStart(3, '0');
       const payload = JSON.stringify({
-        accion:      'solicitarGarantia',
-        idNuevo:     garantiaProspectoId,
-        tratamiento: garantiaTratamiento,
-        alumno:      garantiaNombreAlumno,
+        accion:      'registrarSolicitud',
+        id:          garantiaProspectoId,
+        alumno:      garantiaNombreAlumno + ' [GARANTÍA:' + garantiaFolioMalo + ']',
         telAlumno:   garantiaTelefonoAlumno,
-        folioMalo:   garantiaFolioMalo,
-        evidencia:   garantiaEvidenciaB64
+        ref:         ref,
+        monto:       '🔄 GARANTÍA',
+        comprobante: garantiaEvidenciaB64
       });
       await fetch(API_URL, { method: 'POST', body: payload });
+
       document.getElementById('gPaso2').style.display = 'none';
       document.getElementById('gPasoExito').style.display = 'block';
+      await cargarProspectos();
     } catch(e) {
       btn.disabled = false;
       txt.textContent = 'Enviar solicitud de garantía';
