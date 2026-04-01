@@ -1660,7 +1660,7 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
   let garantiaTratamiento = '';
   let garantiaNombreAlumno = '';
   let garantiaTelefonoAlumno = '';
-  let garantiaFolioMalo = '';
+  let garantiaTelMalo = '';
   let garantiaEvidenciaB64 = '';
 
   function abrirModalGarantia(id, trat) {
@@ -1669,7 +1669,7 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
     garantiaEvidenciaB64 = '';
     document.getElementById('gInputNombre').value = '';
     document.getElementById('gInputTelefono').value = '';
-    document.getElementById('gInputFolio').value = '';
+    document.getElementById('gInputTelMalo').value = '';
     document.getElementById('gPaso1').style.display = 'block';
     document.getElementById('gPaso2').style.display = 'none';
     document.getElementById('gPasoExito').style.display = 'none';
@@ -1685,21 +1685,21 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
   }
 
   function gIrPaso2() {
-    const nombre   = document.getElementById('gInputNombre').value.trim();
-    const telefono = document.getElementById('gInputTelefono').value.trim();
-    const folio    = document.getElementById('gInputFolio').value.trim();
+    const nombre    = document.getElementById('gInputNombre').value.trim();
+    const telefono  = document.getElementById('gInputTelefono').value.trim();
+    const telMalo   = document.getElementById('gInputTelMalo').value.replace(/\D/g, '').trim();
 
     document.getElementById('gInputNombre').style.borderColor   = '#1E3A6E';
     document.getElementById('gInputTelefono').style.borderColor = '#1E3A6E';
-    document.getElementById('gInputFolio').style.borderColor    = '#1E3A6E';
+    document.getElementById('gInputTelMalo').style.borderColor  = '#1E3A6E';
 
-    if (!nombre)                        { document.getElementById('gInputNombre').style.borderColor   = '#EF4444'; return; }
+    if (!nombre)                          { document.getElementById('gInputNombre').style.borderColor   = '#EF4444'; return; }
     if (!telefono || telefono.length < 10) { document.getElementById('gInputTelefono').style.borderColor = '#EF4444'; return; }
-    if (!folio)                         { document.getElementById('gInputFolio').style.borderColor    = '#EF4444'; return; }
+    if (!telMalo || telMalo.length < 10)  { document.getElementById('gInputTelMalo').style.borderColor  = '#EF4444'; return; }
 
     garantiaNombreAlumno   = nombre;
     garantiaTelefonoAlumno = telefono;
-    garantiaFolioMalo      = folio;
+    garantiaTelMalo        = telMalo;
 
     document.getElementById('gPaso1').style.display = 'none';
     document.getElementById('gPaso2').style.display = 'block';
@@ -1730,18 +1730,17 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
     btn.disabled = true;
     txt.textContent = 'Enviando...';
     try {
-      // 1. Cambiar el prospecto malo a estado "Garantia"
-      await fetch(API_URL + '?accion=cambiarEstado&id=' + encodeURIComponent(garantiaFolioMalo) + '&estado=Garantia');
-
-      // 2. Registrar la solicitud del prospecto nuevo usando la misma
-      //    acción que los pagos normales — así el comprobante sube al Drive
-      //    y el admin lo ve en la sección de Pagos.
-      //    El tag [GARANTÍA:folio] en el nombre permite identificarla en el admin.
+      // Registrar la solicitud del prospecto nuevo usando la misma
+      // acción que los pagos normales — así el comprobante sube al Drive
+      // y el admin lo ve en la sección de Pagos.
+      // El tag [GARANTÍA:tel:numero] lleva el teléfono del prospecto malo
+      // para que el admin pueda enviarle el mensaje de seguimiento y
+      // cambiarle el estado a "No respondio".
       const ref = 'GAR-' + String(garantiaProspectoId).padStart(3, '0');
       const payload = JSON.stringify({
         accion:      'registrarSolicitud',
         id:          garantiaProspectoId,
-        alumno:      garantiaNombreAlumno + ' [GARANTÍA:' + garantiaFolioMalo + ']',
+        alumno:      garantiaNombreAlumno + ' [GARANTÍA:tel:' + garantiaTelMalo + ']',
         telAlumno:   garantiaTelefonoAlumno,
         ref:         ref,
         monto:       '🔄 GARANTÍA',
@@ -1815,10 +1814,10 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
     <div id="gPaso1">
       <div class="step-indicator"><div class="step active"></div><div class="step"></div><div class="step"></div></div>
       <div class="modal-title">🔄 Solicitar Garantía</div>
-      <div class="modal-subtitle">Ingresa tus datos y el folio del prospecto que no respondió</div>
+      <div class="modal-subtitle">Ingresa tus datos y el teléfono del prospecto que no respondió</div>
       <input class="modal-input" id="gInputNombre" type="text" placeholder="Tu nombre completo..." autocomplete="off">
       <input class="modal-input" id="gInputTelefono" type="tel" placeholder="Tu número de WhatsApp (10 dígitos)..." autocomplete="off">
-      <input class="modal-input" id="gInputFolio" type="text" placeholder="Folio / ID del prospecto que no respondió..." autocomplete="off" style="margin-bottom:10px;">
+      <input class="modal-input" id="gInputTelMalo" type="tel" placeholder="Número del prospecto que no respondió (10 dígitos)..." autocomplete="off" style="margin-bottom:10px;">
       <div style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.3);border-radius:10px;padding:12px;margin-bottom:16px;font-size:12px;color:#FCD34D;line-height:1.6;">
         ⚠️ La garantía aplica cuando el prospecto asignado no respondió tras 24 h de contacto. En el siguiente paso deberás subir evidencia fotográfica.
       </div>
