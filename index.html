@@ -1021,15 +1021,24 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
       <div style="font-family:'Syne',sans-serif; font-size:16px; font-weight:800; margin-bottom:8px; color:white;">¿Cómo adquirir un prospecto?</div>
       <div style="font-size:13px; color:#94A3B8; line-height:1.7;">
         1. Selecciona el prospecto que te interese<br>
-        2. Toca <strong style="color:white;">Adquirir</strong> — se abrirá WhatsApp<br>
-        3. Pregunta si está disponible<br>
-        4. El operador te enviará los datos de transferencia<br>
-        5. Realiza el pago y envía tu comprobante<br>
+        2. Toca <strong style="color:white;">Adquirir</strong><br>
+        3. Ingresa tu nombre y WhatsApp<br>
+        4. Transfiere a la CLABE con el concepto indicado<br>
+        5. Sube tu comprobante desde la misma app<br>
         6. ¡Listo! Recibirás los datos del paciente
       </div>
     </div>
+
+    <div style="background:#0A1628; border:1.5px solid #1E3A6E; border-radius:16px; padding:18px; margin-bottom:16px;">
+      <div style="font-size:11px; font-weight:700; color:#60A5FA; text-transform:uppercase; letter-spacing:0.8px; margin-bottom:12px;">💳 Datos bancarios oficiales</div>
+      <div class="sheet-row"><span class="key">Titular</span><span class="val" style="color:white;">Vinculat Odonto</span></div>
+      <div class="sheet-row"><span class="key">Banco</span><span class="val" style="color:white;">Spin by STP</span></div>
+      <div class="sheet-row" style="border-bottom:none;"><span class="key">CLABE</span><span class="val" style="color:#60A5FA; font-family:'Syne',sans-serif; letter-spacing:1px;">728969000084218503</span></div>
+      <button class="copy-btn" style="width:100%; justify-content:center; margin-top:10px;" onclick="copiar('728969000084218503')">📋 Copiar CLABE</button>
+    </div>
+
     <div class="warning-box">
-      🔒 Los datos de pago se envían directamente por WhatsApp para mayor seguridad. Nunca compartas tu comprobante con otros alumnos.
+      🔒 Usa siempre el concepto que te genera la app (VIN-###). Sin ese concepto el operador no puede identificar tu pago. Nunca compartas tu comprobante con otros alumnos.
     </div>
     <button class="sheet-cta cta-primary" onclick="showPanel('prospectos', document.querySelectorAll('.nav-item')[1])">
       🦷 Ver prospectos disponibles
@@ -1789,6 +1798,8 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
       <div class="modal-title">Realiza tu pago</div>
       <div class="modal-subtitle">Transfiere el monto exacto con esta referencia</div>
       <div class="pago-box"><div class="pago-label">Monto</div><div class="pago-monto" id="pagoMonto">$130</div></div>
+      <div class="pago-box"><div class="pago-label">Titular de la cuenta</div><div class="pago-value">Vinculat Odonto</div></div>
+      <div class="pago-box"><div class="pago-label">Banco</div><div class="pago-value">Spin by STP</div></div>
       <div class="pago-box"><div class="pago-label">CLABE interbancaria</div><div class="pago-value">728969000084218503</div><button class="copy-btn" onclick="copiar('728969000084218503')">📋 Copiar</button></div>
       <div class="pago-box"><div class="pago-label">⚠️ Concepto obligatorio</div><div class="pago-ref" id="pagoRef">VIN-000</div><button class="copy-btn" onclick="copiar(document.getElementById('pagoRef').innerText)">📋 Copiar</button></div>
       <button class="btn-solicitar-confirm" onclick="irPaso3()">Ya pagué, subir comprobante →</button>
