@@ -32,6 +32,21 @@ function getProp(name) {
   return v;
 }
 
+function generarSiguienteId(sheet) {
+  var lastRow = sheet.getLastRow();
+  if (lastRow < 2) return 'P-1';
+  var ids = sheet.getRange(2, COL_ID, lastRow - 1, 1).getValues();
+  var maxNum = 0;
+  for (var i = 0; i < ids.length; i++) {
+    var val = String(ids[i][0] || '').trim();
+    if (val.indexOf('P-') === 0) {
+      var num = parseInt(val.substring(2), 10);
+      if (!isNaN(num) && num > maxNum) maxNum = num;
+    }
+  }
+  return 'P-' + (maxNum + 1);
+}
+
 function SPREADSHEET_ID()      { return getProp('SPREADSHEET_ID'); }
 function EMAIL_ADMIN()         { return getProp('EMAIL_ADMIN'); }
 function FOLDER_COMPROBANTES() { return getProp('FOLDER_COMPROBANTES'); }
@@ -178,7 +193,7 @@ function accionCambiarEstado(params, sheet) {
 
 function accionCrearVIP(params, sheet) {
   var lastRow = sheet.getLastRow() + 1;
-  var newId   = 'P-' + (lastRow - 1);
+  var newId   = generarSiguienteId(sheet);
   sheet.getRange(lastRow, COL_ESTADO).setValue('VIP');
   sheet.getRange(lastRow, COL_FECHA_REG).setValue(new Date());
   sheet.getRange(lastRow, COL_NOMBRE).setValue(params.nombre || '');
@@ -536,7 +551,7 @@ function recibirWebhookJotForm(p, pArr) {
     var fotoUrl = fotosPublicas.filter(function(u){ return u && u.length > 0; }).join(' | ');
     var lastRow = sheet.getLastRow();
     var newRow  = lastRow + 1;
-    var newId   = 'P-' + lastRow;
+    var newId   = generarSiguienteId(sheet);
     sheet.getRange(newRow, COL_ESTADO).setValue('Revision');
     sheet.getRange(newRow, COL_FECHA_REG).setValue(new Date());
     sheet.getRange(newRow, COL_NOMBRE).setValue(nombre);
