@@ -751,7 +751,7 @@
 .lightbox-close { position: absolute; top: 20px; right: 20px; background: none; border: none; color: white; font-size: 32px; cursor: pointer; line-height: 1; }
 
 /* NUEVO BOTÓN FLOTANTE WA */
-.float-wa { position: fixed; bottom: 85px; right: 20px; background: #25D366; color: white; padding: 12px 18px; border-radius: 100px; font-weight: 700; text-decoration: none; box-shadow: 0 8px 20px rgba(37,211,102,0.4); z-index: 90; display: flex; align-items: center; gap: 8px; font-family: 'DM Sans', sans-serif; transition: transform 0.2s; }
+.float-wa { position: fixed; bottom: calc(80px + var(--safe-bottom)); right: 16px; background: #25D366; color: white; padding: 10px 16px; border-radius: 100px; font-weight: 700; font-size: 13px; text-decoration: none; box-shadow: 0 8px 20px rgba(37,211,102,0.4); z-index: 55; display: flex; align-items: center; gap: 8px; font-family: 'DM Sans', sans-serif; transition: transform 0.2s; }
 .float-wa:active { transform: scale(0.95); }
 </style>
 </head>
@@ -1087,13 +1087,13 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
 </div>
 
 <script>
-  const API_URL = 'https://script.google.com/macros/s/AKfycbwPDQoVUqbrJwob52woIh2Kg2DoV8Z3z5JAY6-rOg8Tnpl71AO5y2wfPYQAfDjcoCdICw/exec';
+  const API_URL = 'https://script.google.com/macros/s/AKfycbyah5DTft6olSyUc9AJMlKHZAtMDuKG3r_WPZVNN20A3G5-o2FR5q-AWDYbjW2I7cIqng/exec';
   const WHATSAPP = '528126026552'; 
   const CLABE    = '728969000084218503'; 
   let PRECIOS = { vip:1500, infantil_manana:200, infantil_tarde:130, extraccion_2:260, extraccion_3:390, aparato:300, aparato_manana:600, general:130, blanqueamiento:1500, mantenedor:320, corona_acero:285 };
 
   let todosLosProspectos = [];
-  let filtroActual = 'todos';
+  let filtroActual = localStorage.getItem('vinculat_filtro') || 'todos';
   let prospectoSeleccionado = null;
   let nombreAlumnoSolicitud = '';
   let telefonoAlumnoSolicitud = '';
@@ -1303,7 +1303,9 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
       </div>`;
   }
 
-  async function cargarProspectos() {
+  async function cargarProspectos(intento) {
+    intento = intento || 1;
+    const MAX_INTENTOS = 3;
     const btn  = document.getElementById('sync-btn');
     btn.classList.add('loading');
     try {
@@ -1311,12 +1313,39 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
       const json = await res.json();
       if (!json.ok) throw new Error('API error');
 
-      todosLosProspectos = json.data.reverse(); 
-      if (json.precios) PRECIOS = Object.assign(PRECIOS, json.precios);
+      todosLosProspectos = json.data.reverse();
+      if (json.precios) {
+        var preciosValidos = {};
+        var clavesPermitidas = ['vip','infantil_manana','infantil_tarde','extraccion_2','extraccion_3','aparato','aparato_manana','general','blanqueamiento','mantenedor','corona_acero'];
+        clavesPermitidas.forEach(function(k) {
+          if (json.precios[k] !== undefined && !isNaN(parseInt(json.precios[k]))) {
+            preciosValidos[k] = parseInt(json.precios[k]);
+          }
+        });
+        PRECIOS = Object.assign(PRECIOS, preciosValidos);
+      }
+      try { localStorage.setItem('vinculat_cache', JSON.stringify({ data: todosLosProspectos, precios: PRECIOS, ts: Date.now() })); } catch(e) {}
       renderTodo();
       toast('✅ Actualizado correctamente');
     } catch(e) {
-      toast('❌ Error al cargar. Reintenta.');
+      if (intento < MAX_INTENTOS) {
+        var delay = Math.pow(2, intento) * 1000;
+        setTimeout(function() { cargarProspectos(intento + 1); }, delay);
+        return;
+      }
+      try {
+        var cache = JSON.parse(localStorage.getItem('vinculat_cache'));
+        if (cache && cache.data && cache.data.length > 0) {
+          todosLosProspectos = cache.data;
+          if (cache.precios) PRECIOS = Object.assign(PRECIOS, cache.precios);
+          renderTodo();
+          toast('⚠️ Sin conexión — mostrando datos guardados');
+        } else {
+          toast('❌ Error al cargar. Reintenta.');
+        }
+      } catch(e2) {
+        toast('❌ Error al cargar. Reintenta.');
+      }
     } finally {
       btn.classList.remove('loading');
     }
@@ -1372,7 +1401,7 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
     } else if (filtroActual === 'vip') {
       lista = todosLosProspectos.filter(p => esCasoPremium(p.tratamiento, p.estado));
     } else if (filtroActual === 'sabado') {
-      lista = todosLosProspectos.filter(p => p.estado.toLowerCase() === 'sabado');
+      lista = todosLosProspectos.filter(p => String(p.estado || '').toLowerCase() === 'sabado');
     }
     document.getElementById('todos-count').textContent = lista.length;
     document.getElementById('cards-todos').innerHTML = lista.map((p, i) => buildCard(p, i * 40)).join('');
@@ -1380,6 +1409,7 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
 
   function filtrar(tipo, btn) {
     filtroActual = tipo;
+    try { localStorage.setItem('vinculat_filtro', tipo); } catch(e) {}
     document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
     if (btn) btn.classList.add('active');
     renderFiltro();
@@ -1574,11 +1604,12 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
       return;
     }
     
-    if (!telefono || telefono.length < 10) {
+    var telLimpio = telefono.replace(/\D/g, '');
+    if (!telLimpio || !/^[2-9]\d{9}$/.test(telLimpio)) {
       document.getElementById('inputTelefonoAlumno').style.borderColor = '#EF4444';
       return;
     }
-    
+
     document.getElementById('inputNombreAlumno').style.borderColor = '#1E3A6E';
     document.getElementById('inputTelefonoAlumno').style.borderColor = '#1E3A6E';
     
@@ -1629,6 +1660,17 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
   async function previsualizarComprobante(event) {
     const file = event.target.files[0];
     if (!file) return;
+    var tiposPermitidos = ['image/jpeg','image/png','image/webp','image/jpg'];
+    if (tiposPermitidos.indexOf(file.type) === -1) {
+      toast('❌ Solo se aceptan imagenes JPG, PNG o WEBP');
+      event.target.value = '';
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      toast('❌ La imagen es muy pesada (max 10 MB)');
+      event.target.value = '';
+      return;
+    }
     const preview = document.getElementById('previewImg');
     preview.src = URL.createObjectURL(file);
     preview.style.display = 'block';
@@ -1712,9 +1754,9 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
     document.getElementById('gInputTelefono').style.borderColor = '#1E3A6E';
     document.getElementById('gInputTelMalo').style.borderColor  = '#1E3A6E';
 
-    if (!nombre)                          { document.getElementById('gInputNombre').style.borderColor   = '#EF4444'; return; }
-    if (!telefono || telefono.length < 10) { document.getElementById('gInputTelefono').style.borderColor = '#EF4444'; return; }
-    if (!telMalo || telMalo.length < 10)  { document.getElementById('gInputTelMalo').style.borderColor  = '#EF4444'; return; }
+    if (!nombre)                                              { document.getElementById('gInputNombre').style.borderColor   = '#EF4444'; return; }
+    if (!telefono || !/^[2-9]\d{9}$/.test(telefono.replace(/\D/g, ''))) { document.getElementById('gInputTelefono').style.borderColor = '#EF4444'; return; }
+    if (!telMalo || !/^[2-9]\d{9}$/.test(telMalo))            { document.getElementById('gInputTelMalo').style.borderColor  = '#EF4444'; return; }
 
     garantiaNombreAlumno   = nombre;
     garantiaTelefonoAlumno = telefono;
@@ -1727,6 +1769,17 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
   async function gPrevisualizarEvidencia(event) {
     const file = event.target.files[0];
     if (!file) return;
+    var tiposPermitidos = ['image/jpeg','image/png','image/webp','image/jpg'];
+    if (tiposPermitidos.indexOf(file.type) === -1) {
+      toast('❌ Solo se aceptan imagenes JPG, PNG o WEBP');
+      event.target.value = '';
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      toast('❌ La imagen es muy pesada (max 10 MB)');
+      event.target.value = '';
+      return;
+    }
     const preview = document.getElementById('gPreviewImg');
     preview.src = URL.createObjectURL(file);
     preview.style.display = 'block';
