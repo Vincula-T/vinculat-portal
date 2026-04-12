@@ -159,6 +159,31 @@
   }
   .filter-btn:active { transform: scale(0.95); }
 
+  .filters-advanced {
+    padding: 8px 16px 4px;
+    display: flex;
+    gap: 8px;
+  }
+  .filter-select {
+    flex: 1;
+    padding: 9px 12px;
+    border-radius: 10px;
+    border: 1.5px solid var(--border);
+    background: var(--card);
+    color: var(--text);
+    font-size: 12px;
+    font-weight: 600;
+    font-family: 'DM Sans', sans-serif;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    cursor: pointer;
+    min-width: 0;
+  }
+  .filter-select:focus { outline: none; border-color: var(--blue); }
+
   /* ── SECTION TITLE ── */
   .section-title {
     padding: 18px 16px 10px;
@@ -860,6 +885,14 @@
     <button class="filter-btn" onclick="filtrar('vip', this)">🔴 Premium</button>
     <button class="filter-btn" onclick="filtrar('sabado', this)">🎁 Sábado</button>
   </div>
+  <div class="filters-advanced">
+    <select class="filter-select" id="filtro-tratamiento" onchange="renderFiltro()">
+      <option value="">🔧 Tratamiento</option>
+    </select>
+    <select class="filter-select" id="filtro-horario" onchange="renderFiltro()">
+      <option value="">🕐 Horario</option>
+    </select>
+  </div>
   <div class="section-title">
     Todos los prospectos
     <span class="section-count" id="todos-count">—</span>
@@ -1430,20 +1463,59 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
       avisoEl.textContent = '';
     }
 
+    poblarFiltrosAvanzados();
     renderFiltro();
+  }
+
+  function poblarFiltrosAvanzados() {
+    const tratamientos = new Set();
+    const horarios = new Set();
+    todosLosProspectos.forEach(p => {
+      const t = formatearTratamiento(p.tratamiento, p.extracciones);
+      if (t) tratamientos.add(t);
+      const h = String(p.horario || '').trim();
+      if (h) horarios.add(h);
+    });
+    const selTrat = document.getElementById('filtro-tratamiento');
+    const valTrat = selTrat.value;
+    selTrat.innerHTML = '<option value="">🔧 Todos los tratamientos</option>';
+    Array.from(tratamientos).sort().forEach(t => {
+      selTrat.innerHTML += `<option value="${t}">${getIcono(t)} ${t}</option>`;
+    });
+    selTrat.value = valTrat;
+
+    const selHor = document.getElementById('filtro-horario');
+    const valHor = selHor.value;
+    selHor.innerHTML = '<option value="">🕐 Todos los horarios</option>';
+    Array.from(horarios).sort().forEach(h => {
+      selHor.innerHTML += `<option value="${h}">🕐 ${h}</option>`;
+    });
+    selHor.value = valHor;
   }
 
   function renderFiltro() {
     let lista = todosLosProspectos;
     if (filtroActual === 'disponible') {
-      lista = todosLosProspectos.filter(p => p.estado === 'Disponible' && !esCasoPremium(p.tratamiento, p.estado));
+      lista = lista.filter(p => p.estado === 'Disponible' && !esCasoPremium(p.tratamiento, p.estado));
     } else if (filtroActual === 'vip') {
-      lista = todosLosProspectos.filter(p => esCasoPremium(p.tratamiento, p.estado));
+      lista = lista.filter(p => esCasoPremium(p.tratamiento, p.estado));
     } else if (filtroActual === 'sabado') {
-      lista = todosLosProspectos.filter(p => String(p.estado || '').toLowerCase() === 'sabado');
+      lista = lista.filter(p => String(p.estado || '').toLowerCase() === 'sabado');
     }
+
+    const filtroTrat = document.getElementById('filtro-tratamiento').value;
+    if (filtroTrat) {
+      lista = lista.filter(p => formatearTratamiento(p.tratamiento, p.extracciones) === filtroTrat);
+    }
+    const filtroHor = document.getElementById('filtro-horario').value;
+    if (filtroHor) {
+      lista = lista.filter(p => String(p.horario || '').trim() === filtroHor);
+    }
+
     document.getElementById('todos-count').textContent = lista.length;
-    document.getElementById('cards-todos').innerHTML = lista.map((p, i) => buildCard(p, i * 40)).join('');
+    document.getElementById('cards-todos').innerHTML = lista.length > 0
+      ? lista.map((p, i) => buildCard(p, i * 40)).join('')
+      : '<div class="empty"><p>No hay prospectos con esos filtros.</p></div>';
   }
 
   function filtrar(tipo, btn) {
