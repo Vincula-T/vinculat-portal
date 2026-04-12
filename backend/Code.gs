@@ -1,19 +1,41 @@
 // ================================================================
 // VINCULAT — Apps Script Completo
-// Versión 2.3 — Fix fotos + comprobante + garantía
+// Versión 2.4 — Secretos movidos a Script Properties
 // ================================================================
-// CAMBIOS vs v2.2:
-//   [NEW] doGet: ruta accion=miscasos
-//   [NEW] doPost: ruta accion=solicitarGarantia
-//   [NEW] leerMisCasos: busca prospectos asignados por tel del alumno
-//   [NEW] accionSolicitarGarantia: cambia estado + guarda evidencia + email
+// CAMBIOS vs v2.3:
+//   [SEC] SPREADSHEET_ID, EMAIL_ADMIN y FOLDER_* se leen desde
+//         Script Properties (no mas secretos en el codigo fuente)
+//   [SEC] Helper getProp() con error claro si falta configuracion
+// ================================================================
+//
+// CONFIGURACION INICIAL (solo una vez):
+//   Apps Script → ⚙️ Configuracion del proyecto → "Propiedades de
+//   la secuencia de comandos" → agregar estas 4 propiedades:
+//
+//     SPREADSHEET_ID       = (ID del Google Sheet)
+//     EMAIL_ADMIN          = (correo que recibe notificaciones)
+//     FOLDER_COMPROBANTES  = (ID de la carpeta Drive de comprobantes)
+//     FOLDER_FOTOS         = (ID de la carpeta Drive de fotos)
+//
+//   Si falta alguna, getProp() lanzara un error descriptivo.
+//
 // ================================================================
 
-var SPREADSHEET_ID       = '1k2XOdYVPcLO_p4uwlcoeWE23YFvek5hXdoTY8Zgkya0';
-var SHEET_NAME           = 'Pacientes JotForm';
-var EMAIL_ADMIN          = 'martin199413@gmail.com';
-var FOLDER_COMPROBANTES  = '1qbDvAH9PpkgHqcX0I9J3zh-Ko1_krcOi';
-var FOLDER_FOTOS         = '1yzapLF247CQyIcK2kuvZQSxfJjhyhEfk';
+var SHEET_NAME = 'Pacientes JotForm';
+
+function getProp(name) {
+  var v = PropertiesService.getScriptProperties().getProperty(name);
+  if (!v) {
+    throw new Error('Falta Script Property: ' + name +
+      '. Configurala en Apps Script → ⚙️ Configuracion del proyecto → Propiedades de la secuencia de comandos.');
+  }
+  return v;
+}
+
+function SPREADSHEET_ID()      { return getProp('SPREADSHEET_ID'); }
+function EMAIL_ADMIN()         { return getProp('EMAIL_ADMIN'); }
+function FOLDER_COMPROBANTES() { return getProp('FOLDER_COMPROBANTES'); }
+function FOLDER_FOTOS()        { return getProp('FOLDER_FOTOS'); }
 
 var COL_ESTADO        = 1;
 var COL_FECHA_REG     = 2;
@@ -53,7 +75,7 @@ function enviarAlertaVIP(e) {
   var esCasoVIP = motivo.match(/fractura|frente|anterior|golpe|quebrado|trauma|oscuro/) ||
                   (motivo.match(/endo/) && !motivo.match(/molar|muela/));
   if (esCasoVIP) {
-    MailApp.sendEmail(EMAIL_ADMIN, 'ALERTA VIP: Posible Fractura/Endo',
+    MailApp.sendEmail(EMAIL_ADMIN(), 'ALERTA VIP: Posible Fractura/Endo',
       'Llego un paciente urgente:\n\nNombre: ' + nombre + '\nMotivo: ' + motivoOriginal + '\nTel: ' + telefono + '\n\nRevisa el panel admin.');
   }
 }
@@ -74,7 +96,7 @@ function onEdit(e) {
   if (estado === 'Garantia') {
     var nombre = sheet.getRange(row, COL_NOMBRE).getValue();
     var idPac  = sheet.getRange(row, COL_ID).getValue();
-    MailApp.sendEmail(EMAIL_ADMIN, 'Garantia solicitada: ' + idPac,
+    MailApp.sendEmail(EMAIL_ADMIN(), 'Garantia solicitada: ' + idPac,
       'Paciente: ' + nombre + ' | ID: ' + idPac + '\nRevisa el panel admin para validar.');
   }
   if (['Disponible', 'Sabado', 'Regalado', 'Contactado'].indexOf(estado) !== -1) {
@@ -89,7 +111,7 @@ function onEdit(e) {
 
 
 function doGet(e) {
-  var sheet  = SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName(SHEET_NAME);
+  var sheet  = SpreadsheetApp.openById(SPREADSHEET_ID()).getSheetByName(SHEET_NAME);
   var accion = e.parameter.accion || '';
   if (accion === 'cambiarEstado') return accionCambiarEstado(e.parameter, sheet);
   if (accion === 'crearVIP')      return accionCrearVIP(e.parameter, sheet);
@@ -102,7 +124,7 @@ function doGet(e) {
 
 
 function doPost(e) {
-  var sheet    = SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName(SHEET_NAME);
+  var sheet    = SpreadsheetApp.openById(SPREADSHEET_ID()).getSheetByName(SHEET_NAME);
   var postData = e.postData ? e.postData.contents : '';
   var params   = {};
   Logger.log('=== doPost recibido ===');
@@ -205,7 +227,7 @@ function accionRegistrarSolicitud(params, sheet) {
         sheet.getRange(row, COL_COMPROBANTE).setValue('[BASE64-PENDIENTE] ' + compB64.substring(0, 100));
       }
       var tratamiento = data[i][COL_TRATAMIENTO - 1] || '';
-      MailApp.sendEmail(EMAIL_ADMIN, 'Pago pendiente: ' + ref,
+      MailApp.sendEmail(EMAIL_ADMIN(), 'Pago pendiente: ' + ref,
         'Nuevo comprobante recibido!\n\nAlumno: ' + alumno + '\nTel: ' + telAlumno +
         '\nRef: ' + ref + '\nMonto: ' + monto + '\nTratamiento: ' + tratamiento +
         '\nComprobante: ' + (urlComprobante || '(no guardado)') +
@@ -268,7 +290,7 @@ function accionSolicitarGarantia(params, sheet) {
         Logger.log('Evidencia guardada: ' + (urlEvidencia || '(error)'));
       }
       var tratamiento = data[i][COL_TRATAMIENTO - 1] || '';
-      MailApp.sendEmail(EMAIL_ADMIN, 'Garantia solicitada: ' + id,
+      MailApp.sendEmail(EMAIL_ADMIN(), 'Garantia solicitada: ' + id,
         'El alumno reporta que el prospecto no respondio.\n\n' +
         'Alumno: ' + alumno + '\nTel: ' + telAlumno +
         '\nProspecto: ' + id + ' - ' + tratamiento +
@@ -358,7 +380,7 @@ function guardarComprobanteEnDrive(base64String, ref) {
     var mimeType  = mimeMatch ? mimeMatch[1] : 'image/jpeg';
     var datos  = Utilities.base64Decode(partes[1]);
     var blob   = Utilities.newBlob(datos, mimeType, ref + '.jpg');
-    var folder = DriveApp.getFolderById(FOLDER_COMPROBANTES);
+    var folder = DriveApp.getFolderById(FOLDER_COMPROBANTES());
     var file   = folder.createFile(blob);
     file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
     var url = 'https://drive.google.com/thumbnail?id=' + file.getId() + '&sz=w1000';
@@ -374,7 +396,8 @@ function guardarComprobanteEnDrive(base64String, ref) {
 function subirFotoADrive(jotformUrl, nombrePaciente) {
   Logger.log('subirFotoADrive URL: ' + jotformUrl);
   try {
-    if (!FOLDER_FOTOS || FOLDER_FOTOS === 'PEGA_AQUI_EL_ID_DE_TU_CARPETA_FOTOS') return jotformUrl;
+    var folderFotosId = FOLDER_FOTOS();
+    if (!folderFotosId || folderFotosId === 'PEGA_AQUI_EL_ID_DE_TU_CARPETA_FOTOS') return jotformUrl;
     var response = UrlFetchApp.fetch(jotformUrl, {
       muteHttpExceptions: true, followRedirects: true,
       headers: { 'User-Agent': 'Mozilla/5.0 (compatible; GoogleAppsScript)', 'Accept': 'image/*, */*' }
@@ -391,7 +414,7 @@ function subirFotoADrive(jotformUrl, nombrePaciente) {
     var ext = jotformUrl.split('?')[0].split('.').pop().toLowerCase();
     ext = ['jpg','jpeg','png','gif','webp'].indexOf(ext) > -1 ? ext : 'jpg';
     blob.setName((nombrePaciente || 'paciente').replace(/\s+/g,'_') + '_' + Date.now() + '.' + ext);
-    var folder = DriveApp.getFolderById(FOLDER_FOTOS);
+    var folder = DriveApp.getFolderById(folderFotosId);
     var file   = folder.createFile(blob);
     file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
     var url = 'https://drive.google.com/thumbnail?id=' + file.getId() + '&sz=w1000';
@@ -404,7 +427,7 @@ function subirFotoADrive(jotformUrl, nombrePaciente) {
 
 
 function manejarPostPortal(params) {
-  var sheet = SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName(SHEET_NAME);
+  var sheet = SpreadsheetApp.openById(SPREADSHEET_ID()).getSheetByName(SHEET_NAME);
   var data  = sheet.getDataRange().getValues();
   if (params.accion === 'crearVIP') return accionCrearVIP(params, sheet);
   for (var i = 1; i < data.length; i++) {
@@ -422,7 +445,7 @@ function manejarPostPortal(params) {
 function recibirWebhookJotForm(p, pArr) {
   pArr = pArr || {};
   try {
-    var sheet  = SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName(SHEET_NAME);
+    var sheet  = SpreadsheetApp.openById(SPREADSHEET_ID()).getSheetByName(SHEET_NAME);
     var pretty = (p.pretty || '').replace(/<[^>]+>/g, '');
     function fromPretty(qRegex) {
       var searchFrom = 0;
