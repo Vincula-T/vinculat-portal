@@ -1467,14 +1467,69 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
     renderFiltro();
   }
 
+  function categoriaTratamiento(tratamiento, extracciones) {
+    const t = String(tratamiento || '').toLowerCase();
+    if (t.includes('endodoncia') || t.includes('nervio') || t.includes('fractura') || t.includes('oscuro')) return 'Endodoncia';
+    if (t.includes('infantil') || t.includes('menor') || t.includes('niño') || t.includes('pedi')) return 'Infantil';
+    if (t.includes('prótesis') || t.includes('protesis') || t.includes('dentadura')) return 'Prótesis';
+    if (t.includes('corona')) return 'Corona';
+    if (t.includes('cirugía') || t.includes('cirugia')) return 'Cirugía';
+    if (t.includes('juicio')) return 'Muelas del juicio';
+    if (t.includes('resina') || t.includes('caries') || t.includes('empa')) return 'Resinas';
+    if (t.includes('periodoncia') || t.includes('encía') || t.includes('limpieza')) return 'Periodoncia';
+    if (t.includes('blanquea')) return 'Blanqueamiento';
+    if (t.includes('mantenedor') || t.includes('ortodoncia') || t.includes('aparato')) return 'Ortodoncia';
+    if (t.includes('extrac') || t.includes('sacar') || t.includes('muela')) return 'Extracciones';
+    return 'Otro';
+  }
+
+  function categoriaHorario(horario) {
+    const h = String(horario || '').toLowerCase();
+    if (!h || h === 'a definir') return '';
+    const dias = [];
+    if (h.includes('lunes'))     dias.push('Lunes');
+    if (h.includes('martes'))    dias.push('Martes');
+    if (h.includes('miércoles') || h.includes('miercoles')) dias.push('Miércoles');
+    if (h.includes('jueves'))    dias.push('Jueves');
+    if (h.includes('viernes'))   dias.push('Viernes');
+    if (h.includes('sábado') || h.includes('sabado')) dias.push('Sábado');
+    const esMañana = h.includes('mañana') || h.includes('mañanas') || h.includes('8am') || h.includes('am');
+    const esTarde  = h.includes('tarde') || h.includes('tardes') || h.includes('12pm') || h.includes('pm');
+    let turno = '';
+    if (esMañana && esTarde) turno = 'Ambos turnos';
+    else if (esMañana) turno = 'Mañanas';
+    else if (esTarde)  turno = 'Tardes';
+    const dia = dias.length > 0 ? dias.join(', ') : '';
+    if (dia && turno) return dia + ' — ' + turno;
+    if (dia) return dia;
+    if (turno) return turno;
+    return '';
+  }
+
+  function horarioCoincide(horario, filtro) {
+    const cat = categoriaHorario(horario);
+    if (!cat) return false;
+    return cat.includes(filtro);
+  }
+
   function poblarFiltrosAvanzados() {
     const tratamientos = new Set();
     const horarios = new Set();
     todosLosProspectos.forEach(p => {
-      const t = formatearTratamiento(p.tratamiento, p.extracciones);
-      if (t) tratamientos.add(t);
-      const h = String(p.horario || '').trim();
-      if (h) horarios.add(h);
+      const cat = categoriaTratamiento(p.tratamiento, p.extracciones);
+      if (cat) tratamientos.add(cat);
+      const h = String(p.horario || '').toLowerCase();
+      if (!h || h === 'a definir') return;
+      if (h.includes('lunes'))   { if (h.includes('mañan') || h.includes('am')) horarios.add('Lunes — Mañanas'); if (h.includes('tarde') || h.includes('pm')) horarios.add('Lunes — Tardes'); }
+      if (h.includes('martes'))  { if (h.includes('mañan') || h.includes('am')) horarios.add('Martes — Mañanas'); if (h.includes('tarde') || h.includes('pm')) horarios.add('Martes — Tardes'); }
+      if (h.includes('miércoles') || h.includes('miercoles')) { if (h.includes('mañan') || h.includes('am')) horarios.add('Miércoles — Mañanas'); if (h.includes('tarde') || h.includes('pm')) horarios.add('Miércoles — Tardes'); }
+      if (h.includes('jueves'))  { if (h.includes('mañan') || h.includes('am')) horarios.add('Jueves — Mañanas'); if (h.includes('tarde') || h.includes('pm')) horarios.add('Jueves — Tardes'); }
+      if (h.includes('viernes')) { if (h.includes('mañan') || h.includes('am')) horarios.add('Viernes — Mañanas'); if (h.includes('tarde') || h.includes('pm')) horarios.add('Viernes — Tardes'); }
+      if (h.includes('sábado') || h.includes('sabado')) { if (h.includes('mañan') || h.includes('am')) horarios.add('Sábado — Mañanas'); if (h.includes('tarde') || h.includes('pm')) horarios.add('Sábado — Tardes'); }
+      if (!h.includes('lunes') && !h.includes('martes') && !h.includes('mi') && !h.includes('jueves') && !h.includes('viernes') && !h.includes('sábado') && !h.includes('sabado')) {
+        if (h.includes('mañan') || h.includes('am')) horarios.add('Mañanas');
+        if (h.includes('tarde') || h.includes('pm')) horarios.add('Tardes');
+      }
     });
     const selTrat = document.getElementById('filtro-tratamiento');
     const valTrat = selTrat.value;
@@ -1487,8 +1542,14 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
     const selHor = document.getElementById('filtro-horario');
     const valHor = selHor.value;
     selHor.innerHTML = '<option value="">🕐 Todos los horarios</option>';
-    Array.from(horarios).sort().forEach(h => {
-      selHor.innerHTML += `<option value="${h}">🕐 ${h}</option>`;
+    const ordenDias = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Mañanas','Tardes'];
+    Array.from(horarios).sort((a, b) => {
+      const ia = ordenDias.findIndex(d => a.startsWith(d));
+      const ib = ordenDias.findIndex(d => b.startsWith(d));
+      return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib) || a.localeCompare(b);
+    }).forEach(h => {
+      const icon = h.includes('Mañanas') ? '🌅' : '🌇';
+      selHor.innerHTML += `<option value="${h}">${icon} ${h}</option>`;
     });
     selHor.value = valHor;
   }
@@ -1505,11 +1566,11 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
 
     const filtroTrat = document.getElementById('filtro-tratamiento').value;
     if (filtroTrat) {
-      lista = lista.filter(p => formatearTratamiento(p.tratamiento, p.extracciones) === filtroTrat);
+      lista = lista.filter(p => categoriaTratamiento(p.tratamiento, p.extracciones) === filtroTrat);
     }
     const filtroHor = document.getElementById('filtro-horario').value;
     if (filtroHor) {
-      lista = lista.filter(p => String(p.horario || '').trim() === filtroHor);
+      lista = lista.filter(p => horarioCoincide(p.horario, filtroHor));
     }
 
     document.getElementById('todos-count').textContent = lista.length;
