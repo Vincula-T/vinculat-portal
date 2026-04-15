@@ -1256,8 +1256,14 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
     let t = String(tratamiento || '').replace(/\.$/, '').trim();
     let tLower = t.toLowerCase();
 
-    if (tLower.includes('fractura') || tLower.includes('oscuro') || tLower.includes('endodoncia') || tLower.includes('nervio')) {
-      return 'Posible Endodoncia';
+    if (tLower.includes('fractura') || tLower.includes('frontal')) {
+      return 'Fractura diente frontal / Posible Endo';
+    }
+    if (tLower.includes('oscuro') || tLower.includes('anterior')) {
+      return 'Diente oscuro / Posible Endo';
+    }
+    if (tLower.includes('endodoncia') || tLower.includes('nervio')) {
+      return 'Endodoncia';
     }
     if (tLower.includes('infantil') || tLower.includes('menor')) {
       return 'Infantil';
