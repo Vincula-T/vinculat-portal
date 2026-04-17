@@ -1629,9 +1629,9 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
       const btnPremClass = esPremium ? 'cta-premium' : 'cta-primary';
       botonesHtml = `
         <div style="display:flex; flex-direction:column; gap:8px; margin-top: 14px;">
+          <button class="sheet-cta" style="background:rgba(245,158,11,0.15);color:#FCD34D;border:1px solid rgba(245,158,11,0.4);margin-top:0;" onclick="cerrarSheet(); abrirModalGarantia('${id}', '${trat}')">🔄 Reclamar garantía</button>
           <button class="sheet-cta" style="background:#25D366; color:white; margin-top:0; box-shadow: 0 4px 12px rgba(37,211,102,0.3);" onclick="abrirWhatsAppDisponibilidad('${id}')">💬 Preguntar disponibilidad</button>
           <button class="sheet-cta ${btnPremClass}" style="margin-top:0;" onclick="cerrarSheet(); solicitarProspecto('${id}')">💳 Pagar prospecto · ${precio.monto}</button>
-          <button class="sheet-cta" style="background:rgba(245,158,11,0.15);color:#FCD34D;border:1px solid rgba(245,158,11,0.4);margin-top:0;" onclick="cerrarSheet(); abrirModalGarantia('${id}', '${trat}')">🔄 Solicitar garantía</button>
         </div>
       `;
     }
@@ -1676,10 +1676,17 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
     document.getElementById('bottom-sheet').classList.remove('open');
   }
 
+  function getVin(p) {
+    const digits = String(p.id || '').replace(/\D/g, '');
+    return 'VIN-' + (digits || String(p.id || '')).padStart(3, '0');
+  }
+
   function abrirWhatsAppGratis(id) {
     const p = todosLosProspectos.find(x => String(x.id).trim() === String(id).trim());
     if(!p) return;
-    const msg = encodeURIComponent(`Hola, soy alumno 🦷\nQuiero apartar el prospecto de sábado gratuito:\n📋 *ID:* ${p.id}\n🔧 *Tratamiento:* ${p.tratamiento}\n🎁 *Inversión:* GRATIS`);
+    const vin = getVin(p);
+    const tratFormateado = formatearTratamiento(p.tratamiento, p.extracciones);
+    const msg = encodeURIComponent(`Hola, soy alumno 🦷\nQuiero apartar el prospecto de sábado gratuito:\n📋 *Folio:* ${vin}\n🔧 *Tratamiento:* ${tratFormateado}\n🎁 *Inversión:* GRATIS`);
     window.open(`https://wa.me/${WHATSAPP}?text=${msg}`, '_blank');
   }
 
@@ -1688,7 +1695,8 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
     if(!p) return;
     const precio = getPrecio(p.tratamiento, p.estado, p.extracciones, p.horario, p.aparato, p.edad);
     const tratFormateado = formatearTratamiento(p.tratamiento, p.extracciones);
-    const msg = `Hola, soy alumno de la Facultad de Odontología UANL 🦷\n\nQuiero adquirir el siguiente prospecto:\n📋 *ID:* ${p.id}\n🔧 *Tratamiento:* ${tratFormateado}\n💰 *Inversión:* ${precio.monto}\n\n¿Está disponible? De ser así, por favor indícame los datos para realizar la transferencia y confirmar mi lugar. ✅`;
+    const vin = getVin(p);
+    const msg = `Hola, soy alumno de la Facultad de Odontología UANL 🦷\n\nQuiero adquirir el siguiente prospecto:\n📋 *Folio:* ${vin}\n🔧 *Tratamiento:* ${tratFormateado}\n💰 *Inversión:* ${precio.monto}\n\n¿Está disponible? De ser así, por favor indícame los datos para realizar la transferencia y confirmar mi lugar. ✅`;
     window.open(`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(msg)}`, '_blank');
   }
 
@@ -2065,7 +2073,7 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
 
     <div id="gPaso1">
       <div class="step-indicator"><div class="step active"></div><div class="step"></div><div class="step"></div></div>
-      <div class="modal-title">🔄 Solicitar Garantía</div>
+      <div class="modal-title">🔄 Reclamar Garantía</div>
       <div class="modal-subtitle">Ingresa tus datos y el teléfono del prospecto que no respondió</div>
       <input class="modal-input" id="gInputNombre" type="text" placeholder="Tu nombre completo..." autocomplete="off">
       <input class="modal-input" id="gInputTelefono" type="tel" placeholder="Tu número de WhatsApp (10 dígitos)..." autocomplete="off">
@@ -2096,9 +2104,9 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
 
     <div id="gPasoExito" style="display:none">
       <div style="text-align:center;padding:8px 0;">
-        <div style="font-size:56px;margin-bottom:16px;">✅</div>
-        <div class="modal-title">¡Garantía solicitada!</div>
-        <div class="modal-subtitle">Tu solicitud fue enviada. Revisaremos la evidencia y te asignaremos un nuevo prospecto lo antes posible.<br><br>Te notificaremos por WhatsApp cuando esté listo. 🦷</div>
+        <div style="font-size:56px;margin-bottom:16px;">🔄</div>
+        <div class="modal-title">¡Garantía reclamada!</div>
+        <div class="modal-subtitle">Tu garantía ha sido recibida. Revisaremos la evidencia y en cuanto sea aprobada te asignaremos un nuevo prospecto.<br><br>Te notificaremos por WhatsApp cuando esté listo. 🦷</div>
         <button onclick="cerrarModalGarantia()" class="btn-solicitar-confirm" style="background:#1A2744;margin-top:20px;">Cerrar</button>
       </div>
     </div>
