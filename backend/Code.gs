@@ -114,7 +114,7 @@ function onEdit(e) {
     MailApp.sendEmail(EMAIL_ADMIN(), 'Garantia solicitada: ' + idPac,
       'Paciente: ' + nombre + ' | ID: ' + idPac + '\nRevisa el panel admin para validar.');
   }
-  if (['Disponible', 'Sabado', 'Regalado', 'Contactado'].indexOf(estado) !== -1) {
+  if (['Disponible', 'Sabado', 'Gratis', 'Regalado', 'Contactado'].indexOf(estado) !== -1) {
     sheet.getRange(row, COL_FECHA_ASIG).clearContent();
     sheet.getRange(row, COL_ALUMNO).clearContent();
     sheet.getRange(row, COL_PAGO).clearContent();
@@ -152,8 +152,9 @@ function doPost(e) {
     params = JSON.parse(postData);
     Logger.log('JSON parseado OK. Claves: ' + Object.keys(params).join(', '));
     if (params.formID || params.submissionID)  return recibirWebhookJotForm(params);
-    if (params.accion === 'registrarSolicitud') return accionRegistrarSolicitud(params, sheet);
-    if (params.accion === 'solicitarGarantia')  return accionSolicitarGarantia(params, sheet);
+    if (params.accion === 'registrarSolicitud')       return accionRegistrarSolicitud(params, sheet);
+    if (params.accion === 'registrarSolicitudGratis') return accionRegistrarSolicitudGratis(params, sheet);
+    if (params.accion === 'solicitarGarantia')        return accionSolicitarGarantia(params, sheet);
     return manejarPostPortal(params);
   } catch(err) {
     Logger.log('Error parseando JSON: ' + err.message);
@@ -176,7 +177,7 @@ function accionCambiarEstado(params, sheet) {
         sheet.getRange(row, COL_FECHA_ASIG).setValue(new Date());
         sheet.getRange(row, COL_PAGO).setValue('Validado');
       }
-      if (['Disponible', 'Sabado', 'Regalado', 'Contactado'].indexOf(estado) !== -1) {
+      if (['Disponible', 'Sabado', 'Gratis', 'Regalado', 'Contactado'].indexOf(estado) !== -1) {
         sheet.getRange(row, COL_FECHA_ASIG).clearContent();
         sheet.getRange(row, COL_ALUMNO).clearContent();
         sheet.getRange(row, COL_PAGO).clearContent();
@@ -221,7 +222,7 @@ function accionRegistrarSolicitud(params, sheet) {
     if (String(data[i][COL_ID - 1]).trim() === String(id).trim()) {
       var row          = i + 1;
       var estadoActual = data[i][COL_ESTADO - 1];
-      if (estadoActual !== 'Disponible' && estadoActual !== 'VIP' && estadoActual !== 'Sabado') {
+      if (estadoActual !== 'Disponible' && estadoActual !== 'VIP' && estadoActual !== 'Sabado' && estadoActual !== 'Gratis') {
         return jsonOk({ ok: false, error: 'Este prospecto ya no esta disponible' });
       }
       var urlComprobante = '';
@@ -248,6 +249,42 @@ function accionRegistrarSolicitud(params, sheet) {
         '\nComprobante: ' + (urlComprobante || '(no guardado)') +
         '\n\nEntra al panel admin para validar.');
       return jsonOk({ ok: true, ref: ref });
+    }
+  }
+  return jsonOk({ ok: false, error: 'ID no encontrado' });
+}
+
+
+// ================================================================
+// ACCION: Registrar solicitud gratuita (sin comprobante de pago)
+// ================================================================
+function accionRegistrarSolicitudGratis(params, sheet) {
+  var id        = params.id;
+  var alumno    = params.alumno    || '';
+  var telAlumno = params.telAlumno || '';
+  Logger.log('=== accionRegistrarSolicitudGratis === ID: ' + id + ' | Alumno: ' + alumno);
+  var data = sheet.getRange('A1:AZ2000').getValues();
+  for (var i = 1; i < data.length; i++) {
+    if (String(data[i][COL_ID - 1]).trim() === String(id).trim()) {
+      var row          = i + 1;
+      var estadoActual = data[i][COL_ESTADO - 1];
+      if (estadoActual !== 'Gratis') {
+        return jsonOk({ ok: false, error: 'Este prospecto ya no esta disponible como gratuito' });
+      }
+      sheet.getRange(row, COL_ESTADO).setValue('Asignado');
+      sheet.getRange(row, COL_ESTADO_PORTAL).setValue('Asignado');
+      sheet.getRange(row, COL_ALUMNO).setValue(alumno);
+      sheet.getRange(row, COL_TEL_ALUMNO).setValue(telAlumno);
+      sheet.getRange(row, COL_FECHA_ASIG).setValue(new Date());
+      sheet.getRange(row, COL_PAGO).setValue('Validado');
+      sheet.getRange(row, COL_REF_PAGO).setValue('GRATIS');
+      var tratamiento = data[i][COL_TRATAMIENTO - 1] || '';
+      MailApp.sendEmail(EMAIL_ADMIN(), 'Prospecto gratuito reclamado: ' + id,
+        'Un alumno reclamó el prospecto gratuito.\n\n' +
+        'Alumno: ' + alumno + '\nTel: ' + telAlumno +
+        '\nProspecto: ' + id + ' - ' + tratamiento +
+        '\n\nEl prospecto fue asignado directamente (sin pago). Envíale los datos al alumno por WhatsApp.');
+      return jsonOk({ ok: true, id: id });
     }
   }
   return jsonOk({ ok: false, error: 'ID no encontrado' });
@@ -323,7 +360,7 @@ function leerProspectosPortal(sheet) {
   var prospectos = [];
   for (var i = 1; i < data.length; i++) {
     var estado = data[i][COL_ESTADO - 1];
-    if (estado !== 'Disponible' && estado !== 'VIP' && estado !== 'Sabado') continue;
+    if (estado !== 'Disponible' && estado !== 'VIP' && estado !== 'Sabado' && estado !== 'Gratis') continue;
     if (!data[i][COL_ID - 1]) continue;
     prospectos.push({
       id:           data[i][COL_ID - 1],
@@ -350,7 +387,7 @@ function leerTodosLosProspectos(sheet) {
   var data          = sheet.getRange('A1:AZ2000').getValues();
   var prospectos    = [];
   var estadosValidos = ['Disponible','Asignado','VIP','Garantia','Contactado',
-                        'No respondio','Regalado','Sabado','Pago enviado'];
+                        'No respondio','Regalado','Sabado','Gratis','Pago enviado'];
   for (var i = 1; i < data.length; i++) {
     var estado = data[i][COL_ESTADO - 1];
     if (!estado || estadosValidos.indexOf(String(estado)) === -1) continue;
@@ -623,9 +660,10 @@ function onOpen() {
           .addSubMenu(ui.createMenu('🔘 Cambiar Estado')
                 .addItem('✅ Disponible', 'marcarDisponible')
                       .addItem('⭐ VIP', 'marcarVIP')
-                            .addItem('👤 Asignado', 'marcarAsignado')
-                                  .addItem('🔄 Garantía', 'marcarGarantia')
-                                        .addItem('❌ No respondió', 'marcarNoRespondio'))
+                            .addItem('🎁 Gratis', 'marcarGratis')
+                                  .addItem('👤 Asignado', 'marcarAsignado')
+                                        .addItem('🔄 Garantía', 'marcarGarantia')
+                                              .addItem('❌ No respondió', 'marcarNoRespondio'))
                                             .addSeparator()
                                                 .addSubMenu(ui.createMenu('🔍 Filtros Rápidos')
                                                       .addItem('Ver solo Disponibles', 'filtrarDisponibles')
@@ -654,6 +692,7 @@ function cambiarEstadoSeleccionados(nuevoEstado) {
 
 function marcarDisponible() { cambiarEstadoSeleccionados('Disponible'); }
 function marcarVIP() { cambiarEstadoSeleccionados('VIP'); }
+function marcarGratis() { cambiarEstadoSeleccionados('Gratis'); }
 function marcarAsignado() { cambiarEstadoSeleccionados('Asignado'); }
 function marcarGarantia() { cambiarEstadoSeleccionados('Garantia'); }
 function marcarNoRespondio() { cambiarEstadoSeleccionados('No respondio'); }
@@ -663,7 +702,7 @@ function aplicarColorEstado(sheet) {
   var lastRow = sheet.getLastRow();
   if (lastRow < 2) return;
   var estados = sheet.getRange(2, COL_ESTADO, lastRow - 1, 1).getValues();
-  var colores = { 'Disponible': '#C8E6C9', 'VIP': '#FFF9C4', 'Asignado': '#B3E5FC', 'Garantia': '#F8BBD0', 'No respondio': '#FFCCBC' };
+  var colores = { 'Disponible': '#C8E6C9', 'VIP': '#FFF9C4', 'Gratis': '#E8F5E9', 'Asignado': '#B3E5FC', 'Garantia': '#F8BBD0', 'No respondio': '#FFCCBC' };
   var lastCol = sheet.getLastColumn();
   for (var i = 0; i < estados.length; i++) {
     var fila = i + 2;

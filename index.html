@@ -845,6 +845,7 @@
 <div class="panel active" id="panel-inicio">
   <div id="vip-banner-container"></div>
   <div id="sabado-banner-container"></div>
+  <div id="gratis-banner-container"></div>
   <div class="section-title">
     Últimos prospectos
     <span class="section-count" id="recientes-count">—</span>
@@ -884,6 +885,7 @@
     <button class="filter-btn" onclick="filtrar('disponible', this)">🟢 Disponibles</button>
     <button class="filter-btn" onclick="filtrar('vip', this)">🔴 Premium</button>
     <button class="filter-btn" onclick="filtrar('sabado', this)">🎁 Sábado</button>
+    <button class="filter-btn" id="filter-btn-gratis" onclick="filtrar('gratis', this)" style="display:none;">🎁 Gratis</button>
   </div>
   <div class="filters-advanced">
     <select class="filter-select" id="filtro-tratamiento" onchange="renderFiltro()">
@@ -1192,7 +1194,7 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
     const h = String(horario || '').toLowerCase();
 
     if (esCasoPremium(trat, estado)) return { monto: '$' + PRECIOS.vip.toLocaleString(), clase: 'premium' };
-    if (estado === 'Sabado') return { monto: 'GRATIS', clase: 'gratis' };
+    if (estado === 'Sabado' || estado === 'Gratis') return { monto: 'GRATIS', clase: 'gratis' };
 
     let reqAparato = tieneAparato(aparato, trat);
     let puedeManana = /mañana|mañanas|\bam\b/i.test(h);
@@ -1324,15 +1326,16 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
     const badgeFoto = numFotos > 0 ? `<span class="badge-foto">📷 ${numFotos > 1 ? numFotos + ' Fotos' : 'Con foto'}</span>` : '';
     
     const isPrem = esCasoPremium(p.tratamiento, p.estado);
+    const esGratisGiveaway = p.estado === 'Gratis';
     const badgeEstado = isPrem
       ? `<span class="badge badge-red">🔴 PREMIUM</span>`
-      : p.estado === 'Sabado'
+      : (p.estado === 'Sabado' || esGratisGiveaway)
       ? `<span class="badge badge-gold">🎁 GRATIS</span>`
       : `<span class="badge badge-green">🟢 Disponible</span>`;
 
-    const btnClase = isPrem ? 'btn-premium' : p.estado === 'Sabado' ? 'btn-gratis' : 'btn-normal';
-    const btnText  = p.estado === 'Sabado' ? '🎁 Apartar' : 'Adquirir →';
-    const cardClase = isPrem ? 'vip' : p.estado === 'Sabado' ? 'sabado' : 'disponible';
+    const btnClase  = isPrem ? 'btn-premium' : (p.estado === 'Sabado' || esGratisGiveaway) ? 'btn-gratis' : 'btn-normal';
+    const btnText   = p.estado === 'Sabado' ? '🎁 Apartar' : esGratisGiveaway ? '🎁 Obtener gratis' : 'Adquirir →';
+    const cardClase = isPrem ? 'vip' : (p.estado === 'Sabado' || esGratisGiveaway) ? 'sabado' : 'disponible';
 
     let metaChips = `
       <div class="meta-chip">🕐 ${horario}</div>
@@ -1365,7 +1368,7 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
           <div class="card-precio ${precio.clase}">${precio.monto}</div>
           <div style="display:flex; gap:8px;">
             <button class="btn-adquirir btn-secondary" onclick="event.stopPropagation(); abrirSheet('${idSafe}')">Ver fotos</button>
-            <button class="btn-adquirir ${btnClase}" onclick="event.stopPropagation(); ${p.estado === 'Sabado' ? `abrirWhatsAppGratis('${idSafe}')` : `solicitarProspecto('${idSafe}')`}">${btnText}</button>
+            <button class="btn-adquirir ${btnClase}" onclick="event.stopPropagation(); ${p.estado === 'Sabado' ? `abrirWhatsAppGratis('${idSafe}')` : esGratisGiveaway ? `solicitarProspectoGratis('${idSafe}')` : `solicitarProspecto('${idSafe}')`}">${btnText}</button>
           </div>
         </div>
       </div>`;
@@ -1423,12 +1426,16 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
     const vips        = todosLosProspectos.filter(p => esCasoPremium(p.tratamiento, p.estado));
     const disponibles = todosLosProspectos.filter(p => p.estado === 'Disponible' && !esCasoPremium(p.tratamiento, p.estado));
     const sabados     = todosLosProspectos.filter(p => p.estado === 'Sabado');
+    const gratis      = todosLosProspectos.filter(p => p.estado === 'Gratis');
     const total       = todosLosProspectos.length;
 
     document.getElementById('stat-disponibles').textContent = disponibles.length;
     document.getElementById('stat-vip').textContent  = vips.length;
     document.getElementById('stat-sabado').textContent = sabados.length;
     document.getElementById('stat-total').textContent  = total;
+
+    const filtroGratisBtn = document.getElementById('filter-btn-gratis');
+    if (filtroGratisBtn) filtroGratisBtn.style.display = gratis.length > 0 ? '' : 'none';
 
     const vipBanner = document.getElementById('vip-banner-container');
     vipBanner.innerHTML = vips.length > 0 ? `
@@ -1449,6 +1456,17 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
           <div class="sabado-title">${sabados.length} prospecto${sabados.length > 1 ? 's' : ''} disponible${sabados.length > 1 ? 's' : ''}</div>
           <div class="sabado-sub">Gratis para alumnos activos — solo este sábado</div>
         </div>
+      </div>` : '';
+
+    const gratisBanner = document.getElementById('gratis-banner-container');
+    gratisBanner.innerHTML = gratis.length > 0 ? `
+      <div class="sabado-banner" onclick="filtrar('gratis', null); showPanel('prospectos', document.querySelectorAll('.nav-item')[1])" style="cursor:pointer;">
+        <div class="sabado-icon">🎁</div>
+        <div class="vip-text">
+          <div class="sabado-title">${gratis.length} prospecto${gratis.length > 1 ? 's' : ''} regalado${gratis.length > 1 ? 's' : ''}</div>
+          <div class="sabado-sub">Reclámalos gratis — solo deja tus datos</div>
+        </div>
+        <div class="vip-count" style="color:#34D399;">${gratis.length}</div>
       </div>` : '';
 
     const recientes = todosLosProspectos.slice(0, 5);
@@ -1568,6 +1586,8 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
       lista = lista.filter(p => esCasoPremium(p.tratamiento, p.estado));
     } else if (filtroActual === 'sabado') {
       lista = lista.filter(p => String(p.estado || '').toLowerCase() === 'sabado');
+    } else if (filtroActual === 'gratis') {
+      lista = lista.filter(p => p.estado === 'Gratis');
     }
 
     const filtroTrat = document.getElementById('filtro-tratamiento').value;
@@ -1604,8 +1624,9 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
     const horario = p.horario || 'A definir';
     const folio  = String(p.expediente || '').includes('primera') ? 'No tiene folio' : 'Sí tiene folio';
 
-    const esGratis  = p.estado === 'Sabado';
-    const esPremium = esCasoPremium(p.tratamiento, p.estado);
+    const esGratisSabado    = p.estado === 'Sabado';
+    const esGratisGiveaway  = p.estado === 'Gratis';
+    const esPremium         = esCasoPremium(p.tratamiento, p.estado);
 
     let fotosHtml = '';
     if (p.foto) {
@@ -1623,8 +1644,16 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
     }
 
     let botonesHtml = '';
-    if (esGratis) {
+    if (esGratisSabado) {
       botonesHtml = `<button class="sheet-cta cta-gratis" onclick="abrirWhatsAppGratis('${id}')">🎁 Apartar — preguntar por WhatsApp</button>`;
+    } else if (esGratisGiveaway) {
+      botonesHtml = `
+        <div style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.3);border-radius:12px;padding:14px;margin-top:16px;">
+          <div style="font-size:12px;font-weight:800;color:#34D399;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px;">🎁 Prospecto gratuito</div>
+          <div style="font-size:12px;color:#CBD5E1;line-height:1.6;">Este prospecto está disponible sin costo. Solo necesitas dejar tus datos de contacto para reclamarlo y te enviamos los datos del paciente por WhatsApp.</div>
+        </div>
+        <button class="sheet-cta cta-gratis" style="margin-top:12px;" onclick="cerrarSheet(); solicitarProspectoGratis('${id}')">🎁 Obtener gratis</button>
+      `;
     } else {
       const btnPremClass = esPremium ? 'cta-premium' : 'cta-primary';
       botonesHtml = `
@@ -1688,6 +1717,64 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
     const tratFormateado = formatearTratamiento(p.tratamiento, p.extracciones);
     const msg = encodeURIComponent(`Hola, soy alumno 🦷\nQuiero apartar el prospecto de sábado gratuito:\n📋 *Folio:* ${vin}\n🔧 *Tratamiento:* ${tratFormateado}\n🎁 *Inversión:* GRATIS`);
     window.open(`https://wa.me/${WHATSAPP}?text=${msg}`, '_blank');
+  }
+
+  // ── FLUJO GRATIS (sin pago) ──
+  function solicitarProspectoGratis(id) {
+    const p = todosLosProspectos.find(x => String(x.id).trim() === String(id).trim());
+    if (!p) return;
+    prospectoSeleccionado = p;
+    const trat = formatearTratamiento(p.tratamiento, p.extracciones);
+    document.getElementById('grat-trat-label').textContent = trat;
+    document.getElementById('gratInputNombre').value = '';
+    document.getElementById('gratInputTelefono').value = '';
+    document.getElementById('gratInputNombre').style.borderColor = '#1E3A6E';
+    document.getElementById('gratInputTelefono').style.borderColor = '#1E3A6E';
+    document.getElementById('gratBtnEnviar').disabled = false;
+    document.getElementById('gratBtnEnviarTxt').textContent = '🎁 Reclamar gratis';
+    document.getElementById('gratPaso1').style.display = 'block';
+    document.getElementById('gratPasoExito').style.display = 'none';
+    document.getElementById('modalGratis').classList.add('active');
+  }
+
+  function cerrarModalGratis() {
+    document.getElementById('modalGratis').classList.remove('active');
+  }
+
+  async function enviarSolicitudGratis() {
+    const nombre   = document.getElementById('gratInputNombre').value.trim();
+    const telefono = document.getElementById('gratInputTelefono').value.trim();
+    document.getElementById('gratInputNombre').style.borderColor = '#1E3A6E';
+    document.getElementById('gratInputTelefono').style.borderColor = '#1E3A6E';
+    if (!nombre) {
+      document.getElementById('gratInputNombre').style.borderColor = '#EF4444';
+      return;
+    }
+    const telLimpio = telefono.replace(/\D/g, '');
+    if (!telLimpio || !/^[2-9]\d{9}$/.test(telLimpio)) {
+      document.getElementById('gratInputTelefono').style.borderColor = '#EF4444';
+      return;
+    }
+    const btn = document.getElementById('gratBtnEnviar');
+    const txt = document.getElementById('gratBtnEnviarTxt');
+    btn.disabled = true;
+    txt.textContent = 'Enviando...';
+    try {
+      const payload = JSON.stringify({
+        accion:    'registrarSolicitudGratis',
+        id:        prospectoSeleccionado.id,
+        alumno:    nombre,
+        telAlumno: telLimpio
+      });
+      await fetch(API_URL, { method: 'POST', body: payload });
+      document.getElementById('gratPaso1').style.display = 'none';
+      document.getElementById('gratPasoExito').style.display = 'block';
+      await cargarProspectos();
+    } catch(e) {
+      btn.disabled = false;
+      txt.textContent = '🎁 Reclamar gratis';
+      alert('Error al enviar. Intenta de nuevo.');
+    }
   }
 
   function abrirWhatsAppDisponibilidad(id) {
@@ -2108,6 +2195,35 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
         <div class="modal-title">¡Garantía reclamada!</div>
         <div class="modal-subtitle">Tu garantía ha sido recibida. Revisaremos la evidencia y en cuanto sea aprobada te asignaremos un nuevo prospecto.<br><br>Te notificaremos por WhatsApp cuando esté listo. 🦷</div>
         <button onclick="cerrarModalGarantia()" class="btn-solicitar-confirm" style="background:#1A2744;margin-top:20px;">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── MODAL GRATIS ── -->
+<div class="modal-overlay solicitar-overlay" id="modalGratis" onclick="if(event.target===this) cerrarModalGratis()">
+  <div class="modal-box solicitar-box">
+    <div class="modal-handle"></div>
+
+    <div id="gratPaso1">
+      <div style="text-align:center;font-size:48px;margin-bottom:8px;">🎁</div>
+      <div class="modal-title">Obtener prospecto gratis</div>
+      <div class="modal-subtitle" id="grat-trat-label" style="margin-bottom:16px;">Cargando...</div>
+      <input class="modal-input" id="gratInputNombre" type="text" placeholder="Tu nombre completo..." autocomplete="off">
+      <input class="modal-input" id="gratInputTelefono" type="tel" placeholder="Tu número de WhatsApp (10 dígitos)..." autocomplete="off" style="margin-bottom:12px;">
+      <div style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.3);border-radius:10px;padding:12px;margin-bottom:16px;font-size:12px;color:#34D399;line-height:1.6;">
+        ✅ Este prospecto es completamente gratuito. Solo deja tus datos y te enviamos la información del paciente por WhatsApp.
+      </div>
+      <button class="btn-solicitar-confirm" id="gratBtnEnviar" onclick="enviarSolicitudGratis()"><span id="gratBtnEnviarTxt">🎁 Reclamar gratis</span></button>
+      <button onclick="cerrarModalGratis()" style="width:100%;background:none;border:none;color:#64748B;padding:12px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;margin-top:4px;">Cancelar</button>
+    </div>
+
+    <div id="gratPasoExito" style="display:none">
+      <div style="text-align:center;padding:8px 0;">
+        <div style="font-size:56px;margin-bottom:16px;">🎉</div>
+        <div class="modal-title">¡Prospecto reclamado!</div>
+        <div class="modal-subtitle">Recibimos tu solicitud. Te enviaremos los datos del paciente por WhatsApp pronto.<br><br>Contáctalo lo antes posible para coordinar su cita. 🦷</div>
+        <button onclick="cerrarModalGratis()" class="btn-solicitar-confirm" style="background:#1A2744;margin-top:20px;">Cerrar</button>
       </div>
     </div>
   </div>
