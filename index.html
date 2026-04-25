@@ -1710,13 +1710,45 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
     return 'VIN-' + (digits || String(p.id || '')).padStart(3, '0');
   }
 
+  let sabadoProspectoId = null;
+
   function abrirWhatsAppGratis(id) {
-    const p = todosLosProspectos.find(x => String(x.id).trim() === String(id).trim());
-    if(!p) return;
+    sabadoProspectoId = id;
+    document.getElementById('sInputNombre').value = '';
+    document.getElementById('sInputTelefono').value = '';
+    document.getElementById('modalSabado').classList.add('active');
+  }
+
+  async function confirmarSabado() {
+    const nombre = document.getElementById('sInputNombre').value.trim();
+    const telefono = document.getElementById('sInputTelefono').value.replace(/\D/g,'');
+    if (!nombre) { alert('Ingresa tu nombre completo.'); return; }
+    if (telefono.length < 10) { alert('Ingresa tu número de WhatsApp (10 dígitos).'); return; }
+
+    const p = todosLosProspectos.find(x => String(x.id).trim() === String(sabadoProspectoId).trim());
+    if (!p) return;
+
     const vin = getVin(p);
     const tratFormateado = formatearTratamiento(p.tratamiento, p.extracciones);
-    const msg = encodeURIComponent(`Hola, soy alumno 🦷\nQuiero apartar el prospecto de sábado gratuito:\n📋 *Folio:* ${vin}\n🔧 *Tratamiento:* ${tratFormateado}\n🎁 *Inversión:* GRATIS`);
+
+    try {
+      const payload = JSON.stringify({
+        accion:      'registrarSolicitud',
+        id:          p.id,
+        alumno:      nombre + ' [SÁBADO]',
+        telAlumno:   telefono,
+        ref:         vin,
+        monto:       'GRATIS',
+        comprobante: 'GRATIS'
+      });
+      await fetch(API_URL, { method: 'POST', body: payload });
+    } catch(e) {}
+
+    const msg = encodeURIComponent(`Hola, soy alumno 🦷\nQuiero apartar el prospecto de sábado gratuito:\n📋 *Folio:* ${vin}\n🔧 *Tratamiento:* ${tratFormateado}\n🎁 *Inversión:* GRATIS\n\n👤 *Nombre:* ${nombre}\n📞 *WhatsApp:* ${telefono}`);
     window.open(`https://wa.me/${WHATSAPP}?text=${msg}`, '_blank');
+    document.getElementById('modalSabado').classList.remove('active');
+    toast('✅ Solicitud enviada al operador');
+    await cargarProspectos();
   }
 
   // ── FLUJO GRATIS (sin pago) ──
@@ -2226,6 +2258,20 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
         <button onclick="cerrarModalGratis()" class="btn-solicitar-confirm" style="background:#1A2744;margin-top:20px;">Cerrar</button>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- ── MODAL SÁBADO ── -->
+<div class="modal-overlay solicitar-overlay" id="modalSabado" onclick="if(event.target===this) document.getElementById('modalSabado').classList.remove('active')">
+  <div class="modal-box solicitar-box">
+    <div class="modal-handle"></div>
+    <div style="font-size:40px;text-align:center;margin-bottom:8px;">🎁</div>
+    <div class="modal-title">Apartar sábado gratuito</div>
+    <div class="modal-subtitle">Ingresa tus datos y el operador confirmará tu lugar por WhatsApp</div>
+    <input class="modal-input" id="sInputNombre" type="text" placeholder="Tu nombre completo..." autocomplete="off">
+    <input class="modal-input" id="sInputTelefono" type="tel" placeholder="Tu número de WhatsApp (10 dígitos)..." autocomplete="off">
+    <button class="btn-solicitar-confirm" onclick="confirmarSabado()">Enviar solicitud →</button>
+    <button onclick="document.getElementById('modalSabado').classList.remove('active')" style="width:100%;background:none;border:none;color:#64748B;padding:12px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;margin-top:4px;">Cancelar</button>
   </div>
 </div>
 
