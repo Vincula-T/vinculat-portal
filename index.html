@@ -1727,6 +1727,15 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
 
     const p = todosLosProspectos.find(x => String(x.id).trim() === String(sabadoProspectoId).trim());
     if (!p) return;
+    if (p.estado !== 'Sabado') {
+      alert('Este prospecto de sábado ya no está disponible. Recarga la página para ver los disponibles.');
+      document.getElementById('modalSabado').classList.remove('active');
+      await cargarProspectos();
+      return;
+    }
+
+    const btnConfirmar = document.querySelector('#modalSabado .btn-solicitar-confirm');
+    if (btnConfirmar) { btnConfirmar.disabled = true; btnConfirmar.textContent = 'Enviando...'; }
 
     const vin = getVin(p);
     const tratFormateado = formatearTratamiento(p.tratamiento, p.extracciones);
@@ -1744,6 +1753,7 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
       await fetch(API_URL, { method: 'POST', body: payload });
     } catch(e) {}
 
+    if (btnConfirmar) { btnConfirmar.disabled = false; btnConfirmar.textContent = 'Enviar solicitud →'; }
     const msg = encodeURIComponent(`Hola, soy alumno 🦷\nQuiero apartar el prospecto de sábado gratuito:\n📋 *Folio:* ${vin}\n🔧 *Tratamiento:* ${tratFormateado}\n🎁 *Inversión:* GRATIS\n\n👤 *Nombre:* ${nombre}\n📞 *WhatsApp:* ${telefono}`);
     window.open(`https://wa.me/${WHATSAPP}?text=${msg}`, '_blank');
     document.getElementById('modalSabado').classList.remove('active');
@@ -1791,6 +1801,16 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
     const txt = document.getElementById('gratBtnEnviarTxt');
     btn.disabled = true;
     txt.textContent = 'Enviando...';
+    // Verificar que el prospecto sigue disponible antes de enviar
+    const pActual = todosLosProspectos.find(x => String(x.id) === String(prospectoSeleccionado.id));
+    if (!pActual || pActual.estado !== 'Gratis') {
+      btn.disabled = false;
+      txt.textContent = '🎁 Reclamar gratis';
+      alert('Este prospecto ya no está disponible. Recarga la página para ver los disponibles.');
+      cerrarModalGratis();
+      await cargarProspectos();
+      return;
+    }
     try {
       const payload = JSON.stringify({
         accion:    'registrarSolicitudGratis',
@@ -2106,6 +2126,13 @@ Por favor llegue 10 minutos antes con una identificación oficial. Cualquier dud
     const txt = document.getElementById('gBtnEnviarTxt');
     btn.disabled = true;
     txt.textContent = 'Enviando...';
+    const pActual = todosLosProspectos.find(x => String(x.id) === String(garantiaProspectoId));
+    if (!pActual || pActual.estado !== 'Asignado') {
+      btn.disabled = false;
+      txt.textContent = 'Enviar solicitud de garantía';
+      alert('Este prospecto ya no está en estado Asignado. Recarga la página e intenta de nuevo.');
+      return;
+    }
     try {
       // Registrar la solicitud del prospecto nuevo usando la misma
       // acción que los pagos normales — así el comprobante sube al Drive
