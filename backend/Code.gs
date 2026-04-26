@@ -256,12 +256,17 @@ function accionRegistrarSolicitud(params, sheet) {
 
 
 // ================================================================
-// ACCION: Registrar solicitud gratuita (sin comprobante de pago)
+// ACCION: Registrar solicitud gratuita (Genera VIN y alerta)
 // ================================================================
 function accionRegistrarSolicitudGratis(params, sheet) {
   var id        = params.id;
   var alumno    = params.alumno    || '';
   var telAlumno = params.telAlumno || '';
+  
+  // Extraemos el número del ID (ej: de "P-5" saca el "5") y creamos el VIN
+  var nums = String(id).replace(/\D/g, '');
+  var vin = nums ? 'VIN-' + nums.padStart(3, '0') : id;
+
   Logger.log('=== accionRegistrarSolicitudGratis === ID: ' + id + ' | Alumno: ' + alumno);
   var data = sheet.getRange('A1:AZ2000').getValues();
   for (var i = 1; i < data.length; i++) {
@@ -271,19 +276,23 @@ function accionRegistrarSolicitudGratis(params, sheet) {
       if (estadoActual !== 'Gratis') {
         return jsonOk({ ok: false, error: 'Este prospecto ya no esta disponible como gratuito' });
       }
-      sheet.getRange(row, COL_ESTADO).setValue('Asignado');
-      sheet.getRange(row, COL_ESTADO_PORTAL).setValue('Asignado');
+      
+      sheet.getRange(row, COL_ESTADO).setValue('Pago enviado');
+      sheet.getRange(row, COL_ESTADO_PORTAL).setValue('Pago enviado');
       sheet.getRange(row, COL_ALUMNO).setValue(alumno);
       sheet.getRange(row, COL_TEL_ALUMNO).setValue(telAlumno);
       sheet.getRange(row, COL_FECHA_ASIG).setValue(new Date());
-      sheet.getRange(row, COL_PAGO).setValue('Validado');
-      sheet.getRange(row, COL_REF_PAGO).setValue('GRATIS');
+      
+      // MARCADORES CLAVE: Ponemos el VIN real y lo etiquetamos como Apoyo
+      sheet.getRange(row, COL_PAGO).setValue('Pendiente (Apoyo)'); 
+      sheet.getRange(row, COL_REF_PAGO).setValue(vin);
+      
       var tratamiento = data[i][COL_TRATAMIENTO - 1] || '';
-      MailApp.sendEmail(EMAIL_ADMIN(), 'Prospecto gratuito reclamado: ' + id,
-        'Un alumno reclamó el prospecto gratuito.\n\n' +
+      MailApp.sendEmail(EMAIL_ADMIN(), 'Apoyo solicitado: ' + vin,
+        'Un alumno reclamó un prospecto gratuito.\n\n' +
         'Alumno: ' + alumno + '\nTel: ' + telAlumno +
-        '\nProspecto: ' + id + ' - ' + tratamiento +
-        '\n\nEl prospecto fue asignado directamente (sin pago). Envíale los datos al alumno por WhatsApp.');
+        '\nProspecto: ' + vin + ' - ' + tratamiento +
+        '\n\nEntra al panel admin para aprobar el apoyo y enviarle el WhatsApp.');
       return jsonOk({ ok: true, id: id });
     }
   }
