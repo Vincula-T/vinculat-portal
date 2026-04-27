@@ -2117,10 +2117,10 @@ Si sigue interesado/a en recibir atención, por favor, vuelva a llenar el formul
     btn.disabled = true;
     txt.textContent = 'Enviando...';
     const pActual = todosLosProspectos.find(x => String(x.id) === String(garantiaProspectoId));
-    if (!pActual || (pActual.estado !== 'Asignado' && pActual.estado !== 'Garantia')) {
+    if (!pActual) {
       btn.disabled = false;
       txt.textContent = 'Enviar solicitud de garantía';
-      alert('Este prospecto no está disponible para reclamar garantía. Recarga la página e intenta de nuevo.');
+      alert('No se encontró el prospecto. Recarga la página e intenta de nuevo.');
       return;
     }
     try {
