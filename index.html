@@ -1143,7 +1143,6 @@ Si sigue interesado/a en recibir atención, por favor, vuelva a llenar el formul
   let prospectoSeleccionado = null;
   let nombreAlumnoSolicitud = '';
   let telefonoAlumnoSolicitud = '';
-  let clabeAlumnoSolicitud = '';
   let comprobanteB64 = '';
 
   // ── DETECTOR PREMIUM GLOBAL ──
@@ -1916,7 +1915,6 @@ Si sigue interesado/a en recibir atención, por favor, vuelva a llenar el formul
     comprobanteB64 = '';
     document.getElementById('inputNombreAlumno').value = '';
     document.getElementById('inputTelefonoAlumno').value = '';
-    document.getElementById('inputCLABEAlumno').value = '';
     document.getElementById('paso1').style.display = 'block';
     document.getElementById('paso2').style.display = 'none';
     document.getElementById('paso3').style.display = 'none';
@@ -1939,7 +1937,6 @@ Si sigue interesado/a en recibir atención, por favor, vuelva a llenar el formul
   function irPaso2() {
     const nombre = document.getElementById('inputNombreAlumno').value.trim();
     const telefono = document.getElementById('inputTelefonoAlumno').value.trim();
-    const clabe = document.getElementById('inputCLABEAlumno').value.trim();
 
     if (!nombre) {
       document.getElementById('inputNombreAlumno').style.borderColor = '#EF4444';
@@ -1952,19 +1949,11 @@ Si sigue interesado/a en recibir atención, por favor, vuelva a llenar el formul
       return;
     }
 
-    var clabeLimpia = clabe.replace(/\D/g, '');
-    if (!clabeLimpia || clabeLimpia.length !== 18) {
-      document.getElementById('inputCLABEAlumno').style.borderColor = '#EF4444';
-      return;
-    }
-
     document.getElementById('inputNombreAlumno').style.borderColor = '#1E3A6E';
     document.getElementById('inputTelefonoAlumno').style.borderColor = '#1E3A6E';
-    document.getElementById('inputCLABEAlumno').style.borderColor = '#1E3A6E';
 
     nombreAlumnoSolicitud = nombre;
     telefonoAlumnoSolicitud = telLimpio;
-    clabeAlumnoSolicitud = clabeLimpia;
 
     document.getElementById('paso1').style.display = 'none';
     document.getElementById('paso2').style.display = 'block';
@@ -2050,7 +2039,6 @@ Si sigue interesado/a en recibir atención, por favor, vuelva a llenar el formul
         id:          prospectoSeleccionado.id,
         alumno:      nombreAlumnoSolicitud,
         telAlumno:   telefonoAlumnoSolicitud,
-        clabe:       clabeAlumnoSolicitud,
         ref:         ref,
         monto:       pc.montoNumero,
         comprobante: comprobanteB64
@@ -2200,8 +2188,6 @@ Si sigue interesado/a en recibir atención, por favor, vuelva a llenar el formul
       <input class="modal-input" id="inputNombreAlumno" type="text" placeholder="Tu nombre completo..." autocomplete="off">
 
       <input class="modal-input" id="inputTelefonoAlumno" type="tel" placeholder="Tu número de WhatsApp (10 dígitos)..." autocomplete="off" style="margin-bottom: 16px;">
-
-      <input class="modal-input" id="inputCLABEAlumno" type="text" placeholder="Tu número de CLABE (18 dígitos)..." autocomplete="off" style="margin-bottom: 16px; font-family: 'Syne', sans-serif; letter-spacing: 1px;">
 
       <button class="btn-solicitar-confirm" onclick="irPaso2()">Continuar →</button>
     </div>
